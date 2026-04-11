@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+    <controls>
+        <!-- Background -->
+        <control type="image">
+            <left>0</left>
+            <top>0</top>
+            <width>1920</width>
+            <height>1080</height>
+            <texture colordiffuse="FF000000">liberator_common/white.png</texture>
+            <animation effect="fade" end="80" time="120">WindowOpen</animation>
+        </control>
+        <!-- Main Window -->
+        <control type="group">
+            <top>92</top>
+            <left>92</left>
+            <animation effect="fade" end="100" time="200">WindowOpen</animation>
+            <control type="image">
+                <left>-2</left>
+                <top>-2</top>
+                <width>1736</width>
+                <height>907</height>
+                <texture colordiffuse="FFCCCCCC" border="30">liberator_common/circle.png</texture>
+            </control>
+            <control type="image">
+                <width>1732</width>
+                <height>903</height>
+                <texture colordiffuse="FF1F2020" border="30">liberator_common/circle.png</texture>
+            </control>
+            <control type="image">
+                <left>12</left>
+                <top>12</top>
+                <width>40</width>
+                <height>40</height>
+                <align>left</align>
+                <aligny>top</aligny>
+                <aspectratio aligny="top">keep</aspectratio>
+                <texture colordiffuse="FFCCCCCC">liberator_common/liberator.png</texture>
+            </control>
+            <!-- Title -->
+            <control type="label">
+                <width max="1635">auto</width>
+                <top>12</top>
+                <left>60</left>
+                <height>20</height>
+                <font>font12</font>
+                <textcolor>FFCCCCCC</textcolor>
+                <shadowcolor>FF000000</shadowcolor>
+                <align>left</align>
+                <label>[UPPERCASE][B]$INFO[Window.Property(category_name)][/B][/UPPERCASE]</label>
+            </control>
+            
+            <!-- List Header (Fake columns) -->
+            <control type="group">
+                <top>65</top>
+                <left>15</left>
+                <control type="label">
+                    <left>15</left>
+                    <width>150</width>
+                    <height>30</height>
+                    <aligny>center</aligny>
+                    <label>[B]SOURCE[/B]</label>
+                    <font>font10</font>
+                    <textcolor>FF999999</textcolor>
+                </control>
+                <control type="label">
+                    <left>180</left>
+                    <width>600</width>
+                    <height>30</height>
+                    <aligny>center</aligny>
+                    <label>[B]LIST NAME[/B]</label>
+                    <font>font10</font>
+                    <textcolor>FF999999</textcolor>
+                </control>
+                <control type="label">
+                    <left>800</left>
+                    <width>280</width>
+                    <height>30</height>
+                    <aligny>center</aligny>
+                    <label>[B]OWNER[/B]</label>
+                    <font>font10</font>
+                    <textcolor>FF999999</textcolor>
+                </control>
+                <control type="label">
+                    <left>1100</left>
+                    <width>150</width>
+                    <height>30</height>
+                    <aligny>center</aligny>
+                    <label>[B]ITEMS[/B]</label>
+                    <font>font10</font>
+                    <textcolor>FF999999</textcolor>
+                    <align>right</align>
+                </control>
+                 <control type="label">
+                    <left>1270</left>
+                    <width>350</width>
+                    <height>30</height>
+                    <aligny>center</aligny>
+                    <label>[B]STATUS[/B]</label>
+                    <font>font10</font>
+                    <textcolor>FF999999</textcolor>
+                </control>
+            </control>
+
+            <!-- List Control -->
+            <control type="fixedlist" id="2000">
+                <pagecontrol>60</pagecontrol>
+                <left>15</left>
+                <top>100</top>
+                <width>1702</width>
+                <height>780</height>
+                <onup>2000</onup>
+                <ondown>2000</ondown>
+                <onleft>2000</onleft>
+                <onright>60</onright>
+                <scrolltime tween="sine">200</scrolltime>
+                <focusposition>4</focusposition>
+                <orientation>vertical</orientation>
+                
+                <itemlayout height="50" width="1702">
+                    <control type="image">
+                        <width>1702</width>
+                        <height>50</height>
+                        <texture colordiffuse="11FFFFFF">liberator_common/white.png</texture>
+                        <visible>false</visible>
+                    </control>
+                    <control type="label">
+                        <left>15</left>
+                        <top>0</top>
+                        <width>150</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FFAAAAAA</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(source)]</label>
+                    </control>
+                    <control type="label">
+                        <left>180</left>
+                        <top>0</top>
+                        <width>600</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FFCCCCCC</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>800</left>
+                        <top>0</top>
+                        <width>280</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FFAAAAAA</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(owner)]</label>
+                    </control>
+                    <control type="label">
+                        <left>1100</left>
+                        <top>0</top>
+                        <width>150</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FFAAAAAA</textcolor>
+                        <align>right</align>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(item_count)]</label>
+                    </control>
+                     <control type="label">
+                        <left>1270</left>
+                        <top>0</top>
+                        <width>350</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FFCCCCCC</textcolor>
+                        <aligny>center</aligny>
+                        <label>[COLOR $INFO[ListItem.Property(status_color)]]$INFO[ListItem.Property(status)][/COLOR]</label>
+                    </control>
+                </itemlayout>
+
+                <focusedlayout height="50" width="1702">
+                    <control type="image">
+                        <width>1702</width>
+                        <height>50</height>
+                        <texture colordiffuse="FFCCCCCC" border="10">liberator_common/white.png</texture>
+                    </control>
+                    <control type="label">
+                        <left>15</left>
+                        <top>0</top>
+                        <width>150</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FF333333</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(source)]</label>
+                    </control>
+                    <control type="label">
+                        <left>180</left>
+                        <top>0</top>
+                        <width>600</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FF1F2020</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Label]</label>
+                    </control>
+                    <control type="label">
+                        <left>800</left>
+                        <top>0</top>
+                        <width>280</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FF333333</textcolor>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(owner)]</label>
+                    </control>
+                    <control type="label">
+                        <left>1100</left>
+                        <top>0</top>
+                        <width>150</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FF333333</textcolor>
+                        <align>right</align>
+                        <aligny>center</aligny>
+                        <label>$INFO[ListItem.Property(item_count)]</label>
+                    </control>
+                     <control type="label">
+                        <left>1270</left>
+                        <top>0</top>
+                        <width>350</width>
+                        <height>50</height>
+                        <font>font12</font>
+                        <textcolor>FF333333</textcolor>
+                        <aligny>center</aligny>
+                        <label>[COLOR $INFO[ListItem.Property(status_color)]]$INFO[ListItem.Property(status)][/COLOR]</label>
+                    </control>
+                </focusedlayout>
+            </control>
+
+            <!-- Scrollbar -->
+            <control type="scrollbar" id="60">
+                <top>100</top>
+                <left>1740</left>
+                <width>10</width>
+                <height>780</height>
+                <onleft>2000</onleft>
+                <onright>2000</onright>
+                <texturesliderbackground colordiffuse="FF1F2020">liberator_common/white.png</texturesliderbackground>
+                <texturesliderbar colordiffuse="FF555556">liberator_common/white.png</texturesliderbar>
+                <texturesliderbarfocus colordiffuse="FFCCCCCC">liberator_common/white.png</texturesliderbarfocus>
+                <orientation>vertical</orientation>
+            </control>
+
+        </control>
+    </controls>
+</window>

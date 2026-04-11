@@ -1,0 +1,27 @@
+Add ability to include/exclude lists from library
+- Not synced to DB if flag off
+- Must still be visible if selected via addon, so using trakt api
+- Updated via CM on list itself
+- Need to update garbage collection so that it ignores items on lists mot in DB, then GC will clean update
+Add Lists Manager menu option
+- Under this, All Lists option
+- Shows choice of all lists
+- CM offers
+    - Add/Remove from library
+    - Unlike if liked
+    - Delete if owned
+    - Open to see contents
+        - Can we support play from here? Need to be able to get to a list not in library to play
+        - No separation for tvshows and movies
+
+- What does the user need?
+    - Manage lists
+        - Ability to add/remove lists from library
+        - Ability to unlike liked lists
+        - Ability to delete lists owned
+        - Can't be separated into tvshows/movies as lists can be combined and delete would be the full list
+        - Need to be able to see items to decide on remove/unlike. Same issue - mixed lists. Update, not an issue
+        - Don't need to be able to play, but would be possible from here? Then don't need below feature
+
+
+
