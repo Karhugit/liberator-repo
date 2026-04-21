@@ -505,35 +505,7 @@
                           <property name="setting_description">Choose the delay time before Liberator checks for updates after Kodi start</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_numeric&amp;setting_id=update.delay)</onclick>
                       </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(10)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(liberator.update.action),3)</visible>
-                          <property name="setting_label">    - Github Username</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.update.username)]</property>
-                          <property name="setting_description">Leave this setting as default unless you wsh to update Liberator through a different user repository. If you do, enter the Github Username of the new github location</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=update.username)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(10)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(liberator.update.action),3)</visible>
-                          <property name="setting_label">    - Github Repo Address</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.update.location)]</property>
-                          <property name="setting_description">Leave this setting as default unless you wsh to update Liberator through a different user repository. If you do, enter the Github Repo Address of the new github location</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=update.location)</onclick>
-                      </item>
 
-        <!-- Trakt Cache -->
-                      <item>
-                          <visible>Container(2000).HasFocus(10)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(liberator.trakt.user),empty_setting)</visible>
-                          <property name="setting_label">Refresh Widgets After Trakt Sync</property>
-                          <property name="setting_type">boolean</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.trakt.refresh_widgets)]</property>
-                          <property name="setting_description">Enable this and Liberator will refresh widgets after performing a Trakt Sync if there were any changes</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=trakt.refresh_widgets)</onclick>
-                      </item>
         <!-- UTC Time Offset -->
                       <item>
                           <visible>Container(2000).HasFocus(10)</visible>
@@ -1023,7 +995,7 @@
                           <property name="setting_description">Enable this to include unaired episodes within Next Episodes. They will show with a RED highlight and become visible within 7 days of their airdate</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=nextep.include_unaired)</onclick>
                       </item>
-        <!-- Trakt Calendar -->
+        <!-- Trakt Calendar
                       <item>
                           <visible>Container(2000).HasFocus(40)</visible>
                           <property name="setting_label">Trakt Calendar</property>
@@ -1062,6 +1034,7 @@
                           <property name="setting_description">Choose how many future days will be shown within the Trakt Calendar</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_numeric&amp;setting_id=trakt.calendar_future_days)</onclick>
                       </item>
+        -->
 <!-- ACCOUNTS 50 -->
         <!-- Trakt -->
                       <item>
@@ -1207,6 +1180,7 @@
                           <property name="setting_description">Revoke authorization of your TMDb account</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=tmdb.tmdb_revoke_authentication)</onclick>
                       </item>
+<!--
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
                           <property name="setting_label">API Key</property>
@@ -1232,6 +1206,7 @@
                           <property name="setting_description">Test if your TMDb API is activated and working</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=tmdb_api_check_choice)</onclick>
                       </item>
+-->
         <!-- OMDb -->
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
@@ -1458,7 +1433,7 @@
                          <property name="setting_description">Choose the order in which Real Debrid results appear in relation to any other active accounts. The lower the number, the higher the sort order</property>
                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_numeric&amp;setting_id=pm.priority)</onclick>
                      </item>
-        <!-- All Debrid -->
+        <!-- All Debrid
                      <item>
                          <visible>Container(2000).HasFocus(50)</visible>
                          <property name="setting_label">All Debrid</property>
@@ -1556,6 +1531,7 @@
                           <property name="setting_description">Choose the order in which All Debrid results appear in relation to any other active accounts. The lower the number, the higher the sort order</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_numeric&amp;setting_id=ad.priority)</onclick>
                       </item>
+        -->
         <!-- Off Cloud -->
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>

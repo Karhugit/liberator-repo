@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# TRUMP WON
 import xbmc, xbmcgui, xbmcplugin, xbmcvfs, xbmcaddon
 from os import path as osPath
 from urllib.parse import urlencode
@@ -19,9 +18,9 @@ img_url = 'https://i.imgur.com/%s.png'
 invoker_switch_dict = {'true': 'false', 'false': 'true'}
 empty_poster, nextpage = img_url % icons.box_office, img_url % icons.nextpage
 nextpage_landscape = img_url % icons.nextpage_landscape
-tmdb_default_api = 'b370b60447737762ca38457bd77579b3'
-trakt_default_id = '1038ef327e86e7f6d39d80d2eb5479bff66dd8394e813c5e0e387af0f84d89fb'
-trakt_default_secret = '8d27a92e1d17334dae4a0590083a4f26401cb8f721f477a79fd3f218f8534fd1'
+tmdb_default_api = '60e9233a78d39d9fe51cf31ebbc8865d'
+trakt_default_id = '378e7c8adf3569e809b57a26e318dee3d4080e3c58dafa817537f6b7d6662cd6'
+trakt_default_secret = 'e454afd65b734faea58be818af256bb05e88e6151404df987d5716025dbc0b29'
 myvideos_db_paths = {19: '119', 20: '121', 21: '124'}
 sort_method_dict = {'episodes': 24, 'files': 5, 'label': 2, 'none': 0}
 playlist_type_dict = {'music': 0, 'video': 1}

@@ -15,7 +15,6 @@ navigator_db = translatePath(path_join(database_path_raw, 'navigator.db'))
 watched_db = translatePath(path_join(database_path_raw, 'watched.db'))
 favorites_db = translatePath(path_join(database_path_raw, 'favourites.db'))
 maincache_db = translatePath(path_join(database_path_raw, 'maincache.db'))
-lists_db = translatePath(path_join(database_path_raw, 'lists.db'))
 discover_db = translatePath(path_join(database_path_raw, 'discover.db'))
 #metacache_db = translatePath(path_join(database_path_raw, 'metacache.db'))
 debridcache_db = translatePath(path_join(database_path_raw, 'debridcache.db'))
@@ -24,11 +23,11 @@ episode_groups_db = translatePath(path_join(database_path_raw, 'episode_groups.d
 ipc_data_db = translatePath(path_join(database_path_raw, 'ipc_data.db'))
 # ipc_data_db is used for inter-process communication, not a cache database
 database_timeout = 20
-current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'maincache.db', 'lists.db',
+current_dbs = ('navigator.db', 'watched.db', 'favourites.db', 'maincache.db',
                 'discover.db', 'debridcache.db', 'settings.db', 'episode_groups.db', 'ipc_data.db')
 database_locations = {
 'navigator_db': navigator_db, 'watched_db': watched_db, 'favorites_db': favorites_db, 'settings_db': settings_db, 'maincache_db': maincache_db,
-'debridcache_db': debridcache_db, 'lists_db': lists_db, 'discover_db': discover_db,
+'debridcache_db': debridcache_db, 'discover_db': discover_db,
 'episode_groups_db': episode_groups_db,  'ipc_data_db': ipc_data_db
         }
 integrity_check = {
@@ -37,7 +36,6 @@ integrity_check = {
 'watched_db': ('watched_status', 'progress'),
 'favorites_db': ('favourites',),
 'maincache_db': ('maincache',),
-'lists_db': ('lists',),
 'discover_db': ('discover',),
 'debridcache_db': ('debrid_data',),
 'episode_groups_db': ('groups_data',),
@@ -61,8 +59,6 @@ last_played text, resume_id integer, title text, unique (db_type, media_id, seas
 'CREATE TABLE IF NOT EXISTS maincache (id text unique, data text, expires integer)',),
 'debridcache_db': (
 'CREATE TABLE IF NOT EXISTS debrid_data (hash text not null, debrid text not null, cached text, expires integer, unique (hash, debrid))',),
-'lists_db': (
-'CREATE TABLE IF NOT EXISTS lists (id text unique, data text, expires integer)',),
 'discover_db': (
 'CREATE TABLE IF NOT EXISTS discover (id text not null unique, db_type text not null, data text)',),
 'episode_groups_db': (
@@ -130,10 +126,10 @@ def get_size(file):
 def clean_databases():
     from caches.external_cache import external_cache
     from caches.main_cache import main_cache
-    from caches.lists_cache import lists_cache
+#    from caches.lists_cache import lists_cache
     from caches.meta_cache import meta_cache
     from caches.debrid_cache import debrid_cache
-    clean_cache_list = (('MAIN CACHE', main_cache, maincache_db), ('LISTS CACHE', lists_cache, lists_db),
+    clean_cache_list = (('MAIN CACHE', main_cache, maincache_db),
                         ('DEBRID CACHE', debrid_cache, debridcache_db))
     results = []
     append = results.append
@@ -197,10 +193,10 @@ def clear_cache(cache_type, silent=False):
         if not _confirm(): return
         from caches.main_cache import main_cache
         success = main_cache.delete_all_folderscrapers()
-    elif cache_type == 'list':
-        if not _confirm(): return
-        from caches.lists_cache import lists_cache
-        success = lists_cache.delete_all_lists()
+#    elif cache_type == 'list':
+#        if not _confirm(): return
+#        from caches.lists_cache import lists_cache
+#        success = lists_cache.delete_all_lists()
     else:# main
         if not _confirm(): return
         from caches.main_cache import main_cache
@@ -213,7 +209,7 @@ def clear_all_cache():
     progressDialog = progress_dialog()
     line = 'Clearing....[CR]%s'
     caches = (('meta', 'Meta Cache'), ('internal_scrapers', 'Internal Scrapers Cache'), ('external_scrapers', 'External Scrapers Cache'),
-            ('imdb', 'IMDb Cache'), ('list', 'List Data Cache', ), ('main', 'Main Cache', ),
+            ('imdb', 'IMDb Cache'), ('main', 'Main Cache', ),
             ('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'),
             ('oc_cloud', 'OffCloud Cloud'), ('ed_cloud', 'Easy Debrid Cloud'), ('tb_cloud', 'TorBox Cloud'))
     for count, cache_type in enumerate(caches, 1):

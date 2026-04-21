@@ -72,20 +72,22 @@ def tmdb_media_videos(media_type, tmdb_id):
 	return cache_function(get_tmdb, string, url, expiration=EXPIRY_1_WEEK)
 
 def tmdb_movies_genres(genre_id, page_no):
-	api_key = tmdb_api_key()
-	if api_key in empty_setting_check: return no_api_key()
-	string = 'tmdb_movies_genres_%s_%s' % (genre_id, page_no)
-	url = '%s/discover/movie?api_key=%s&with_genres=%s&language=en-US&region=US&with_original_language=en&release_date.lte=%s&page=%s' \
-			% (base_url, api_key, genre_id, get_current_date(), page_no)
-	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
+#	api_key = tmdb_api_key()
+#	if api_key in empty_setting_check: return no_api_key()
+#	string = 'tmdb_movies_genres_%s_%s' % (genre_id, page_no)
+#	url = '%s/discover/movie?api_key=%s&with_genres=%s&language=en-US&region=US&with_original_language=en&release_date.lte=%s&page=%s' \
+#			% (base_url, api_key, genre_id, get_current_date(), page_no)
+#	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
+	return None
 
 def tmdb_movies_year(year, page_no):
-	api_key = tmdb_api_key()
-	if api_key in empty_setting_check: return no_api_key()
-	string = 'tmdb_movies_year_%s_%s' % (year, page_no)
-	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&certification_country=US&primary_release_year=%s&page=%s' \
-							% (base_url, api_key, year, page_no)
-	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
+#	api_key = tmdb_api_key()
+#	if api_key in empty_setting_check: return no_api_key()
+#	string = 'tmdb_movies_year_%s_%s' % (year, page_no)
+#	url = '%s/discover/movie?api_key=%s&language=en-US&region=US&with_original_language=en&certification_country=US&primary_release_year=%s&page=%s' \
+#							% (base_url, api_key, year, page_no)
+#	return lists_cache_object(get_data, string, url, expiration= EXPIRY_1_WEEK)
+	return None
 
 def tmdb_movies_recommendations(tmdb_id, page_no):
 	api_key = tmdb_api_key()

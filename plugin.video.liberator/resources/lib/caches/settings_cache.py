@@ -202,19 +202,14 @@ default_settings = [
 #==================== General
 {'setting_id': 'auto_start_liberator', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac_address', 'setting_type': 'string', 'setting_default': '127.0.0.1'},
-{'setting_id': 'orac_fast_start_episode', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac_scraping', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac.strict_dedupe', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': default_addon_fanart, 'browse_mode': '2'},
 #==================== Manage Updates
 {'setting_id': 'update.action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Prompt', '1': 'Automatic', '2': 'Notification', '3': 'Off'}},
 {'setting_id': 'update.delay', 'setting_type': 'action', 'setting_default': '10', 'min_value': '10', 'max_value': '300'},
-{'setting_id': 'update.username', 'setting_type': 'string', 'setting_default': 'Tikipeter'},
-{'setting_id': 'update.location', 'setting_type': 'string', 'setting_default': 'tikipeter.github.io'},
 #==================== Watched Indicators
 {'setting_id': 'watched_indicators', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Liberator', '1': 'Trakt'}},
-#======+============= Trakt Cache
-{'setting_id': 'trakt.refresh_widgets', 'setting_type': 'boolean', 'setting_default': 'true'},
 #==================== UTC Time Offset
 {'setting_id': 'datetime.offset', 'setting_type': 'action', 'setting_default': '0', 'min_value': '-15', 'max_value': '15'},
 #==================== Downloads

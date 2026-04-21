@@ -30,11 +30,12 @@ class ListsCache(BaseCache):
 lists_cache = ListsCache()
 
 def lists_cache_object(function, string, args, json=False, expiration=48):
-	cache = lists_cache.get(string)
-	if cache is not None: return cache
-	if isinstance(args, list): args = tuple(args)
-	else: args = (args,)
-	if json: result = function(*args).json()
-	else: result = function(*args)
-	lists_cache.set(string, result, expiration=expiration)
-	return result
+#	cache = lists_cache.get(string)
+#	if cache is not None: return cache
+#	if isinstance(args, list): args = tuple(args)
+#	else: args = (args,)
+#	if json: result = function(*args).json()
+#	else: result = function(*args)
+#	lists_cache.set(string, result, expiration=expiration)
+#	return result
+	return None
