@@ -444,17 +444,6 @@ def show_text(heading, text=None, file=None, font_size='small', kodi_log=False):
 def notification(line1, time=5000, icon=None):
 	kodi_dialog().notification('Liberator', line1, icon or addon_icon(), time)
 
-def timeIt(func):
-	# Thanks to 123Venom
-	import time
-	fnc_name = func.__name__
-	def wrap(*args, **kwargs):
-		started_at = time.time()
-		result = func(*args, **kwargs)
-		logger('%s.%s' % (__name__ , fnc_name), (time.time() - started_at))
-		return result
-	return wrap
-
 def volume_checker():
 	# 0% == -60db, 100% == 0db
 	try:
@@ -519,13 +508,3 @@ def upload_logfile(params):
 	except: ok_dialog(text='Error. Log Upload Failed')
 	hide_busy_dialog()
 
-def fetch_kodi_imagecache(image):
-	import sqlite3 as database
-	result = None
-	try:
-		dbcon = database.connect(translate_path('special://database/Textures13.db'), timeout=40.0)
-		dbcur = dbcon.cursor()
-		dbcur.execute("SELECT cachedurl FROM texture WHERE url = ?", (image,))
-		result = dbcur.fetchone()[0]
-	except: pass
-	return result
