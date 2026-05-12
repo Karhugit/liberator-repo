@@ -106,6 +106,20 @@ def sync_settings(params={}):
 	except: pass
 	if currentsettings:
 		for k, v  in currentsettings.items(): settings_cache.set_memory_cache(k, v)
+
+	# Migrate any settings whose stored value still matches a superseded default.
+	# This silently upgrades users who never manually changed the value.
+	_superseded_defaults = {
+		'tmdb_api': '60e9233a78d39d9fe51cf31ebbc8865d',
+		'trakt.client': '378e7c8adf3569e809b57a26e318dee3d4080e3c58dafa817537f6b7d6662cd6',
+		'trakt.secret': 'e454afd65b734faea58be818af256bb05e88e6151404df987d5716025dbc0b29',
+	}
+	for setting_id, old_value in _superseded_defaults.items():
+		if currentsettings.get(setting_id) == old_value:
+			new_default = next((i['setting_default'] for i in default_settings if i['setting_id'] == setting_id), None)
+			if new_default and new_default != old_value:
+				settings_cache.set(setting_id, new_default)
+
 	for item in default_settings:
 		setting_id = item['setting_id']
 		if setting_id in currentsettings: continue
@@ -118,6 +132,7 @@ def sync_settings(params={}):
 	if insert_list: settings_cache.set_many(insert_list)
 	settings_cache.clean_database()
 	if not silent: notification('Settings Cache Remade')
+
 
 def set_default(setting_ids):
 	if not isinstance(setting_ids, list): setting_ids = [setting_ids]

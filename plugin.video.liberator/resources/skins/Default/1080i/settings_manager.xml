@@ -1071,7 +1071,7 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(liberator.trakt.client),378e7c8adf3569e809b57a26e318dee3d4080e3c58dafa817537f6b7d6662cd6)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(liberator.trakt.client),f986871799a140dc20a166adfa637c98c8fa474dc80757aabad8668b99e184de)</visible>
                           <property name="setting_label">    - Restore Default Client ID Key</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">...</property>
@@ -1088,7 +1088,7 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(liberator.trakt.secret),e454afd65b734faea58be818af256bb05e88e6151404df987d5716025dbc0b29)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(liberator.trakt.secret),579a93101ccf4cb251884dc1d632d74c3b3f34d275cee59d56e82cac31161f71)</visible>
                           <property name="setting_label">    - Restore Default Client Secret Key</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">...</property>
@@ -1191,7 +1191,7 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(liberator.tmdb_api),60e9233a78d39d9fe51cf31ebbc8865d)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(liberator.tmdb_api),872d408b3d926ebb32f84f5167764cc3)</visible>
                           <property name="setting_label">    - Restore Default TMDb API Key</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">...</property>

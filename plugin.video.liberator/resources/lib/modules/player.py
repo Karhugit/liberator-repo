@@ -90,11 +90,11 @@ class LiberatorPlayer(xbmc_player):
                 try:
                     total_time = self.getTotalTime()
                     fullscreen = get_visibility(video_fullscreen_check)
-                    if total_time not in total_time_errors and fullscreen: 
-                        logger("orac", f"check_playback_start: Success! total_time={total_time}")
+                    if total_time not in total_time_errors:
+                        logger("orac", f"check_playback_start: Success! total_time={total_time}, fullscreen={fullscreen}")
                         self.playback_successful = True
                     else:
-                        # Log periodically while playing but waiting for metadata/fullscreen
+                        # Log periodically while playing but waiting for total_time to populate
                         if int(resolve_percent * 10) % 50 == 0:
                             logger("orac", f"check_playback_start: isPlayingVideo=True, total_time={total_time}, fullscreen={fullscreen}")
                 except Exception as e: 
