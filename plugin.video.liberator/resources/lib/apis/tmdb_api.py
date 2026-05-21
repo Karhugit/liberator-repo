@@ -433,7 +433,7 @@ def tmdb_authenticate(dummy=''):
 					set_setting('tmdb.session_id', session_id)
 					set_setting('tmdb.user', username)
 					
-					params = {'tmdb_session_id': session_id, 'tmdb_user': username}
+					params = {'tmdb_session_id': session_id, 'tmdb_user': username, 'tmdb_api_key': api_key}
 					_get_data_via_ipc('update_tmdb_tokens', params)
 					
 					notification('TMDB Account Authorized', 3000)
@@ -455,7 +455,9 @@ def tmdb_revoke_authentication(dummy=''):
 	set_setting('tmdb.session_id', 'empty_setting')
 	set_setting('tmdb.user', 'empty_setting')
 	
-	params = {'tmdb_session_id': '', 'tmdb_user': ''}
+	api_key = tmdb_api_key()
+	api_key_val = api_key if api_key not in empty_setting_check else ''
+	params = {'tmdb_session_id': '', 'tmdb_user': '', 'tmdb_api_key': api_key_val}
 	_get_data_via_ipc('update_tmdb_tokens', params)
 	
 	notification('TMDB Authorization Revoked', 3000)

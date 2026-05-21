@@ -115,6 +115,8 @@ class LiberatorService(xbmc.Monitor):
             'recommendations_movies': self.orac_client.get_movie_recommendations,
             'get_reviews': self.orac_client.get_reviews,
             'mark_undesirable': self.orac_client.mark_undesirable,
+            'get_providers': self.orac_client.get_watch_providers,
+            'get_collections': self.orac_client.get_collections,
         }
         self.log_counter = 0
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)

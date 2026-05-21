@@ -1,6 +1,9 @@
-[COLOR dodgerblue][B]Version 2.0.1[/B][/COLOR]
-- Fixed API keys
+[COLOR dodgerblue][B]Version 2.1.0[/B][/COLOR]
+- Added Collections library feature
+- Fixed TMDB API authorization flow
 
+[COLOR dodgerblue][B]Version 2.0.10[/B][/COLOR]
+- Fixed API keys
 [COLOR dodgerblue][B]Version 2.0.0[/B][/COLOR]
 - Initial build of liberator using Orac as a server
 

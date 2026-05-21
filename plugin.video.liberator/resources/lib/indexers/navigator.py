@@ -141,6 +141,7 @@ class Navigator:
         self.end_directory()
 
     def ml_movies(self):
+        self.add({'mode': 'navigator.collections', 'name': 'Collections'}, 'Collections', 'lists')
         self.add({'mode': 'orac.list.get_orac_lists', 'list_type': 'my_lists', 'category_name': 'My Lists', 'item_type': 'movie'}, 'My Lists', 'trakt')
         self.add({'mode': 'orac.list.get_orac_lists', 'list_type': 'generic_lists', 'category_name': 'Generic Lists', 'item_type': 'movie'}, 'Generic Lists', 'trakt')
         self.add({'mode': 'orac.recommendations', 'name': 'Recommendations'}, 'Recommendations', 'trakt')

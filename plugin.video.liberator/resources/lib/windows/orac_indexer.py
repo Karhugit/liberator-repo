@@ -299,9 +299,39 @@ class OracIndexer(BaseDialog):
             self.set_key_values(','.join(choice), ', '.join(choice))
 
     def provider(self):
-        providers = watch_providers_movies if self.media_type == 'movie' else watch_providers_tvshows
-        choice = self.selection_dialog(self.chosen_item['label'], [{'name': i['name']} for i in providers], providers)
-        if choice != None: self.set_key_values(str(choice['id']), str(choice['name']))
+        """Fetches provider list live from Orac; falls back to the static meta_lists data."""
+        ipc_media = 'movie' if self.media_type == 'movie' else 'tv'
+        providers = []
+        try:
+            result = _get_data_via_ipc('get_providers', params={'media_type': ipc_media})
+            if result and result.get('success'):
+                providers = result.get('providers', [])
+        except Exception:
+            pass
+
+        # Fall back to static list if Orac is unreachable or returned nothing
+        if not providers:
+            providers = watch_providers_movies if self.media_type == 'movie' else watch_providers_tvshows
+
+        if not providers:
+            ok_dialog(text='No providers available.')
+            return
+
+        # Pre-select any already-chosen provider IDs
+        current_ids = [s.strip() for s in self.get_attribute(self, self.chosen_item['key']).split('|') if s.strip()]
+        preselect = [i for i, p in enumerate(providers) if str(p['id']) in current_ids]
+
+        choices = self.multiselect_dialog(
+            self.chosen_item['label'],
+            [{'name': p['name']} for p in providers],
+            providers,
+            preselect,
+        )
+        if choices is not None:
+            ids_str   = '|'.join([str(p['id'])  for p in choices])
+            names_str = '|'.join([p['name']      for p in choices])
+            self.set_key_values(ids_str, names_str)
+
 
     def ratings(self):
         ratings = [{'name': str(float(i)), 'id': str(i)} for i in range(1,11)]

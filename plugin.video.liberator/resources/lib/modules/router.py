@@ -127,6 +127,9 @@ def routing(sys):
                 return orac_recommendations.build_recommendations(params)
 
         if 'navigator.' in mode:
+            if mode == 'navigator.collections':
+                from windows.collections_window import open_collections_window
+                return open_collections_window(params)
             from indexers.navigator import Navigator
             return exec('Navigator(params).%s()' % mode.split('.')[1])
 

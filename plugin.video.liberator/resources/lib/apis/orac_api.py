@@ -259,6 +259,24 @@ class OracClient:
         """Marks a stream as undesirable via Orac."""
         return self._get_json("mark_undesirable", params=params, put=True)
 
+    def get_collections(self, params=None):
+        """Fetches movie collections from Orac."""
+        return self._get_json("collections/movies", params=params)
+
+    def get_watch_providers(self, media_type: str | None = None):
+        """Fetches the TMDB watch-provider list from Orac's /providers endpoint.
+
+        Returns a list of {id, name, logo_path, for_movie, for_tv} dicts,
+        or an empty list on failure.
+        """
+        params = {}
+        if media_type:
+            params["media_type"] = media_type
+        result = self._get_json("providers", params=params or None)
+        if result and result.get("success"):
+            return result.get("providers", [])
+        return []
+
 
 class OracClientError(Exception):
     """Custom exception for Orac client errors."""
