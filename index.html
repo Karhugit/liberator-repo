@@ -1,2 +1,222 @@
 <!DOCTYPE html>
-<a href="https://raw.githubusercontent.com/Karhugit/liberator-repo/master/zips/repository.liberator/repository.liberator-1.0.0.zip">respository.liberator-1.0.0.zip</a>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liberator Kodi Repository</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f0f13;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #1a1a24;
+      border: 1px solid #2e2e42;
+      border-radius: 16px;
+      max-width: 640px;
+      width: 100%;
+      padding: 2.5rem 2.5rem 2rem;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #7c6af7, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+    }
+
+    .tagline {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #7c6af7;
+      margin-bottom: 0.75rem;
+    }
+
+    .step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      background: linear-gradient(135deg, #7c6af7, #c084fc);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.8rem;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-text {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #ccc;
+    }
+
+    .step-text strong { color: #e0e0e0; }
+
+    .url-box {
+      background: #0f0f18;
+      border: 1px solid #2e2e42;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.82rem;
+      color: #c084fc;
+      word-break: break-all;
+      margin-top: 0.5rem;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .url-box:hover { border-color: #7c6af7; }
+
+    .copy-hint {
+      font-size: 0.7rem;
+      color: #555;
+      margin-top: 0.35rem;
+      font-family: sans-serif;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #2e2e42;
+      margin: 1.75rem 0;
+    }
+
+    .zip-section .step-text a {
+      color: #7c6af7;
+      text-decoration: none;
+    }
+    .zip-section .step-text a:hover { text-decoration: underline; }
+
+    .note {
+      background: #12121c;
+      border-left: 3px solid #7c6af7;
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: #999;
+      margin-top: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .copied-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #7c6af7;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .copied-toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="logo">Liberator</div>
+    <div class="tagline">Kodi Add-on Repository</div>
+
+    <h2>Installation — Add Repository</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        In Kodi, go to <strong>Settings → File Manager → Add Source</strong>.
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        Enter the following URL as the source, then give it a name (e.g. <strong>Liberator</strong>):
+        <div class="url-box" id="repoUrl" onclick="copyUrl()" title="Click to copy">
+          https://karhugit.github.io/liberator-repo/zips/
+        </div>
+        <div class="copy-hint">Click the URL above to copy it</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        Go to <strong>Settings → Add-ons → Install from zip file</strong>, select the <em>Liberator</em> source, then install <code>repository.liberator-1.0.0.zip</code>.
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        Go to <strong>Install from repository → Liberator Repository</strong> and install <strong>Liberator</strong>.
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <h2>Direct Download</h2>
+
+    <div class="step zip-section">
+      <div class="step-num">↓</div>
+      <div class="step-text">
+        <a href="zips/repository.liberator/repository.liberator-1.0.0.zip">
+          repository.liberator-1.0.0.zip
+        </a>
+        — download the repository addon zip directly.
+      </div>
+    </div>
+
+    <div class="note">
+      ℹ️ The <strong>File Manager source URL</strong> ends in <code>/zips/</code> — this is where Kodi reads
+      <code>addons.xml</code> to discover available add-ons. Do not use the zip file URL directly as the source.
+    </div>
+  </div>
+
+  <div class="copied-toast" id="toast">Copied!</div>
+
+  <script>
+    function copyUrl() {
+      const url = document.getElementById('repoUrl').innerText.trim();
+      navigator.clipboard.writeText(url).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>
