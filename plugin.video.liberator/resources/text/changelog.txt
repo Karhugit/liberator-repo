@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.1.1[/B][/COLOR]
+- Removed Imgur dependency by bundling local icons
+- Colorized local icons to match the purple/magenta theme
+
 [COLOR dodgerblue][B]Version 2.1.0[/B][/COLOR]
 - Added Collections library feature
 - Fixed TMDB API authorization flow

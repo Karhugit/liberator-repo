@@ -14,10 +14,11 @@ progressDialogBG = xbmcgui.DialogProgressBG
 endOfDirectory, addSortMethod, listdir, mkdir, mkdirs = xbmcplugin.endOfDirectory, xbmcplugin.addSortMethod, xbmcvfs.listdir, xbmcvfs.mkdir, xbmcvfs.mkdirs
 addDirectoryItem, addDirectoryItems, setContent, setCategory = xbmcplugin.addDirectoryItem, xbmcplugin.addDirectoryItems, xbmcplugin.setContent, xbmcplugin.setPluginCategory
 path_join = osPath.join
-img_url = 'https://i.imgur.com/%s.png'
+def _icon_path(name):
+	return osPath.join(osPath.dirname(osPath.dirname(osPath.dirname(osPath.abspath(__file__)))), 'media', 'icons', '%s.png' % name)
 invoker_switch_dict = {'true': 'false', 'false': 'true'}
-empty_poster, nextpage = img_url % icons.box_office, img_url % icons.nextpage
-nextpage_landscape = img_url % icons.nextpage_landscape
+empty_poster, nextpage = _icon_path(icons.box_office), _icon_path(icons.nextpage)
+nextpage_landscape = _icon_path(icons.nextpage_landscape)
 tmdb_default_api = '872d408b3d926ebb32f84f5167764cc3'
 trakt_default_id = 'f986871799a140dc20a166adfa637c98c8fa474dc80757aabad8668b99e184de'
 trakt_default_secret = '579a93101ccf4cb251884dc1d632d74c3b3f34d275cee59d56e82cac31161f71'
@@ -71,7 +72,7 @@ def addon_fanart():
 	return get_property('liberator.addon_fanart') or addon_info('fanart')
 
 def get_icon(image_name):
-	return img_url % getattr(icons, image_name, 'I1JJhji')
+	return _icon_path(getattr(icons, image_name, 'folder'))
 
 def get_addon_fanart():
 	return get_property('liberator.default_addon_fanart') or addon_fanart()

@@ -8,7 +8,7 @@ logger = kodi_utils.logger
 
 kodi_dialog = kodi_utils.kodi_dialog
 hide_busy_dialog, addon_fanart, empty_poster = kodi_utils.hide_busy_dialog, kodi_utils.addon_fanart(), kodi_utils.empty_poster
-get_icon, img_url = kodi_utils.get_icon, kodi_utils.img_url
+get_icon = kodi_utils.get_icon
 
 resume_dict = {10: 'resume', 11: 'start_over', 12: 'cancel'}
 info_icons_dict = {'easynews': get_icon('easynews'), 'alldebrid': get_icon('alldebrid'), 'real-debrid': get_icon('realdebrid'), 'premiumize': get_icon('premiumize'),
@@ -18,7 +18,7 @@ info_quality_dict = {'4k': get_icon('flag_4k'), '1080p': get_icon('flag_1080p'),
 quality_choices = ('4K', '1080P', '720P', 'SD', 'CAM/SCR/TELE')
 prerelease_values, prerelease_key = ('CAM', 'SCR', 'TELE'), 'CAM/SCR/TELE'
 poster_lists, pack_check = ('list', 'medialist'), ('true', 'show', 'season')
-xml_choices = [('List', img_url % 'rcgKRWk'), ('Rows', img_url % 'wHvaixs'), ('WideList', img_url % '4UwfSLy')]
+xml_choices = [('List', get_icon('layout_list')), ('Rows', get_icon('layout_rows')), ('WideList', get_icon('layout_widelist'))]
 run_plugin_str = 'RunPlugin(%s)'
 string = str
 upper, lower = string.upper, string.lower
