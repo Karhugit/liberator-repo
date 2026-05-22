@@ -66,4 +66,76 @@ md5_hash = create_md5(os.path.join(zips_path, 'addons.xml'))
 with open(os.path.join(zips_path, 'addons.xml.md5'), 'w') as f:
     f.write(md5_hash)
 
-print("Repository generation complete!")
+def generate_directory_indexes(base_path):
+    for root, dirs, files in os.walk(base_path):
+        relative_dir = os.path.relpath(root, base_path)
+        title = f"Index of /zips/{relative_dir.replace(os.sep, '/')}" if relative_dir != '.' else "Index of /zips/"
+        
+        items = []
+        if relative_dir != '.':
+            items.append('<li><a href="../">../</a></li>')
+            
+        for d in sorted(dirs):
+            if d.startswith('.') or d == '__pycache__':
+                continue
+            items.append(f'<li><a href="{d}/">{d}/</a></li>')
+            
+        for f in sorted(files):
+            if f == 'index.html' or f.startswith('.'):
+                continue
+            items.append(f'<li><a href="{f}">{f}</a></li>')
+            
+        html_content = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{title}</title>
+    <style>
+        body {{
+            font-family: monospace;
+            background-color: #0f0f13;
+            color: #e0e0e0;
+            padding: 2rem;
+        }}
+        h1 {{
+            color: #7c6af7;
+            border-bottom: 1px solid #2e2e42;
+            padding-bottom: 0.5rem;
+        }}
+        ul {{
+            list-style-type: none;
+            padding-left: 0;
+        }}
+        li {{
+            margin: 0.5rem 0;
+        }}
+        a {{
+            color: #c084fc;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }}
+        a:hover {{
+            text-decoration: underline;
+            color: #7c6af7;
+        }}
+    </style>
+</head>
+<body>
+    <h1>{title}</h1>
+    <hr>
+    <ul>
+        {"\\n        ".join(items)}
+    </ul>
+    <hr>
+</body>
+</html>
+"""
+        index_file_path = os.path.join(root, 'index.html')
+        with open(index_file_path, 'w', encoding='utf-8') as f_out:
+            f_out.write(html_content)
+        print(f"Generated index.html for {relative_dir if relative_dir != '.' else 'zips root'}")
+
+print("Generating index.html files for Kodi compatibility...")
+generate_directory_indexes(zips_path)
+
+print("Repository generation complete!")
