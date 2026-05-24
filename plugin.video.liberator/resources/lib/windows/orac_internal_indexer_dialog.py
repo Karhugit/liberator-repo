@@ -404,6 +404,11 @@ class OracInternalIndexerDialog(BaseDialog):
                 # Text/Numeric input
                 value = kodi_dialog().input(chosen_item['label'], defaultt=current_value)
                 if value:
+                    # Validate year filters
+                    if key in ('min_year', 'max_year', 'min_first_aired_year', 'max_first_aired_year'):
+                        if not value.isdigit() or len(value) != 4 or not (1800 <= int(value) <= (datetime.now().year + 10)):
+                            kodi_utils.ok_dialog(text='Invalid year. Please enter a valid 4-digit year (e.g., 2024).')
+                            return
                     self.set_attribute(self, chosen_item['key'], value)
                     self.set_attribute(self, chosen_item['display_key'], value)
                     list_item.setProperty('label2', value)
