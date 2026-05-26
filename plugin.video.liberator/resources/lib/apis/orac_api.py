@@ -147,6 +147,9 @@ class OracClient:
     def update_mdblist_tokens(self, params):
         return self._get_json("update_mdblist_tokens", params=params, put=True)
 
+    def update_aiostreams_settings(self, params):
+        return self._get_json("update_aiostreams_settings", params=params, put=True)
+
     def get_fast_start_episode(self, params):
         """Fetches fast start episode details from Orac."""
         return self._get_json("fast_start_episode", params=params)

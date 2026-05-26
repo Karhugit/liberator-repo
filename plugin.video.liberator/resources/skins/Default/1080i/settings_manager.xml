@@ -448,6 +448,23 @@
                             <property name="setting_description">Enable strict server-side deduplication for Orac results</property>
                             <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=orac.strict_dedupe)</onclick>
                         </item>
+                        <item>
+                            <visible>Container(2000).HasFocus(5)</visible>
+                            <property name="setting_label">AioStreams URL Selection</property>
+                            <property name="setting_type">action</property>
+                            <property name="setting_value">$INFO[Window(10000).Property(liberator.aiostreams_instance_name)]</property>
+                            <property name="setting_description">Select the URL instance to use for AioStreams scraper.</property>
+                            <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_from_list&amp;setting_id=aiostreams_instance)</onclick>
+                        </item>
+                        <item>
+                            <visible>Container(2000).HasFocus(5)</visible>
+                            <visible>String.IsEqual(Window(10000).Property(liberator.aiostreams_instance),1)</visible>
+                            <property name="setting_label">    - Custom URL</property>
+                            <property name="setting_type">numeric</property>
+                            <property name="setting_value">$INFO[Window(10000).Property(liberator.aio.custom_url)]</property>
+                            <property name="setting_description">Enter custom URL for AioStreams scraper.</property>
+                            <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=aio.custom_url)</onclick>
+                        </item>
 <!-- GENERAL 10-->
         <!-- General -->
                       <item>
@@ -1236,6 +1253,29 @@
                           <property name="setting_value">$INFO[Window(10000).Property(liberator.mdblist_api)]</property>
                           <property name="setting_description">Enter here your MDBList API key.</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=mdblist_api)</onclick>
+                      </item>
+        <!-- AioStreams -->
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <property name="setting_label">AioStreams</property>
+                          <property name="setting_type">separator</property>
+                          <onclick>noop</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <property name="setting_label">AioStreams Username</property>
+                          <property name="setting_type">numeric</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(liberator.aio.username)]</property>
+                          <property name="setting_description">Enter here your AioStreams username.</property>
+                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=aio.username)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <property name="setting_label">AioStreams Password</property>
+                          <property name="setting_type">numeric</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(liberator.aio.password)]</property>
+                          <property name="setting_description">Enter here your AioStreams password.</property>
+                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=aio.password)</onclick>
                       </item>
         <!-- Real Debrid -->
                       <item>

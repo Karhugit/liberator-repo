@@ -155,6 +155,9 @@ def set_string(params):
 	if params['setting_id'] == 'mdblist_api':
 		from apis.mdblist_api import mdblist_authenticate
 		Thread(target=mdblist_authenticate, args=({'mdblist_api': new_value},)).start()
+	elif params['setting_id'] in ('aio.username', 'aio.password', 'aio.custom_url'):
+		from apis.aiostreams_api import aiostreams_sync
+		Thread(target=aiostreams_sync).start()
 
 def set_numeric(params):
 	setting_id = params['setting_id']
@@ -189,6 +192,9 @@ def set_from_list(params):
 	if not new_value: return
 	setting_value = new_value[1]
 	set_setting(setting_id, setting_value)
+	if setting_id == 'aiostreams_instance':
+		from apis.aiostreams_api import aiostreams_sync
+		Thread(target=aiostreams_sync).start()
 
 def set_source_folder_path(params):
 	setting_id = params['setting_id']
@@ -323,6 +329,17 @@ default_settings = [
 {'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== MDBList
 {'setting_id': 'mdblist_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+#==================== AioStreams
+{'setting_id': 'aio.username', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'aio.password', 'setting_type': 'string', 'setting_default': 'empty_setting'},
+{'setting_id': 'aiostreams_instance', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {
+    '0': 'https://aiostreams.stremio.ru',
+    '1': 'Custom URL',
+    '2': 'https://aiostreams.viren070.me',
+    '3': 'https://aiostreams.fortheweak.cloud',
+    '4': 'https://aiostreamsfortheweebsstable.midnightignite.me'
+}},
+{'setting_id': 'aio.custom_url', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== External
 {'setting_id': 'provider.external', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'external_scraper.name', 'setting_type': 'string', 'setting_default': 'empty_setting'},

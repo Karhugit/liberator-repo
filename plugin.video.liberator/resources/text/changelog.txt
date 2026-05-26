@@ -1,3 +1,9 @@
+[COLOR dodgerblue][B]Version 2.1.3[/B][/COLOR]
+- Upgraded AioStreams scraper support with credentials configuration and URL Selection dropdown
+
+[COLOR dodgerblue][B]Version 2.1.2[/B][/COLOR]
+- General fixes and stability improvements
+
 [COLOR dodgerblue][B]Version 2.1.1[/B][/COLOR]
 - Removed Imgur dependency by bundling local icons
 - Colorized local icons to match the purple/magenta theme
