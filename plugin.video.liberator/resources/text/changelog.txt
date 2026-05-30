@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.1.5[/B][/COLOR]
+- Added background connection pinger to monitor Orac Server status
+- Added automatic authorization credentials synchronization for Trakt, Simkl, TMDb, and MDbList across multiple instances
+
 [COLOR dodgerblue][B]Version 2.1.4[/B][/COLOR]
 - Fixed crash and hang in size filters when using internet-speed filtering method due to missing duration metadata key
 

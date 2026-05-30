@@ -389,6 +389,111 @@ class WidgetRefresher:
         if self.offset: self.next_refresh = _time + (self.offset*60)
         else: self.next_refresh = None
 
+class OracStatusMonitor:
+    def run(self):
+        logger('Liberator', 'OracStatusMonitor Service Starting')
+        from caches.settings_cache import get_setting, set_setting
+        from modules.kodi_utils import notification
+        import requests
+
+        monitor = xbmc.Monitor()
+        wait_for_abort = monitor.waitForAbort
+        self.window = xbmcgui.Window(10000)
+
+        # Clear property at start
+        self.window.clearProperty('liberator.orac_offline')
+
+        is_online = None
+
+        # Give a small 3-second wait for network/system initialization at boot
+        wait_for_abort(3)
+
+        # 30 minutes in seconds = 1800
+        interval = 1800
+
+        while not monitor.abortRequested():
+            try:
+                orac_address = get_setting('orac_address')
+                if not orac_address:
+                    wait_for_abort(30)
+                    continue
+
+                if not orac_address.startswith(('http://', 'https://')):
+                    orac_address = f"http://{orac_address}"
+                if ':' not in orac_address.split('/')[-1] and not orac_address.endswith(':5555'):
+                    orac_address = f"{orac_address}:5555"
+
+                url = f"{orac_address.rstrip('/')}/api/status"
+
+                try:
+                    response = requests.get(url, timeout=5)
+                    response.raise_for_status()
+                    data = response.json()
+
+                    if data.get('status') == 'online':
+                        if is_online is False:
+                            # State changed from offline to online
+                            self.window.clearProperty('liberator.orac_offline')
+                            notification('Connected to Orac Server')
+                        is_online = True
+
+                        # Sync settings
+                        trakt = data.get('trakt', {})
+                        simkl = data.get('simkl', {})
+                        tmdb = data.get('tmdb', {})
+                        mdblist = data.get('mdblist', {})
+
+                        # Trakt
+                        if 'user' in trakt:
+                            self._sync_setting('trakt.user', trakt['user'])
+                        if 'token' in trakt:
+                            self._sync_setting('trakt.token', trakt['token'])
+                        if 'refresh' in trakt:
+                            self._sync_setting('trakt.refresh', trakt['refresh'])
+                        if 'expires' in trakt:
+                            self._sync_setting('trakt.expires', trakt['expires'])
+
+                        # Simkl
+                        if 'user' in simkl:
+                            self._sync_setting('simkl.user', simkl['user'])
+                        if 'token' in simkl:
+                            self._sync_setting('simkl.token', simkl['token'])
+
+                        # TMDb
+                        if 'user' in tmdb:
+                            self._sync_setting('tmdb.user', tmdb['user'])
+                        if 'session_id' in tmdb:
+                            self._sync_setting('tmdb.session_id', tmdb['session_id'])
+
+                        # MDbList
+                        if 'api' in mdblist:
+                            self._sync_setting('mdblist_api', mdblist['api'])
+
+                except Exception as e:
+                    # Connection failed
+                    if is_online is not False:
+                        # State changed to offline (either from None or True)
+                        self.window.setProperty('liberator.orac_offline', 'true')
+                        notification('Connection to Orac Server Failed!')
+                    is_online = False
+
+            except Exception as e:
+                logger('Liberator', f'OracStatusMonitor error: {e}')
+
+            # Sleep for the interval, but wake up early if abort is requested
+            wait_for_abort(interval)
+
+        try: del monitor
+        except: pass
+        return logger('Liberator', 'OracStatusMonitor Service Finished')
+
+    def _sync_setting(self, setting_id, remote_value):
+        from caches.settings_cache import get_setting, set_setting
+        local_value = get_setting(setting_id, 'empty_setting')
+        if local_value != remote_value:
+            logger('Liberator', f'OracStatusMonitor: Syncing setting {setting_id} from {local_value} -> {remote_value}')
+            set_setting(setting_id, remote_value)
+
 class AutoStart:
     def run(self):
         logger('Liberator', 'AutoStart Service Starting')
@@ -428,9 +533,10 @@ class LiberatorMonitor(xbmc.Monitor):
             self.liberator_service = LiberatorService(OracClient=orac_client_instance, db_path=ipc_data_db)
             
             # Use a ThreadPoolExecutor to run all services concurrently
-            self.executor = ThreadPoolExecutor(max_workers=3)
+            self.executor = ThreadPoolExecutor(max_workers=4)
             self.executor.submit(CustomFonts().run)
             self.executor.submit(WidgetRefresher().run)
+            self.executor.submit(OracStatusMonitor().run)
             
             # We submit the main LiberatorService polling loop as a task
             self.executor.submit(self.liberator_service.run)
@@ -478,9 +584,10 @@ class LiberatorMonitor(xbmc.Monitor):
         service = LiberatorService(OracClient=orac_client_instance, db_path=ipc_data_db)
         service.run()
 
-        with ThreadPoolExecutor(max_workers=3) as executor:
+        with ThreadPoolExecutor(max_workers=4) as executor:
             executor.submit(CustomFonts().run)
             executor.submit(WidgetRefresher().run)
+            executor.submit(OracStatusMonitor().run)
         AutoStart().run()
         self.additionalService()
 
