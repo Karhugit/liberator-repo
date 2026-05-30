@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.1.4[/B][/COLOR]
+- Fixed crash and hang in size filters when using internet-speed filtering method due to missing duration metadata key
+
 [COLOR dodgerblue][B]Version 2.1.3[/B][/COLOR]
 - Upgraded AioStreams scraper support with credentials configuration and URL Selection dropdown
 
