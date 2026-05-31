@@ -298,7 +298,11 @@ class Sources():
             if min_size == 0.0 and not self.include_unknown_size: min_size = 0.02
             if self.filter_size_method == 1:
                 meta_dict = self.orac_movie_meta if self.media_type == 'movie' else self.orac_episode_meta
-                duration = (meta_dict.get('duration') if meta_dict else None) or (5400 if self.media_type == 'movie' else 2400)
+                duration = meta_dict.get('duration') if meta_dict else None
+                if duration:
+                    duration = int(float(duration)) * 60
+                else:
+                    duration = 5400 if self.media_type == 'movie' else 2400
                 max_size = ((0.125 * (0.90 * string_to_float(get_setting('results.line_speed', '25'), '25'))) * duration)/1000
             elif self.filter_size_method == 2:
                 max_size = string_to_float(get_setting('liberator.results.%s_size_max' % self.media_type, '10000'), '10000') / 1000

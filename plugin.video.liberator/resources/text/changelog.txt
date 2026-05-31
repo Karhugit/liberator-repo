@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.1.7[/B][/COLOR]
+- Fixed size filter line-speed calculation to correctly convert metadata runtime from minutes to seconds
+
 [COLOR dodgerblue][B]Version 2.1.6[/B][/COLOR]
 - Fixed TypeError in Easynews scraper when resolving movies (missing season/episode keys)
 
