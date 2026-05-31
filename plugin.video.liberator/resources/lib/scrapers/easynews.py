@@ -22,10 +22,13 @@ class source:
 			self.media_type = info.get('media_type')
 			if self.media_type == 'episode':
 				title = info.get('tvshowtitle')
+				self.season = int(info.get('season'))
+				self.episode = int(info.get('episode'))
 			else:
 				title = info.get('title')
-			
-			self.year, self.season, self.episode = int(info.get('year')), int(info.get('season')), int(info.get('episode'))
+				self.season = None
+				self.episode = None
+			self.year = int(info.get('year'))
 			self.search_title = clean_file_name(title).replace('&', 'and')
 			files = EasyNews.search(self._search_name())
 			if not files: return internal_results(self.scrape_provider, self.sources)
