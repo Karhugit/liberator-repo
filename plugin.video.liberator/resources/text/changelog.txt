@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.1.8[/B][/COLOR]
+- Relocated AioStreams URL selection and Custom URL settings to the Accounts tab
+
 [COLOR dodgerblue][B]Version 2.1.7[/B][/COLOR]
 - Fixed size filter line-speed calculation to correctly convert metadata runtime from minutes to seconds
 
