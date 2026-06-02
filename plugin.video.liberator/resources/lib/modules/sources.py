@@ -28,7 +28,7 @@ quality_filter, sort_to_top, tmdb_api_key, mpaa_region = settings.quality_filter
 scraping_settings, include_prerelease_results = settings.scraping_settings, settings.include_prerelease_results
 ignore_results_filter, results_sort_order, results_format, filter_status = settings.ignore_results_filter, settings.results_sort_order, settings.results_format, settings.filter_status
 autoplay_next_episode, autoscrape_next_episode, limit_resolve = settings.autoplay_next_episode, settings.autoscrape_next_episode, settings.limit_resolve
-orac_scraping = settings.orac_scraping
+orac_scraping, orac_use_aiostreams = settings.orac_scraping, settings.orac_use_aiostreams
 auto_episode_group, preferred_autoplay, debrid_enabled = settings.auto_episode_group, settings.preferred_autoplay, debrid.debrid_enabled
 
 internal_include_list = ['easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'oc_cloud', 'tb_cloud']
@@ -96,7 +96,7 @@ class Sources():
             else: self.autoplay_nextep, self.autoscrape_nextep = False, True
         else: self.autoplay_nextep, self.autoscrape_nextep = autoplay_next_episode(), autoscrape_next_episode()
         self.autoscrape = self.autoscrape_nextep and self.background
-        self.orac_scraping = orac_scraping()
+        self.orac_scraping = orac_scraping() or orac_use_aiostreams()
         self.auto_episode_group = auto_episode_group()
         self.nextep_settings, self.disable_autoplay_next_episode = params_get('nextep_settings', {}), params_get('disable_autoplay_next_episode', 'false') == 'true'        
         self.orac_strict_dedupe = settings.orac_strict_dedupe()
@@ -136,6 +136,8 @@ class Sources():
             
             # Call Orac /scrape via IPC
             self.search_info['strict_dedupe'] = str(self.orac_strict_dedupe).lower()
+            self.search_info['orac_scraping'] = str(orac_scraping()).lower()
+            self.search_info['use_aiostreams'] = str(orac_use_aiostreams()).lower()
             scrape_results = _get_data_via_ipc('get_orac_scrape', self.search_info)
             if not scrape_results or not scrape_results.get('success'):
                 logger('Orac', 'Orac Scraping failed or returned no results.')

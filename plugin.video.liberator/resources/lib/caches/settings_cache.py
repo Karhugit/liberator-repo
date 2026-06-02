@@ -224,6 +224,7 @@ default_settings = [
 {'setting_id': 'auto_start_liberator', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac_address', 'setting_type': 'string', 'setting_default': '127.0.0.1'},
 {'setting_id': 'orac_scraping', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'orac_use_aiostreams', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'orac.strict_dedupe', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': default_addon_fanart, 'browse_mode': '2'},
 #==================== Manage Updates

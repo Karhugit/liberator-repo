@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.1.9[/B][/COLOR]
+- Added 'Use AIOstreams' settings toggle to configure standalone, hybrid, or standard scraper modes
+- Relocated Strict Deduplication toggle underneath Orac Scraping for improved settings layout
+
 [COLOR dodgerblue][B]Version 2.1.8[/B][/COLOR]
 - Relocated AioStreams URL selection and Custom URL settings to the Accounts tab
 

@@ -84,6 +84,9 @@ def auto_start_liberator():
 def orac_scraping():
 	return get_setting('liberator.orac_scraping', 'false') == 'true'
 
+def orac_use_aiostreams():
+	return get_setting('liberator.orac_use_aiostreams', 'true') == 'true'
+
 def orac_strict_dedupe():
 	return get_setting('liberator.orac.strict_dedupe', 'false') == 'true'
 

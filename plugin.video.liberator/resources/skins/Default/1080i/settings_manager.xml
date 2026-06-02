@@ -448,6 +448,14 @@
                             <property name="setting_description">Enable strict server-side deduplication for Orac results</property>
                             <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=orac.strict_dedupe)</onclick>
                         </item>
+                        <item>
+                            <visible>Container(2000).HasFocus(5)</visible>
+                            <property name="setting_label">Use AIOstreams</property>
+                            <property name="setting_type">boolean</property>
+                            <property name="setting_value">$INFO[Window(10000).Property(liberator.orac_use_aiostreams)]</property>
+                            <property name="setting_description">Use AIOstreams aggregator for Orac scraping</property>
+                            <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=orac_use_aiostreams)</onclick>
+                        </item>
 <!-- GENERAL 10-->
         <!-- General -->
                       <item>
