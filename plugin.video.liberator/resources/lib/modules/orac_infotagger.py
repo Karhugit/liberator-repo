@@ -242,7 +242,7 @@ class KodiListItemBuilder:
             cm = []
             cm_append = cm.append
             
-            tmdb_id = meta.get('tmdb_id')
+            tmdb_id = meta.get('tmdb_id') or meta.get('id')
             poster = meta.get('poster_path') or self.infotagger.poster_empty
 
             browse_url = extra_params.get('browse_url')
@@ -761,17 +761,22 @@ class KodiListItemBuilder:
             info_extra_data = {'playcount': playcount}
             self.infotagger.set_video_info_tag(listitem, meta, 'tvshow', info_extra_data)
             
-            # Build a simplified context menu
-            cm = []
-            cm_append = cm.append
-            if extra_params.get('open_extras', False):
-                cm_append(('[B]Browse[/B]', container_update % browse_params))
-            else:
-                cm_append(('[B]Extras[/B]', run_plugin % extras_params))
-            
-            options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id})
-            cm_append(('[B]Options[/B]', run_plugin % options_params))
-            listitem.addContextMenuItems(cm)
+            # Build context menu using the unified method
+            cm_extra_params = {
+                **extra_params,
+                'browse_url': browse_params,
+                'extras_url': extras_params,
+                'total_unwatched_episodes': 1,
+                'watched_title': extra_params.get('watched_title', 'Orac')
+            }
+            try:
+                cm = self.build_context_menu_tvshow(meta, cm_extra_params)
+                if cm is not None:
+                    options_params = build_url({'mode': 'options_menu_choice', 'content': 'tvshow', 'tmdb_id': tmdb_id})
+                    cm.insert(1, ('[B]Options[/B]', run_plugin % options_params))
+                    listitem.addContextMenuItems(cm)
+            except Exception as e:
+                logger("Liberator", f"Error building context menu for short tvshow: {str(e)}")
             
             # Set basic properties
             listitem.setProperties({
