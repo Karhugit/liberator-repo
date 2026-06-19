@@ -373,6 +373,30 @@ class LiberatorPlayer(xbmc_player):
             from apis.offcloud_api import OffcloudAPI
             OffcloudAPI().clear_played_torrent(self.playing_item)
 
+    def onAVStarted(self):
+        sleep(500)
+        if self.isPlayingVideo():
+            self.auto_select_audio()
+
+    def auto_select_audio(self):
+        try:
+            if get_setting('orac.force_english_audio', 'false') != 'true':
+                return
+            preferred_lang = get_setting('playback.preferred_audio_lang', 'eng').lower().strip()
+            if not preferred_lang or preferred_lang == 'empty_setting':
+                return
+            audio_streams = self.getAvailableAudioStreams()
+            if len(audio_streams) <= 1:
+                return
+            for index, stream in enumerate(audio_streams):
+                if preferred_lang in stream.lower():
+                    self.setAudioStream(index)
+                    logger("orac", f"[Liberator] Forced audio stream to index {index} ({stream})")
+                    return
+            logger("orac", f"[Liberator] Preferred audio language track '{preferred_lang}' not found. Defaulting.")
+        except Exception as e:
+            logger("orac", f"[Liberator] Failed to auto-switch audio: {str(e)}")
+
     def run_error(self):
         try: self.sources_object.playback_successful = False
         except: pass

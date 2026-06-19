@@ -456,6 +456,14 @@
                             <property name="setting_description">Use AIOstreams aggregator for Orac scraping</property>
                             <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=orac_use_aiostreams)</onclick>
                         </item>
+                        <item>
+                            <visible>Container(2000).HasFocus(5)</visible>
+                            <property name="setting_label">Force English Audio Track</property>
+                            <property name="setting_type">boolean</property>
+                            <property name="setting_value">$INFO[Window(10000).Property(liberator.orac.force_english_audio)]</property>
+                            <property name="setting_description">Force the player to select the English audio track if multiple streams are available</property>
+                            <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=orac.force_english_audio)</onclick>
+                        </item>
 <!-- GENERAL 10-->
         <!-- General -->
                       <item>
@@ -2508,6 +2516,14 @@
                           <property name="setting_value">$INFO[Window(10000).Property(liberator.playback.volumecheck_percent)]</property>
                           <property name="setting_description">Choose the maximum allowed volume level</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_numeric&amp;setting_id=playback.volumecheck_percent)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(70)</visible>
+                          <property name="setting_label">Preferred Audio Language (e.g. eng, en)</property>
+                          <property name="setting_type">string</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(liberator.playback.preferred_audio_lang)]</property>
+                          <property name="setting_description">Choose the preferred audio language code to auto-select if multiple audio tracks are found. Clear to disable.</property>
+                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=playback.preferred_audio_lang)</onclick>
                       </item>
                 </content>
             </control>

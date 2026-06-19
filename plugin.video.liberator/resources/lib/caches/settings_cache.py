@@ -226,6 +226,7 @@ default_settings = [
 {'setting_id': 'orac_scraping', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac_use_aiostreams', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'orac.strict_dedupe', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'orac.force_english_audio', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': default_addon_fanart, 'browse_mode': '2'},
 #==================== Manage Updates
 {'setting_id': 'update.action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Prompt', '1': 'Automatic', '2': 'Notification', '3': 'Off'}},
@@ -488,6 +489,7 @@ default_settings = [
 {'setting_id': 'playback.limit_resolve', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'playback.volumecheck_enabled', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'playback.volumecheck_percent', 'setting_type': 'action', 'setting_default': '50', 'min_value': '1', 'max_value': '100'},
+{'setting_id': 'playback.preferred_audio_lang', 'setting_type': 'string', 'setting_default': 'eng'},
 
 
 #=========================================================================================#
