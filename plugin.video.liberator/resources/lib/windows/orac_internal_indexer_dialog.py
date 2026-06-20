@@ -90,9 +90,8 @@ discover_items = {
     },
     'status': {
         'label': 'Status', 'key': 'status', 'display_key': 'status_display',
-        'filter_key': 'status', 'icon': 'status', 'type': 'select', 'media_type': 'tvshow',
+        'filter_key': 'status', 'icon': 'status', 'type': 'multi_select', 'media_type': 'tvshow',
         'options': [
-            {'name': 'All', 'value': ''}, 
             {'name': 'Returning Series', 'value': 'returning series'}, 
             {'name': 'Ended', 'value': 'ended'},
             {'name': 'In Production', 'value': 'in production'},
@@ -216,6 +215,10 @@ class OracInternalIndexerDialog(BaseDialog):
                         genre_ids = param_value.split('|')
                         genre_names = [next((g['name'] for g in genre_list if str(g['id']) == gid), gid) for gid in genre_ids]
                         self.set_attribute(self, values['display_key'], '|'.join(genre_names))
+                    elif values['type'] == 'multi_select':
+                        val_list = param_value.split('|')
+                        display_names = [next((opt['name'] for opt in values['options'] if opt['value'] == val), val) for val in val_list]
+                        self.set_attribute(self, values['display_key'], '|'.join(display_names))
                     elif values['type'] == 'select':
                         # Map value to display name
                         display_name = next((opt['name'] for opt in values['options'] if opt['value'] == param_value), param_value)
@@ -281,6 +284,20 @@ class OracInternalIndexerDialog(BaseDialog):
                         self.set_attribute(self, opposite_key, '')
                         self.set_attribute(self, discover_items[opposite_key]['display_key'], '')
                         self.refresh_menu()
+            elif chosen_item['type'] == 'multi_select':
+                options = chosen_item['options']
+                list_items = [{'line1': opt['name']} for opt in options]
+                current_val = self.get_attribute(self, chosen_item['key'])
+                current_ids = current_val.split('|') if current_val else []
+                preselect = [i for i, opt in enumerate(options) if opt['value'] in current_ids]
+                kwargs_dialog = {'items': json.dumps(list_items), 'heading': chosen_item['label'], 'multi_choice': 'true', 'preselect': preselect}
+                choices = select_dialog(options, **kwargs_dialog)
+                if choices:
+                    val_str = '|'.join([c['value'] for c in choices])
+                    display_str = '|'.join([c['name'] for c in choices])
+                    self.set_attribute(self, chosen_item['key'], val_str)
+                    self.set_attribute(self, chosen_item['display_key'], display_str)
+                    list_item.setProperty('label2', display_str)
             elif chosen_item['type'] == 'select':
                 # Custom selection dialog
                 options = chosen_item['options']
