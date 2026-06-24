@@ -6,8 +6,8 @@ from caches.base_cache import refresh_cached_data
 from caches.episode_groups_cache import episode_groups_cache
 from caches.settings_cache import get_setting, set_setting, set_default, default_setting_values
 from modules.downloader import manager
-from modules import kodi_utils, settings, metadata
-from apis.orac_api import _get_data_via_ipc
+from modules import kodi_utils, settings
+from apis.tmdb_api import episode_groups, group_details, group_episode_data, is_anime_check
 from modules.source_utils import clear_scrapers_cache, get_aliases_titles, make_alias_dict, audio_filter_choices, source_filters
 from modules.utils import get_datetime, title_key, adjust_premiered_date, append_module_to_syspath, manual_module_import
 logger = kodi_utils.logger
@@ -150,7 +150,7 @@ def episode_groups_choice(params):
     episode_group_types = {1: 'Original Air Date', 2: 'Absolute', 3: 'DVD', 4: 'Digital', 5: 'Story Arc', 6: 'Production', 7: 'TV'}
     meta = params.get('meta')
     poster = params.get('poster') or empty_poster
-    groups = metadata.episode_groups(meta['tmdb_id'])
+    groups = episode_groups(meta['tmdb_id'])
     if not groups:
         notification('No Episode Groups to choose from.')
         return None
@@ -171,8 +171,8 @@ def assign_episode_group_choice(params):
             return notification('Success', 2000)
     choice = episode_groups_choice(params)
     if choice == None: return
-    group_details = metadata.group_details(choice)
-    group_data = {'name': group_details['name'], 'id': group_details['id']}
+    g_details = group_details(choice)
+    group_data = {'name': g_details['name'], 'id': g_details['id']}
     episode_groups_cache.set(tmdb_id, group_data)
     notification('Success', 2000)
 
@@ -209,9 +209,7 @@ def playback_choice(params):
     if choice in ('clear_and_rescrape', 'scrape_with_custom_values'):
         show_busy_dialog()
         from caches.base_cache import clear_cache
-        from caches.external_cache import ExternalCache
         clear_cache('internal_scrapers', silent=True)
-        ExternalCache().delete_cache_single(media_type, str(meta['tmdb_id']))
         hide_busy_dialog()
     if choice == 'scrape':
         if media_type == 'movie': play_params = {'mode': 'playback.media', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'autoplay': 'false'}
@@ -238,7 +236,7 @@ def playback_choice(params):
     elif choice == 'scrape_with_episode_group':
         choice = episode_groups_choice({'meta': meta, 'poster': poster})
         if choice == None: return playback_choice(params)
-        episode_details = metadata.group_episode_data(metadata.group_details(choice), episode_id, season, episode)
+        episode_details = group_episode_data(group_details(choice), episode_id, season, episode)
         if not episode_details:
             notification('No matching episode')
             return playback_choice(params)
@@ -449,7 +447,7 @@ def favorites_choice(params):
     media_type, tmdb_id, title = params.get('media_type'), params.get('tmdb_id'), params.get('title')
     if media_type == 'tvshow':
         if params.get('is_anime', None) in (True, 'True', 'true'): media_type = 'anime'
-        elif metadata.is_anime_check(tmdb_id): media_type = 'anime'
+        elif is_anime_check(tmdb_id): media_type = 'anime'
     current_favorites = favorites_cache.get_favorites(media_type)
     people_favorite = media_type == 'people'
     current_favorite = any(i['tmdb_id'] == tmdb_id for i in current_favorites)
@@ -488,10 +486,8 @@ def mpaa_region_choice(params={}):
     kwargs = {'items': json.dumps(list_items), 'heading': 'Set MPAA Region', 'narrow_window': 'true'}
     choice = select_dialog(regions, **kwargs)
     if choice == None: return None
-    from caches.meta_cache import delete_meta_cache
     set_setting('mpaa_region', choice['id'])
     set_setting('mpaa_region_display_name', choice['name'])
-    delete_meta_cache(silent=True)
 
 def options_menu_choice(params, meta=None):
     params_get = params.get

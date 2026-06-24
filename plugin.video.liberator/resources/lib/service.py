@@ -110,6 +110,7 @@ class LiberatorService(xbmc.Monitor):
             'update_tmdb_tokens': self.orac_client.update_tmdb_tokens,
             'update_mdblist_tokens': self.orac_client.update_mdblist_tokens,
             'update_aiostreams_settings': self.orac_client.update_aiostreams_settings,
+            'update_fanart_settings': self.orac_client.update_fanart_settings,
             'get_available_languages': self.orac_client.get_available_languages,
             'get_available_languages': self.orac_client.get_available_languages,
             'tags': self.orac_client.handle_tags,

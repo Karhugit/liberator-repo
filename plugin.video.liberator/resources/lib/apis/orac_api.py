@@ -23,20 +23,22 @@ class OracClient:
     def __init__(self, base_url):
         self.base_url = base_url.rstrip('/')
 
-    def _get_json(self, endpoint, params=None, put=False, json_body=None):
+    def _get_json(self, endpoint, params=None, put=False, post=False, json_body=None):
         url = f"{self.base_url}/{endpoint}"
         log_msg = f"Requesting URL: {url} with params: {params} and json_body: {json_body}"
         logger("OracClient", f"{log_msg}")
         try:
             if put:
                 response = requests.put(url, params=params, json=json_body, timeout=10)
+            elif post:
+                response = requests.post(url, params=params, json=json_body, timeout=10)
             else:
                 response = requests.get(url, params=params, timeout=10)
             
             response.raise_for_status()
 
-            # For PUT requests, an empty body is a valid success response.
-            if put and not response.content:
+            # For PUT and POST requests, an empty body is a valid success response.
+            if (put or post) and not response.content:
                 return {'status': 'ok'}
             
             return response.json()
@@ -149,6 +151,9 @@ class OracClient:
 
     def update_aiostreams_settings(self, params):
         return self._get_json("update_aiostreams_settings", params=params, put=True)
+
+    def update_fanart_settings(self, params):
+        return self._get_json("api/config/fanart", json_body=params, post=True)
 
     def get_fast_start_episode(self, params):
         """Fetches fast start episode details from Orac."""

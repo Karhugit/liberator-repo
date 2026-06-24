@@ -1,6 +1,6 @@
 from caches.base_cache import connect_database, database, get_timestamp
-from caches.main_cache import main_cache, cache_object
-from modules import kodi_utils, settings, metadata
+from caches.main_cache import main_cache
+from modules import kodi_utils, settings
 from modules.utils import get_datetime, adjust_premiered_date, sort_for_article
 from modules.thread_manager import make_thread_list
 from apis.orac_api import _get_data_via_ipc

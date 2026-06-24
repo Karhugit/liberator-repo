@@ -9,7 +9,8 @@ from windows.base_window import open_window, create_window
 from caches.episode_groups_cache import episode_groups_cache
 from caches.settings_cache import get_setting
 from scrapers import folders
-from modules import debrid, kodi_utils, settings, metadata, watched_status
+from modules import debrid, kodi_utils, settings, watched_status
+from apis.tmdb_api import episode_groups, group_details, group_episode_data
 from modules.player import LiberatorPlayer
 from modules.source_utils import get_cache_expiry, make_alias_dict, get_file_info, normalize
 from modules.utils import clean_file_name, string_to_float, safe_string, remove_accents, get_datetime, append_module_to_syspath, manual_function_import, manual_module_import
@@ -190,9 +191,9 @@ class Sources():
             if any([self.custom_season, self.custom_episode]) or 'skip_episode_group_check' in self.params: return
             group_info = episode_groups_cache.get(self.tmdb_id)
             if not group_info: return
-            group_details = metadata.group_episode_data(metadata.group_details(group_info['id']), None, self.season, self.episode)
-            if group_details:
-                self.custom_season, self.custom_episode, self.episode_group_used = group_details['season'], group_details['episode'], True
+            g_details = group_episode_data(group_details(group_info['id']), None, self.season, self.episode)
+            if g_details:
+                self.custom_season, self.custom_episode, self.episode_group_used = g_details['season'], g_details['episode'], True
                 self.episode_group_label = '[B]CUSTOM GROUP: S%02dE%02d[/B]' % (self.custom_season, self.custom_episode)
         except: self.custom_season, self.custom_episode = None, None
 
@@ -611,10 +612,10 @@ class Sources():
                     try: group_id = episode_groups_choice({'meta': self.meta, 'poster': self.meta['poster']})
                     except: group_id = None
                 else:
-                    try: group_id = metadata.episode_groups(self.tmdb_id)[0]['id']
+                    try: group_id = episode_groups(self.tmdb_id)[0]['id']
                     except: group_id = None
                 if group_id:
-                    try: group_details = metadata.group_episode_data(metadata.group_details(group_id), None, self.season, self.episode)
+                    try: group_details = group_episode_data(group_details(group_id), None, self.season, self.episode)
                     except: group_details = None
                     if group_details:
                         season, episode = group_details['season'], group_details['episode']

@@ -1293,6 +1293,37 @@
                           <property name="setting_description">Enter here your AioStreams password.</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=aio.password)</onclick>
                       </item>
+        <!-- Fanart.tv -->
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <property name="setting_label">Fanart.tv</property>
+                          <property name="setting_type">separator</property>
+                          <onclick>noop</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <property name="setting_label">Enable Fanart.tv Integration</property>
+                          <property name="setting_type">boolean</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(liberator.fanart_enabled)]</property>
+                          <property name="setting_description">If enabled, Orac uses Fanart.tv instead of TMDB for artwork.</property>
+                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=fanart_enabled)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <property name="setting_label">Fanart.tv API Key</property>
+                          <property name="setting_type">numeric</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(liberator.fanart_api_key)]</property>
+                          <property name="setting_description">Enter your Fanart.tv project or personal API key.</property>
+                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=fanart_api_key)</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <property name="setting_label">Fanart.tv Storage Mode</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(liberator.fanart_storage_mode_name)]</property>
+                          <property name="setting_description">Select whether Orac uses remote CDN links or downloads assets locally.</property>
+                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_from_list&amp;setting_id=fanart_storage_mode)</onclick>
+                      </item>
         <!-- Real Debrid -->
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>

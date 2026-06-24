@@ -5,7 +5,6 @@ import requests
 from urllib.parse import unquote, quote_plus
 from caches.settings_cache import get_setting, set_setting
 from caches.main_cache import cache_object
-from caches.lists_cache import lists_cache_object
 from modules import kodi_utils, settings
 from modules.utils import sort_list, sort_for_article, get_datetime, timedelta, replace_html_codes, copy2clip, title_key, jsondate_to_datetime as js2date
 from modules.thread_manager import make_thread_list

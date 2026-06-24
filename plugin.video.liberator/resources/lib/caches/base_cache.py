@@ -124,10 +124,7 @@ def get_size(file):
         return s
 
 def clean_databases():
-    from caches.external_cache import external_cache
     from caches.main_cache import main_cache
-#    from caches.lists_cache import lists_cache
-    from caches.meta_cache import meta_cache
     from caches.debrid_cache import debrid_cache
     clean_cache_list = (('MAIN CACHE', main_cache, maincache_db),
                         ('DEBRID CACHE', debrid_cache, debridcache_db))
@@ -149,10 +146,7 @@ def clean_databases():
 def clear_cache(cache_type, silent=False):
     def _confirm(): return silent or confirm_dialog()
     success = True
-    if cache_type == 'meta':
-        from caches.meta_cache import delete_meta_cache
-        success = delete_meta_cache(silent=silent)
-    elif cache_type == 'internal_scrapers':
+    if cache_type == 'internal_scrapers':
         if not _confirm(): return
         from apis import easynews_api
         results = []
@@ -208,7 +202,7 @@ def clear_all_cache():
     if not confirm_dialog(): return
     progressDialog = progress_dialog()
     line = 'Clearing....[CR]%s'
-    caches = (('meta', 'Meta Cache'), ('internal_scrapers', 'Internal Scrapers Cache'), ('external_scrapers', 'External Scrapers Cache'),
+    caches = (('internal_scrapers', 'Internal Scrapers Cache'), ('external_scrapers', 'External Scrapers Cache'),
             ('imdb', 'IMDb Cache'), ('main', 'Main Cache', ),
             ('pm_cloud', 'Premiumize Cloud'), ('rd_cloud', 'Real Debrid Cloud'), ('ad_cloud', 'All Debrid Cloud'),
             ('oc_cloud', 'OffCloud Cloud'), ('ed_cloud', 'Easy Debrid Cloud'), ('tb_cloud', 'TorBox Cloud'))
@@ -223,12 +217,10 @@ def clear_all_cache():
     ok_dialog(text='Success')
 
 def refresh_cached_data(meta):
-    from caches.meta_cache import meta_cache
-    media_type, tmdb_id, imdb_id = meta['mediatype'], meta['tmdb_id'], meta['imdb_id']
-    try: meta_cache.delete(media_type, 'tmdb_id', tmdb_id, meta)
-    except: return notification('Error')
-    from apis.imdb_api import refresh_imdb_meta_data
-    refresh_imdb_meta_data(imdb_id)
+    imdb_id = meta.get('imdb_id')
+    if imdb_id:
+        from apis.imdb_api import refresh_imdb_meta_data
+        refresh_imdb_meta_data(imdb_id)
     notification('Success')
     kodi_refresh()
 

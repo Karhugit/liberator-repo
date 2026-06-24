@@ -144,7 +144,11 @@ def set_default(setting_ids):
 def set_boolean(params):
 	setting = params['setting_id']
 	current_value = get_setting('liberator.%s' % setting) or 'false'
-	set_setting(setting, boolean_dict[current_value])
+	new_value = boolean_dict[current_value]
+	set_setting(setting, new_value)
+	if setting == 'fanart_enabled':
+		from apis.fanart_api import fanart_sync
+		Thread(target=fanart_sync).start()
 
 def set_string(params):
 	current_value = get_setting('liberator.%s' % params['setting_id'])
@@ -158,6 +162,9 @@ def set_string(params):
 	elif params['setting_id'] in ('aio.username', 'aio.password', 'aio.custom_url'):
 		from apis.aiostreams_api import aiostreams_sync
 		Thread(target=aiostreams_sync).start()
+	elif params['setting_id'] == 'fanart_api_key':
+		from apis.fanart_api import fanart_sync
+		Thread(target=fanart_sync).start()
 
 def set_numeric(params):
 	setting_id = params['setting_id']
@@ -195,6 +202,9 @@ def set_from_list(params):
 	if setting_id == 'aiostreams_instance':
 		from apis.aiostreams_api import aiostreams_sync
 		Thread(target=aiostreams_sync).start()
+	elif setting_id == 'fanart_storage_mode':
+		from apis.fanart_api import fanart_sync
+		Thread(target=fanart_sync).start()
 
 def set_source_folder_path(params):
 	setting_id = params['setting_id']
@@ -228,6 +238,9 @@ default_settings = [
 {'setting_id': 'orac.strict_dedupe', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac.force_english_audio', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': default_addon_fanart, 'browse_mode': '2'},
+{'setting_id': 'fanart_enabled', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'fanart_api_key', 'setting_type': 'string', 'setting_default': ''},
+{'setting_id': 'fanart_storage_mode', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'URL', '1': 'Local'}},
 #==================== Manage Updates
 {'setting_id': 'update.action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Prompt', '1': 'Automatic', '2': 'Notification', '3': 'Off'}},
 {'setting_id': 'update.delay', 'setting_type': 'action', 'setting_default': '10', 'min_value': '10', 'max_value': '300'},

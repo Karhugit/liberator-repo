@@ -1,3 +1,23 @@
+[COLOR dodgerblue][B]Version 2.2.5[/B][/COLOR]
+- Integrated Fanart.tv API (v3.2) support (toggle, API key entry, and storage mode selection in Accounts settings)
+- Configured IPC updates to sync Fanart configurations to the Orac Server
+
+[COLOR dodgerblue][B]Version 2.2.4[/B][/COLOR]
+- Removed dead caches (metadata, lists, external) and simplified cache configuration
+- Transitioned metadata helper functions directly to tmdb_api
+
+[COLOR dodgerblue][B]Version 2.2.3[/B][/COLOR]
+- Changed TV Show status option to a tickable checklist UI
+
+[COLOR dodgerblue][B]Version 2.2.2[/B][/COLOR]
+- Added support for forcing English audio playback with a settings toggle
+
+[COLOR dodgerblue][B]Version 2.2.1[/B][/COLOR]
+- Added AIOStreams configuration diagnostic logging
+
+[COLOR dodgerblue][B]Version 2.2.0[/B][/COLOR]
+- Fixed searched TV shows missing Orac context menu options
+
 [COLOR dodgerblue][B]Version 2.1.9[/B][/COLOR]
 - Added 'Use AIOstreams' settings toggle to configure standalone, hybrid, or standard scraper modes
 - Relocated Strict Deduplication toggle underneath Orac Scraping for improved settings layout
