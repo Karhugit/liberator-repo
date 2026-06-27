@@ -271,7 +271,7 @@ class OracClient:
         """Fetches movie collections from Orac."""
         return self._get_json("collections/movies", params=params)
 
-    def get_watch_providers(self, media_type: str | None = None):
+    def get_watch_providers(self, media_type=None):
         """Fetches the TMDB watch-provider list from Orac's /providers endpoint.
 
         Returns a list of {id, name, logo_path, for_movie, for_tv} dicts,
