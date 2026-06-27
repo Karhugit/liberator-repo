@@ -257,6 +257,12 @@ class KodiListItemBuilder:
                 if extras_url:
                     cm_append(('[B]Extras[/B]', run_plugin % extras_url))
 
+            # Play Trailer
+            trailer = meta.get('trailer', '')
+            if tmdb_id:
+                trailer_params = build_url({'mode': 'playback.trailer', 'media_type': 'tvshow', 'tmdb_id': tmdb_id, 'trailer_url': trailer})
+                cm_append(('[B]Play Trailer[/B]', run_plugin % trailer_params))
+
             # Orac Lists Manager
             trakt_mgr_params = build_url({'mode': 'orac.lists_manager_choice', 'tmdb_id': tmdb_id, 'media_type': 'tvshow', 'icon': poster})
             cm_append(('[B]Orac Lists Manager[/B]', run_plugin % trakt_mgr_params))
@@ -337,6 +343,12 @@ class KodiListItemBuilder:
         import json
         playback_options_params = build_url({'mode': 'playback_choice', 'media_type': 'movie', 'meta': json.dumps(meta)})
         cm_append(('[B]Playback Options[/B]', run_plugin % playback_options_params))
+        
+        # Play Trailer
+        trailer = meta.get('trailer', '')
+        if tmdb_id:
+            trailer_params = build_url({'mode': 'playback.trailer', 'media_type': 'movie', 'tmdb_id': tmdb_id, 'trailer_url': trailer})
+            cm_append(('[B]Play Trailer[/B]', run_plugin % trailer_params))
         
         # Movie recommendations
         rec_params = build_url({
@@ -623,6 +635,7 @@ class KodiListItemBuilder:
             info_tag.setTagLine(meta.get('tagline', ''))
             info_tag.setOriginalTitle(meta.get('original_title', title))
             info_tag.setPlaycount(1 if playcount else 0)
+            info_tag.setTrailer(meta.get('trailer', ''))
             
             # Runtime
             runtime = meta.get('runtime', 0)

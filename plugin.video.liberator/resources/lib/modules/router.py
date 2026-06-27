@@ -146,6 +146,9 @@ def routing(sys):
             if mode == 'playback.video':
                 from modules.player import LiberatorPlayer
                 return LiberatorPlayer().run(_get('url', None), _get('obj', None))
+            if mode == 'playback.trailer':
+                from indexers.dialogs import play_trailer
+                return play_trailer(params)
 
         if 'watched_status.' in mode:
 

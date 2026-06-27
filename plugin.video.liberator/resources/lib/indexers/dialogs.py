@@ -748,3 +748,55 @@ def discover_choice(params):
 
 def orac_indexer_choice(params):
     open_window(('windows.orac_indexer', 'OracIndexer'), 'orac_indexer.xml', **params)
+
+def play_trailer(params):
+    show_busy_dialog()
+    media_type = params.get('media_type')
+    tmdb_id = params.get('tmdb_id')
+    trailer_url = params.get('trailer_url')
+
+    if not trailer_url:
+        from apis.orac_api import _get_data_via_ipc
+        content = 'movie' if media_type == 'movie' else 'tvshow'
+        ipc_params = {'tmdb_id': tmdb_id, 'item_type': content, 'user': get_setting('trakt.user', '')}
+        mode = 'get_movie_details' if content == 'movie' else 'get_show_details'
+        try:
+            orac_meta = _get_data_via_ipc(mode, params=ipc_params)
+            if orac_meta and isinstance(orac_meta, dict):
+                meta = _orac_meta_to_extras_meta(orac_meta, media_type)
+                trailer_url = meta.get('trailer')
+        except Exception as e:
+            logger("Liberator", f"Error fetching details for trailer: {str(e)}")
+
+    hide_busy_dialog()
+
+    if not trailer_url:
+        return notification('No trailer available', 2500)
+
+    # Check/format youtube trailer URL
+    youtube_id = None
+    if 'plugin.video.youtube' in trailer_url:
+        final_url = trailer_url
+    elif 'youtube.com' in trailer_url or 'youtu.be' in trailer_url:
+        if 'youtube.com/watch?v=' in trailer_url:
+            youtube_id = trailer_url.split('watch?v=')[1].split('&')[0]
+        elif 'youtu.be/' in trailer_url:
+            youtube_id = trailer_url.split('youtu.be/')[1].split('?')[0]
+        else:
+            youtube_id = trailer_url
+        final_url = f'plugin://plugin.video.youtube/play/?video_id={youtube_id}'
+    else:
+        youtube_id = trailer_url
+        final_url = f'plugin://plugin.video.youtube/play/?video_id={youtube_id}'
+
+    # Check if YouTube addon is installed and enabled
+    if 'plugin.video.youtube' in final_url:
+        if not kodi_utils.addon_installed('plugin.video.youtube') or not kodi_utils.addon_enabled('plugin.video.youtube'):
+            return notification('YouTube Plugin needed for trailer playback', 3000)
+
+    try:
+        player = kodi_utils.xbmc_player()
+        player.play(final_url)
+    except Exception as e:
+        logger("Liberator", f"Error playing trailer: {str(e)}")
+        notification('Error playing trailer', 2500)
