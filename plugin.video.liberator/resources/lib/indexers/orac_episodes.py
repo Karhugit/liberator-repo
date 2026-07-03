@@ -28,6 +28,8 @@ def build_episodes_list(params={}):
             episodes_data = _get_data_via_ipc('get_next_episodes')
             
             category_name = 'Next Episodes'
+            if episodes_data and not settings.show_specials():
+                episodes_data = [ep for ep in episodes_data if ep.get('season') != 0]
             if not episodes_data:
                 end_directory(handle, cacheToDisc=False)
                 return
@@ -62,7 +64,10 @@ def build_episodes_list(params={}):
                 except (ValueError, TypeError):
                     seasons_to_process = []
             else:
-                seasons_to_process = all_seasons
+                if not settings.show_specials():
+                    seasons_to_process = [s for s in all_seasons if s.get('season') != 0]
+                else:
+                    seasons_to_process = all_seasons
 
             for season_data in seasons_to_process:
                 for episode in season_data.get('episodes', []):

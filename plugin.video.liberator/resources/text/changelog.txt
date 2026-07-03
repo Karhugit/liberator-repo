@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.2.7[/B][/COLOR]
+- Filtered specials (season 0) in episodes list when show specials setting is disabled
+
 [COLOR dodgerblue][B]Version 2.2.6[/B][/COLOR]
 - Added Play Trailer context menu option for movies and TV shows
 - Added movie trailer scraping, database storage, and API payload delivery on Orac Server
