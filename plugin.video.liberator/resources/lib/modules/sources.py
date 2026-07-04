@@ -938,13 +938,38 @@ class Sources():
                 else:
                     percent = 0 if not self.percent_watched else self.percent_watched
                 
-                # If percent was passed in params, we assume the decision was already made (e.g. by skin/widget).
-                # Checking self.percent_watched directly avoids re-triggering dialog.
-                if self.percent_watched > 0:
-                    self.playback_percent = float(self.percent_watched)
+                # Check if Kodi/skin has already offered the resume dialog
+                kodi_resume_dialog_offered = False
+                kodi_resume_choice = None
+                
+                import sys
+                for arg in sys.argv:
+                    if arg.lower() == 'resume:true':
+                        kodi_resume_dialog_offered = True
+                        kodi_resume_choice = 'resume'
+                        break
+                    elif arg.lower() == 'resume:false':
+                        kodi_resume_dialog_offered = True
+                        kodi_resume_choice = 'start_over'
+                        break
+                
+                if not kodi_resume_dialog_offered:
+                    # Check URL query parameters as fallback
+                    resume_param = self.params.get('resume')
+                    if resume_param is not None:
+                        kodi_resume_dialog_offered = True
+                        if str(resume_param).lower() in ('true', '1'):
+                            kodi_resume_choice = 'resume'
+                        else:
+                            kodi_resume_choice = 'start_over'
+                
+                if kodi_resume_dialog_offered:
+                    if kodi_resume_choice == 'resume':
+                        self.playback_percent = float(percent)
+                    else:
+                        self.playback_percent = 0.0
                 else:
-                    # Not passed in params, so check metadata/bookmarks internally
-                    # The value passed to _make_resume_dialog is used in a setProperty call, which requires a string.
+                    # Kodi did not offer the resume dialog, so we offer the choice here if appropriate
                     if percent > 5 and percent < 95:
                         action = self._make_resume_dialog(str(percent))
                         if action == 'cancel':

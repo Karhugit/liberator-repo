@@ -182,7 +182,8 @@ class LiberatorPlayer(xbmc_player):
                 poster = self.orac_movie_meta.get('poster') or poster_empty
                 fanart = self.orac_movie_meta.get('fanart') or fanart_empty
                 clearlogo = self.orac_movie_meta.get('clearlogo') or ''
-                duration = (self.orac_movie_meta.get('runtime', 0)) * 60
+                duration_minutes = self.orac_movie_meta.get('runtime') or self.orac_movie_meta.get('duration') or 0
+                duration = int(duration_minutes) * 60
                 plot = self.orac_movie_meta.get('overview', '')
                 genre = self.orac_movie_meta.get('genre', [])
                 rating = self.orac_movie_meta.get('rating', 0.0)
@@ -207,6 +208,16 @@ class LiberatorPlayer(xbmc_player):
                 info_tag.setDuration(duration), info_tag.setCountries(country), info_tag.setPremiered(premiered)
                 info_tag.setTagLine(tagline), info_tag.setStudios(studio), info_tag.setIMDBNumber(self.imdb_id), info_tag.setGenres(genre)
                 info_tag.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id)})
+                
+                # Set playback StartOffset for resume point handling
+                if self.playback_percent > 0 and duration_minutes > 0:
+                    start_seconds = (self.playback_percent / 100.0) * float(duration_minutes) * 60
+                    listitem.setProperty('StartOffset', str(start_seconds))
+                    logger("orac", f"Resuming movie at {start_seconds} seconds (percent: {self.playback_percent})")
+                elif self.playback_percent == 0:
+                    listitem.setProperty('StartOffset', '0')
+                    logger("orac", "Starting movie playback from beginning")
+                
                 self.set_playback_properties()
                 logger("orac", "Using Orac movie metadata")
                 return listitem
@@ -222,8 +233,8 @@ class LiberatorPlayer(xbmc_player):
                 self.season = self.orac_episode_meta.get('season', '')
                 poster = self.orac_episode_meta.get('poster') or poster_empty
                 fanart = self.orac_episode_meta.get('fanart') or fanart_empty
-                clearlogo = self.orac_episode_meta.get('clearlogo') or ''
-                duration = (self.orac_episode_meta.get('runtime', 0)) * 60
+                duration_minutes = self.orac_episode_meta.get('runtime') or self.orac_episode_meta.get('duration') or 0
+                duration = int(duration_minutes) * 60
                 plot = self.orac_episode_meta.get('overview', '')
                 genre = self.orac_episode_meta.get('genre', [])
                 rating = self.orac_episode_meta.get('rating', 0.0)
@@ -249,6 +260,16 @@ class LiberatorPlayer(xbmc_player):
                 info_tag.setDuration(duration), info_tag.setCountries(country), info_tag.setPremiered(premiered)
                 info_tag.setTagLine(tagline), info_tag.setStudios(studio), info_tag.setIMDBNumber(self.imdb_id), info_tag.setGenres(genre)
                 info_tag.setUniqueIDs({'imdb': self.imdb_id, 'tmdb': str(self.tmdb_id)})
+                
+                # Set playback StartOffset for resume point handling
+                if self.playback_percent > 0 and duration_minutes > 0:
+                    start_seconds = (self.playback_percent / 100.0) * float(duration_minutes) * 60
+                    listitem.setProperty('StartOffset', str(start_seconds))
+                    logger("orac", f"Resuming episode at {start_seconds} seconds (percent: {self.playback_percent})")
+                elif self.playback_percent == 0:
+                    listitem.setProperty('StartOffset', '0')
+                    logger("orac", "Starting episode playback from beginning")
+                
                 self.set_playback_properties()
                 logger("orac", "Using Orac episode metadata")
                 return listitem

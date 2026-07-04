@@ -29,11 +29,11 @@ class OracClient:
         logger("OracClient", f"{log_msg}")
         try:
             if put:
-                response = requests.put(url, params=params, json=json_body, timeout=10)
+                response = requests.put(url, params=params, json=json_body, timeout=60)
             elif post:
-                response = requests.post(url, params=params, json=json_body, timeout=10)
+                response = requests.post(url, params=params, json=json_body, timeout=60)
             else:
-                response = requests.get(url, params=params, timeout=10)
+                response = requests.get(url, params=params, timeout=60)
             
             response.raise_for_status()
 
