@@ -233,6 +233,7 @@ class LiberatorPlayer(xbmc_player):
                 self.season = self.orac_episode_meta.get('season', '')
                 poster = self.orac_episode_meta.get('poster') or poster_empty
                 fanart = self.orac_episode_meta.get('fanart') or fanart_empty
+                clearlogo = self.orac_episode_meta.get('clearlogo') or ''
                 duration_minutes = self.orac_episode_meta.get('runtime') or self.orac_episode_meta.get('duration') or 0
                 duration = int(duration_minutes) * 60
                 plot = self.orac_episode_meta.get('overview', '')

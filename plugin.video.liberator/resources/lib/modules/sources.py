@@ -108,7 +108,10 @@ class Sources():
         self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')
         self.custom_title, self.custom_year = params_get('custom_title', None), params_get('custom_year', None)
         self.episode_group_label = params_get('episode_group_label', '')
-        self.percent_watched = int(params_get('percent_watched', '0'))
+        try:
+            self.percent_watched = int(float(params_get('percent_watched', '0')))
+        except (ValueError, TypeError):
+            self.percent_watched = 0
         if self.media_type == 'episode':
 # Add show_trakt_id
             self.show_trakt_id = params_get('show_trakt_id',0)
@@ -120,6 +123,15 @@ class Sources():
         else: self.autoplay = auto_play(self.media_type)
         self.orac_meta = None
         self.get_meta()
+        # Fall back to database-fetched percent_watched if not passed in params or is 0
+        if not self.percent_watched or self.percent_watched == 0:
+            try:
+                if self.media_type == 'movie' and isinstance(self.orac_movie_meta, dict):
+                    self.percent_watched = int(float(self.orac_movie_meta.get('percent_watched', 0)))
+                elif self.media_type == 'episode' and isinstance(self.orac_episode_meta, dict):
+                    self.percent_watched = int(float(self.orac_episode_meta.get('percent_watched', 0)))
+            except (ValueError, TypeError):
+                self.percent_watched = 0
         self.determine_scrapers_status()
         self.sleep_time, self.provider_sort_ranks, self.scraper_settings = 100, provider_sort_ranks(), scraping_settings()
         self.include_prerelease_results, self.ignore_results_filter, self.limit_resolve = include_prerelease_results(), ignore_results_filter(), limit_resolve()
@@ -742,7 +754,8 @@ class Sources():
                 'rating': movies.get('rating'),
                 'studio': movies.get('studio'),
                 'tagline': movies.get('tagline'),
-                'country': movies.get('country')
+                'country': movies.get('country'),
+                'percent_watched': movies.get('watched', 0)
                 }
             
             self.orac_meta = movies if movies else {}
@@ -790,7 +803,8 @@ class Sources():
                             'clearlogo': episode.get('episode_clearlogo_path'),
                             'premiered': episode.get('first_aired'),
                             'overview': episode.get('episode_overview'),
-                            'title': episode.get('episode_title')})
+                            'title': episode.get('episode_title'),
+                            'percent_watched': episode.get('percent_watched', 0)})
                         aired_date = episode.get('air_date')
                         if get_datetime(aired_date, '%Y-%m-%d') > get_datetime(get_datetime(), '%Y-%m-%d'):
                             show_pack_enable = False
