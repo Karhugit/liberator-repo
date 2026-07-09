@@ -952,45 +952,59 @@ class Sources():
                 else:
                     percent = 0 if not self.percent_watched else self.percent_watched
                 
-                # Check if Kodi/skin has already offered the resume dialog
-                kodi_resume_dialog_offered = False
-                kodi_resume_choice = None
-                
                 import sys
+
+                # Log resume state for diagnostics
+                logger('Sources', f'###RESUME_DEBUG###: sys.argv={sys.argv}')
+                logger('Sources', f'###RESUME_DEBUG###: percent_watched={percent}, params.resume={self.params.get("resume")}')
+
+                # Detect the resume signal from Kodi/skin via sys.argv[3]
+                # On Kodi 21 + Arctic Fuse 3: resume:false is ALWAYS sent for plugin
+                # streams regardless of whether the user picked Resume or Start Over —
+                # it means "Kodi cannot seek plugin streams itself, skin has already asked".
+                # On Kodi 22: resume:true is sent when the user picks Resume, and
+                # resume:false when they pick Start Over — Kodi 22 can distinguish.
+                resume_signal = None
                 for arg in sys.argv:
                     if arg.lower() == 'resume:true':
-                        kodi_resume_dialog_offered = True
-                        kodi_resume_choice = 'resume'
+                        resume_signal = 'true'
+                        logger('Sources', '###RESUME_DEBUG###: resume:true received (Kodi-managed resume)')
                         break
                     elif arg.lower() == 'resume:false':
-                        kodi_resume_dialog_offered = True
-                        kodi_resume_choice = 'start_over'
+                        resume_signal = 'false'
+                        logger('Sources', '###RESUME_DEBUG###: resume:false received')
                         break
-                
-                if not kodi_resume_dialog_offered:
-                    # Check URL query parameters as fallback
+
+                # Also check URL params for an explicit resume=true
+                if resume_signal is None:
                     resume_param = self.params.get('resume')
-                    if resume_param is not None:
-                        kodi_resume_dialog_offered = True
-                        if str(resume_param).lower() in ('true', '1'):
-                            kodi_resume_choice = 'resume'
-                        else:
-                            kodi_resume_choice = 'start_over'
-                
-                if kodi_resume_dialog_offered:
-                    if kodi_resume_choice == 'resume':
-                        self.playback_percent = float(percent)
-                    else:
-                        self.playback_percent = 0.0
+                    if str(resume_param).lower() in ('true', '1'):
+                        resume_signal = 'true'
+                        logger('Sources', '###RESUME_DEBUG###: resume=true received via URL param')
+
+                if resume_signal == 'true':
+                    # Kodi 22: user chose Resume and Kodi confirmed it — trust the seek
+                    self.playback_percent = float(percent)
+                    logger('Sources', f'###RESUME_DEBUG###: Kodi-managed resume at {percent}%')
+                elif resume_signal == 'false' and percent > 0:
+                    # Kodi 21: skin already asked the user; resume:false just means Kodi
+                    # cannot handle the seek for plugin streams — auto-resume silently
+                    self.playback_percent = float(percent)
+                    logger('Sources', f'###RESUME_DEBUG###: Skin-managed resume (Kodi 21 flow), auto-resuming at {percent}%')
                 else:
-                    # Kodi did not offer the resume dialog, so we offer the choice here if appropriate
+                    # No resume signal at all — no skin dialog was shown.
+                    # Show our own dialog if there is a meaningful resume point.
                     if percent > 5 and percent < 95:
+                        logger('Sources', f'###RESUME_DEBUG###: No skin signal, showing Liberator resume dialog at {percent}%')
                         action = self._make_resume_dialog(str(percent))
                         if action == 'cancel':
                             self._kill_progress_dialog()
                             return
                         if action == 'start_over':
                             percent = 0
+                            logger('Sources', '###RESUME_DEBUG###: User chose start over')
+                        else:
+                            logger('Sources', '###RESUME_DEBUG###: User chose resume')
                     self.playback_percent = float(percent)
 
                 if not self.resolve_dialog_made: self._make_resolve_dialog()
