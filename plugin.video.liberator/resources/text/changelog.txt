@@ -1,3 +1,12 @@
+[COLOR dodgerblue][B]Version 2.2.12[/B][/COLOR]
+- Fixed resume point not being honoured on Kodi 21 when multiple sources are tried
+- Added seekTime() fallback after playback starts to correct position if StartOffset is ignored by the player
+- Fixed double resume dialog on Kodi 21 (Arctic Fuse 3 skin): skin choice is now respected without prompting again
+
+[COLOR dodgerblue][B]Version 2.2.11[/B][/COLOR]
+- Improved resume signal detection to handle differences between Kodi 21 and Kodi 22
+- Fixed episodes starting from the beginning on Kodi 21 when resume was selected
+
 [COLOR dodgerblue][B]Version 2.2.7[/B][/COLOR]
 - Filtered specials (season 0) in episodes list when show specials setting is disabled
 

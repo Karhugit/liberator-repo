@@ -38,9 +38,6 @@ class LiberatorPlayer(xbmc_player):
 
         self.set_constants(url, obj)
         volume_checker()
-#        logger("orac", "Testing make_listing")
-#        testing_results = self.make_listing()
-#        logger("orac", "make_listing came back with results:")
         
         listitem = self.make_listing()
         # Use setResolvedUrl to let Kodi handle playback if possible
@@ -59,7 +56,13 @@ class LiberatorPlayer(xbmc_player):
 
         if not self.is_generic:
             self.check_playback_start()
-            if self.playback_successful: self.monitor()
+            if self.playback_successful:
+                # Seek to resume point after playback starts if needed.
+                # On Kodi 21 the handle is consumed by the first setResolvedUrl attempt
+                # in the sources loop, so subsequent sources fall through to self.play()
+                # which ignores StartOffset. seekTime() is the reliable cross-version fix.
+                self.seek_to_resume()
+                self.monitor()
             else:
                 self.sources_object.playback_successful = self.playback_successful
                 self.sources_object.cancel_all_playback = self.cancel_all_playback
@@ -67,6 +70,28 @@ class LiberatorPlayer(xbmc_player):
                 self.stop()
             try: del self.kodi_monitor
             except: pass
+
+    def seek_to_resume(self):
+        """After playback is confirmed running, seek to the stored resume time if
+        StartOffset was not honoured (Kodi 21 compatibility)."""
+        start_seconds = getattr(self, 'resume_start_seconds', 0)
+        if not start_seconds or start_seconds <= 0:
+            return
+        try:
+            # Give the player a moment to settle, then check where it is.
+            # If the current position is far from where we want to be, seek.
+            sleep(500)
+            current = self.getTime()
+            logger("orac", f"seek_to_resume: current={current:.1f}s, target={start_seconds:.1f}s")
+            if current < start_seconds - 5:
+                logger("orac", f"seek_to_resume: StartOffset not honoured, seeking to {start_seconds:.1f}s")
+                self.seekTime(start_seconds)
+                sleep(500)
+                logger("orac", f"seek_to_resume: after seek, position={self.getTime():.1f}s")
+            else:
+                logger("orac", f"seek_to_resume: StartOffset already honoured at {current:.1f}s")
+        except Exception as e:
+            logger("orac", f"seek_to_resume: error - {e}")
 
     def check_playback_start(self):
         resolve_percent = 0
@@ -213,9 +238,11 @@ class LiberatorPlayer(xbmc_player):
                 if self.playback_percent > 0 and duration_minutes > 0:
                     start_seconds = (self.playback_percent / 100.0) * float(duration_minutes) * 60
                     listitem.setProperty('StartOffset', str(start_seconds))
+                    self.resume_start_seconds = start_seconds  # used by seek_to_resume() fallback
                     logger("orac", f"Resuming movie at {start_seconds} seconds (percent: {self.playback_percent})")
                 elif self.playback_percent == 0:
                     listitem.setProperty('StartOffset', '0')
+                    self.resume_start_seconds = 0
                     logger("orac", "Starting movie playback from beginning")
                 
                 self.set_playback_properties()
@@ -266,9 +293,11 @@ class LiberatorPlayer(xbmc_player):
                 if self.playback_percent > 0 and duration_minutes > 0:
                     start_seconds = (self.playback_percent / 100.0) * float(duration_minutes) * 60
                     listitem.setProperty('StartOffset', str(start_seconds))
+                    self.resume_start_seconds = start_seconds  # used by seek_to_resume() fallback
                     logger("orac", f"Resuming episode at {start_seconds} seconds (percent: {self.playback_percent})")
                 elif self.playback_percent == 0:
                     listitem.setProperty('StartOffset', '0')
+                    self.resume_start_seconds = 0
                     logger("orac", "Starting episode playback from beginning")
                 
                 self.set_playback_properties()
