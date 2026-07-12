@@ -84,6 +84,20 @@ settings_cache = SettingsCache()
 
 def set_setting(setting_id, value):
 	settings_cache.set(setting_id, value)
+	debrid_settings = {
+		'rd.token', 'rd.enabled', 'rd.refresh', 'rd.account_id',
+		'pm.token', 'pm.enabled', 'pm.account_id',
+		'oc.token', 'oc.enabled',
+		'ed.token', 'ed.enabled',
+		'tb.token', 'tb.enabled',
+		'easynews_user', 'easynews_password', 'provider.easynews'
+	}
+	if setting_id in debrid_settings and get_property('liberator.syncing_from_orac') != 'true':
+		try:
+			from apis.orac_api import _get_data_via_ipc
+			Thread(target=_get_data_via_ipc, args=('update_debrid_tokens', {setting_id: value})).start()
+		except:
+			pass
 
 def get_setting(setting_id, fallback=''):
 	return get_property(setting_id) or settings_cache.get(setting_id) or fallback

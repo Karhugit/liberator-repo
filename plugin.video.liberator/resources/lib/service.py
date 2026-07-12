@@ -109,6 +109,7 @@ class LiberatorService(xbmc.Monitor):
             'internal_index_contents': self.orac_client.internal_index_contents,
             'update_tmdb_tokens': self.orac_client.update_tmdb_tokens,
             'update_mdblist_tokens': self.orac_client.update_mdblist_tokens,
+            'update_debrid_tokens': self.orac_client.update_debrid_tokens,
             'update_aiostreams_settings': self.orac_client.update_aiostreams_settings,
             'update_fanart_settings': self.orac_client.update_fanart_settings,
             'get_available_languages': self.orac_client.get_available_languages,
@@ -470,6 +471,11 @@ class OracStatusMonitor:
                         if 'api' in mdblist:
                             self._sync_setting('mdblist_api', mdblist['api'])
 
+                        # Debrid
+                        debrid = data.get('debrid', {})
+                        for k, v in debrid.items():
+                            self._sync_setting(k, v)
+
                 except Exception as e:
                     # Connection failed
                     if is_online is not False:
@@ -493,7 +499,11 @@ class OracStatusMonitor:
         local_value = get_setting(setting_id, 'empty_setting')
         if local_value != remote_value:
             logger('Liberator', f'OracStatusMonitor: Syncing setting {setting_id} from {local_value} -> {remote_value}')
-            set_setting(setting_id, remote_value)
+            self.window.setProperty('liberator.syncing_from_orac', 'true')
+            try:
+                set_setting(setting_id, remote_value)
+            finally:
+                self.window.clearProperty('liberator.syncing_from_orac')
 
 class AutoStart:
     def run(self):

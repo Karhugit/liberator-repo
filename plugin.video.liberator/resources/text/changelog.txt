@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.2.14[/B][/COLOR]
+- Added automatic Debrid Credentials Sync between Liberator instances and Orac Server
+- Replaced liberator.jpg with high-quality version of fanart artwork
+
 [COLOR dodgerblue][B]Version 2.2.13[/B][/COLOR]
 - Added colour coding to Lists Manager sources column matching 'My Lists' palette
 - Fixed 'Not in Library' visibility in Lists Manager when selected against grey background

@@ -149,6 +149,9 @@ class OracClient:
     def update_mdblist_tokens(self, params):
         return self._get_json("update_mdblist_tokens", params=params, put=True)
 
+    def update_debrid_tokens(self, params):
+        return self._get_json("update_debrid_tokens", params=params, put=True)
+
     def update_aiostreams_settings(self, params):
         return self._get_json("update_aiostreams_settings", params=params, put=True)
 
