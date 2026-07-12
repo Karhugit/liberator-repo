@@ -24,6 +24,31 @@ list_view, single_view = 'view.episodes', 'view.episodes_single'
 category_name_dict = {'episode.recently_watched': 'Recently Watched Episodes', 'episode.next': 'Next Episodes',
 					'episode.trakt': {'true': 'Recently Aired Episodes', None: 'Trakt Calendar'}}
 
+def get_episode_type_properties(episode_type):
+	properties = {}
+	if not episode_type:
+		return properties
+	episode_type = episode_type.lower()
+	episode_type_map = {
+		'season_premiere': 'IsSeasonPremiere',
+		'series_premiere': 'IsSeasonPremiere',
+		'season_finale': 'IsSeasonFinale',
+		'series_finale': 'IsSeriesFinale',
+		'mid_season_premiere': 'IsMidSeasonPremiere',
+		'mid_season_finale': 'IsMidSeasonFinale',
+	}
+	mapped_type = episode_type_map.get(episode_type)
+	if mapped_type:
+		properties['episode_type'] = mapped_type
+		properties[mapped_type] = 'true'
+		if episode_type == 'series_premiere':
+			properties['IsSeriesPremiere'] = 'true'
+		elif episode_type == 'series_finale':
+			properties['IsSeasonFinale'] = 'true'
+	else:
+		properties['episode_type'] = episode_type
+	return properties
+
 def build_episode_list(params):
 	def _process():
 		for item in episodes_data:
@@ -80,7 +105,9 @@ def build_episode_list(params):
 				listitem.addContextMenuItems(cm)
 				listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo, 'landscape': show_landscape,
 								'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
-				set_properties({'liberator.extras_params': extras_params, 'liberator.options_params': options_params, 'episode_type': episode_type})
+				props = {'liberator.extras_params': extras_params, 'liberator.options_params': options_params}
+				props.update(get_episode_type_properties(episode_type))
+				set_properties(props)
 				yield (url_params, listitem, False)
 			except: pass
 	handle, is_external, is_home, category_name = int(sys.argv[1]), external(), home(), 'Episodes'
@@ -236,7 +263,9 @@ def build_single_episode(list_type, params={}):
 			listitem.addContextMenuItems(cm)
 			listitem.setArt({'poster': show_poster, 'fanart': show_fanart, 'thumb': thumb, 'icon':thumb, 'clearlogo': show_clearlogo, 'landscape': show_landscape,
 							'season.poster': season_poster, 'tvshow.poster': show_poster, 'tvshow.clearlogo': show_clearlogo})
-			set_properties({'liberator.extras_params': extras_params, 'liberator.options_params': options_params, 'episode_type': episode_type})
+			props = {'liberator.extras_params': extras_params, 'liberator.options_params': options_params}
+			props.update(get_episode_type_properties(episode_type))
+			set_properties(props)
 			item_list_append({'list_items': (url_params, listitem, False), 'first_aired': premiered, 'name': '%s - %sx%s' % (title, str_season_zfill2, str_episode_zfill2),
 							'unaired': unaired, 'last_played': ep_data_get('last_played', resinsert), 'sort_order': _position, 'unwatched': ep_data_get('unwatched')})
 		except: pass

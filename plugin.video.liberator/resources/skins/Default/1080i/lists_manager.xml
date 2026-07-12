@@ -132,7 +132,7 @@
                         <font>font12</font>
                         <textcolor>FFAAAAAA</textcolor>
                         <aligny>center</aligny>
-                        <label>$INFO[ListItem.Property(source)]</label>
+                        <label>[COLOR $INFO[ListItem.Property(source_color)]]$INFO[ListItem.Property(source)][/COLOR]</label>
                     </control>
                     <control type="label">
                         <left>180</left>
@@ -191,7 +191,7 @@
                         <font>font12</font>
                         <textcolor>FF333333</textcolor>
                         <aligny>center</aligny>
-                        <label>$INFO[ListItem.Property(source)]</label>
+                        <label>[COLOR $INFO[ListItem.Property(source_color)]]$INFO[ListItem.Property(source)][/COLOR]</label>
                     </control>
                     <control type="label">
                         <left>180</left>

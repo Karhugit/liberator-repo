@@ -968,14 +968,36 @@ class KodiListItemBuilder:
             air_date = meta.get('air_date', '')
             progress = meta.get('percent_watched', 0)
 
+            episode_type = meta.get('episode_type', '')
             properties = {
                 'runtime': str(runtime),
                 'season': str(season_number),
                 'episode': str(episode_number),
                 'showtitle': show_title,
                 'airdate': air_date,
-                'episode_type': meta.get('episode_type', '')
             }
+            if episode_type:
+                episode_type_lower = episode_type.lower()
+                episode_type_map = {
+                    'season_premiere': 'IsSeasonPremiere',
+                    'series_premiere': 'IsSeasonPremiere',
+                    'season_finale': 'IsSeasonFinale',
+                    'series_finale': 'IsSeriesFinale',
+                    'mid_season_premiere': 'IsMidSeasonPremiere',
+                    'mid_season_finale': 'IsMidSeasonFinale',
+                }
+                mapped_type = episode_type_map.get(episode_type_lower)
+                if mapped_type:
+                    properties['episode_type'] = mapped_type
+                    properties[mapped_type] = 'true'
+                    if episode_type_lower == 'series_premiere':
+                        properties['IsSeriesPremiere'] = 'true'
+                    elif episode_type_lower == 'series_finale':
+                        properties['IsSeasonFinale'] = 'true'
+                else:
+                    properties['episode_type'] = episode_type
+            else:
+                properties['episode_type'] = ''
             if progress:
                 properties['watchedprogress'] = str(int(progress))
             listitem.setProperties(properties)

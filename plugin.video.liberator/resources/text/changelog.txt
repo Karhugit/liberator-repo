@@ -1,3 +1,11 @@
+[COLOR dodgerblue][B]Version 2.2.13[/B][/COLOR]
+- Added colour coding to Lists Manager sources column matching 'My Lists' palette
+- Fixed 'Not in Library' visibility in Lists Manager when selected against grey background
+- Moved Movie Collections to the right of Indexes in the menu
+- Fixed dual-highlight in Movie Collections so the movies panel highlight only shows when focused
+- Updated default addon fanart image
+- Added support for Season Premiere, Season Finale, and Series Finale tags/properties for widgets
+
 [COLOR dodgerblue][B]Version 2.2.12[/B][/COLOR]
 - Fixed resume point not being honoured on Kodi 21 when multiple sources are tried
 - Added seekTime() fallback after playback starts to correct position if StartOffset is ignored by the player

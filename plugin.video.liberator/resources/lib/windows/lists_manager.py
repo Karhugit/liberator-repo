@@ -26,6 +26,25 @@ class ListsManager(BaseDialog):
         items = []
         trakt_user = get_setting('liberator.trakt.user')
 
+        # Per-source colour palette — same as My Lists in My Library
+        _SOURCE_COLORS = {
+            'trakt':      'FFADD8E6',  # Light Blue
+            'mdblist':    'FF90EE90',  # Light Green
+            'tmdb':       'FFFFFFB3',  # Light Yellow
+            'simkl':      'FFCCB0FF',  # Light Purple
+            'flixpatrol': 'FFFFB347',  # Light Orange
+            'imdb':       'FFFFB6C1',  # Light Pink
+        }
+        _COLOR_CYCLE = ['FFADD8E6', 'FF90EE90', 'FFFFFFB3', 'FFCCB0FF', 'FFFFB347', 'FFFFB6C1']
+        _cycle_index = [0]
+
+        def _source_color(src):
+            if src in _SOURCE_COLORS:
+                return _SOURCE_COLORS[src]
+            color = _COLOR_CYCLE[_cycle_index[0] % len(_COLOR_CYCLE)]
+            _cycle_index[0] += 1
+            return color
+
         # Group lists by source
         from collections import OrderedDict
         grouped = OrderedDict()
@@ -34,9 +53,13 @@ class ListsManager(BaseDialog):
             grouped.setdefault(source, []).append(item)
 
         for source, source_lists in grouped.items():
-            # Section header (non-selectable)
+            color = _source_color(source)
+
+            # Section header (non-selectable), coloured to match the source
             header = self.make_listitem()
-            header.setLabel('[B]%s[/B]' % source.upper())
+            header.setLabel('[COLOR %s][B]%s[/B][/COLOR]' % (color, source.upper()))
+            header.setProperty('source', source.upper())
+            header.setProperty('source_color', color)
             header.setProperty('is_header', 'true')
             header.setProperty('item_data', '')
             items.append(header)
@@ -52,11 +75,14 @@ class ListsManager(BaseDialog):
                     slug = item.get('slug', '')
 
                     status = "In Library" if add_to_library else "Not in Library"
-                    status_color = "FF00FF00" if add_to_library else "FFCCCCCC"
+                    # Green for In Library; orange-amber for Not in Library so it
+                    # stays visible against the light-grey focused-row background
+                    status_color = "FF00FF00" if add_to_library else "FFFF8C00"
 
                     listitem.setLabel(name)
                     listitem.setProperty('owner', owner)
                     listitem.setProperty('source', source.upper())
+                    listitem.setProperty('source_color', color)
                     listitem.setProperty('item_count', count)
                     listitem.setProperty('status', status)
                     listitem.setProperty('status_color', status_color)
@@ -210,7 +236,7 @@ class ListsManager(BaseDialog):
         listitem = self.get_listitem(self.window_id) # This gets selected item
         
         status = "In Library" if item['add_to_library'] else "Not in Library"
-        status_color = "FF00FF00" if item['add_to_library'] else "FFCCCCCC"
+        status_color = "FF00FF00" if item['add_to_library'] else "FFFF8C00"
         
         listitem.setProperty('status', status)
         listitem.setProperty('status_color', status_color)
