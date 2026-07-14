@@ -499,13 +499,15 @@ class KodiListItemBuilder:
         cm_append(('[B]Show Extras[/B]', run_plugin % show_extras_params))
         
         # Browse season
+        is_external = extra_params.get('is_external', False)
+        window_command = 'ActivateWindow(Videos,%s,return)' if is_external else 'Container.Update(%s)'
 
         season_params = build_url({'mode': 'orac.build_episode_list', 'tmdb_id': url_params_formatted['tmdb_id'], 'season': season_number})
-        cm_append(('[B]Browse Season {season_number}[/B]'.format(**url_params_formatted), container_update % season_params))
+        cm_append(('[B]Browse Season {season_number}[/B]'.format(**url_params_formatted), window_command % season_params))
         
         # Browse all seasons
         seasons_params = build_url({'mode': 'orac.build_season_list', 'tmdb_id': url_params_formatted['tmdb_id']})
-        cm_append(('[B]Browse All Seasons[/B]', container_update % seasons_params))
+        cm_append(('[B]Browse All Seasons[/B]', window_command % seasons_params))
         
         # Trakt manager
 #        if imdb_id:

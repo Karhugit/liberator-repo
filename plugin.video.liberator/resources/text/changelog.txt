@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.2.15[/B][/COLOR]
+- Fixed Browse Season and Browse All Seasons context menu actions in external contexts (widgets)
+
 [COLOR dodgerblue][B]Version 2.2.14[/B][/COLOR]
 - Added automatic Debrid Credentials Sync between Liberator instances and Orac Server
 - Replaced liberator.jpg with high-quality version of fanart artwork
