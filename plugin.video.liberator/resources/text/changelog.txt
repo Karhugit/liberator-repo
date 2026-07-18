@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.2.17[/B][/COLOR]
+- Added Orac Server Port setting (defaults to 5555)
+
 [COLOR dodgerblue][B]Version 2.2.16[/B][/COLOR]
 - Fixed country of origin code mapping for Egypt, Finland, France, and Germany
 

@@ -16,7 +16,12 @@ def get_orac_client():
     """Get configured Orac client instance."""
     from caches.settings_cache import get_setting
     orac_address = get_setting('orac_address') or '127.0.0.1'
-    return OracClient(f"http://{orac_address}:5555")
+    orac_port = get_setting('orac_port') or '5555'
+    if ':' not in orac_address:
+        host = f"{orac_address}:{orac_port}"
+    else:
+        host = orac_address
+    return OracClient(f"http://{host}")
 
 
 def normalize_tag_name(tag_name):

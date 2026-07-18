@@ -423,14 +423,22 @@
                           <property name="setting_type">separator</property>
                           <onclick>noop</onclick>
                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(5)</visible>
-                          <property name="setting_label">Orac IP Address</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.orac_address)]</property>
-                          <property name="setting_description">Address of the orac server - set to 127.0.0.1 if it is a service</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=orac_address)</onclick>
-                      </item>
+                       <item>
+                           <visible>Container(2000).HasFocus(5)</visible>
+                           <property name="setting_label">Orac IP Address</property>
+                           <property name="setting_type">numeric</property>
+                           <property name="setting_value">$INFO[Window(10000).Property(liberator.orac_address)]</property>
+                           <property name="setting_description">Address of the orac server - set to 127.0.0.1 if it is a service</property>
+                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=orac_address)</onclick>
+                       </item>
+                       <item>
+                           <visible>Container(2000).HasFocus(5)</visible>
+                           <property name="setting_label">Orac Port</property>
+                           <property name="setting_type">numeric</property>
+                           <property name="setting_value">$INFO[Window(10000).Property(liberator.orac_port)]</property>
+                           <property name="setting_description">Port of the orac server - defaults to 5555 if empty</property>
+                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=orac_port)</onclick>
+                       </item>
                         <item>
                             <visible>Container(2000).HasFocus(5)</visible>
                             <property name="setting_label">Orac Scraping</property>

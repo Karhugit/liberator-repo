@@ -247,6 +247,7 @@ default_settings = [
 #==================== General
 {'setting_id': 'auto_start_liberator', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac_address', 'setting_type': 'string', 'setting_default': '127.0.0.1'},
+{'setting_id': 'orac_port', 'setting_type': 'string', 'setting_default': '5555'},
 {'setting_id': 'orac_scraping', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac_use_aiostreams', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'orac.strict_dedupe', 'setting_type': 'boolean', 'setting_default': 'false'},

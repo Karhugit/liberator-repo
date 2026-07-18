@@ -33,6 +33,7 @@ def _initialize_orac_client():
     Displays notifications if the address is not set or invalid.
     """
     orac_address = get_setting('orac_address')
+    orac_port = get_setting('orac_port') or '5555'
 
     if not orac_address:
         logger("Orac",  "No Orac address set in addon settings.")
@@ -43,9 +44,10 @@ def _initialize_orac_client():
     if not orac_address.startswith(('http://', 'https://')):
         orac_address = f"http://{orac_address}"
 
-    # Append default port :5555 if no port is specified (basic check)
-    if ':' not in orac_address.split('/')[-1] and not orac_address.endswith(':5555'):
-        orac_address = f"{orac_address}:5555"
+    # Append port if no port is specified in the host component of the address
+    host_part = orac_address.split('/')[-1]
+    if ':' not in host_part:
+        orac_address = f"{orac_address}:{orac_port}"
         
     try:
         orac_client = OracClient(orac_address)
@@ -416,14 +418,17 @@ class OracStatusMonitor:
         while not monitor.abortRequested():
             try:
                 orac_address = get_setting('orac_address')
+                orac_port = get_setting('orac_port') or '5555'
                 if not orac_address:
                     wait_for_abort(30)
                     continue
 
                 if not orac_address.startswith(('http://', 'https://')):
                     orac_address = f"http://{orac_address}"
-                if ':' not in orac_address.split('/')[-1] and not orac_address.endswith(':5555'):
-                    orac_address = f"{orac_address}:5555"
+                
+                host_part = orac_address.split('/')[-1]
+                if ':' not in host_part:
+                    orac_address = f"{orac_address}:{orac_port}"
 
                 url = f"{orac_address.rstrip('/')}/api/status"
 

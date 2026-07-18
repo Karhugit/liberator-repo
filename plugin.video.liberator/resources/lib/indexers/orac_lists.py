@@ -472,8 +472,15 @@ def orac_fetch_list_items(list_type="watchlist", item_type="movie", user=None):
 
     encoded_list_type = quote_plus(list_type)
     orac_address = get_setting('orac_address')
+    orac_port = get_setting('orac_port') or '5555'
     if not orac_address: return []
-    url = f"http://{orac_address}:5555/list?name={encoded_list_type}&item_type={quote_plus(item_type)}&user={quote_plus(user)}"
+    
+    if ':' not in orac_address:
+        host = f"{orac_address}:{orac_port}"
+    else:
+        host = orac_address
+        
+    url = f"http://{host}/list?name={encoded_list_type}&item_type={quote_plus(item_type)}&user={quote_plus(user)}"
     timeout = 10
 
     try:
