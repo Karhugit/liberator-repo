@@ -129,4 +129,8 @@ def simkl_revoke_authentication(dummy=''):
     set_setting('simkl.user', 'empty_setting')
     set_setting('simkl.expires', '')
     set_setting('simkl.token', '')
+    try:
+        _get_data_via_ipc('update_simkl_tokens', {'simkl.user': 'empty_setting', 'simkl.token': '', 'simkl.client': ''})
+    except: pass
     notification('Simkl Account Authorization Reset', 3000)
+

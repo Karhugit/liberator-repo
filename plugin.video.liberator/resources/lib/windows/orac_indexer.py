@@ -161,6 +161,8 @@ class OracIndexer(BaseDialog):
                     'label': label,
                     'parameters': self.filter_dict
                 }
+                if self.is_edit:
+                    payload['original_label'] = self.index_name
                 
                 # Add add_to_library as a separate parameter if it exists
                 if add_to_library_value == 'True':

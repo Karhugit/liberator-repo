@@ -180,6 +180,9 @@ def trakt_revoke_authentication(dummy=''):
     set_setting('trakt.token', '')
     set_setting('trakt.refresh', '')
     set_setting('watched_indicators', '0')
+    try:
+        _get_data_via_ipc('update_trakt_tokens', {'trakt_token': '', 'trakt_refresh': '', 'trakt_user': '', 'trakt_expires': ''})
+    except: pass
     notification('Trakt Account Authorization Reset', 3000)
     CLIENT_ID = trakt_client()
     if CLIENT_ID in empty_setting_check: return no_client_key()
@@ -187,6 +190,7 @@ def trakt_revoke_authentication(dummy=''):
     if CLIENT_SECRET in empty_setting_check: return no_secret_key()
     data = {'token': get_setting('liberator.trakt.token'), 'client_id': CLIENT_ID, 'client_secret': CLIENT_SECRET}
     response = call_trakt("oauth/revoke", data=data, with_auth=False)
+
 
 def make_trakt_slug(name):
     import re

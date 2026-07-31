@@ -110,7 +110,7 @@ def orac_lists_manager_filtered(params, addon_handle):
     lists = [] # Initialize your list of lists/categories
 
     try:
-        ipc_params = {'name': list_type, 'item_type': item_type}
+        ipc_params = {'name': list_type, 'item_type': item_type, 'exclude_empty': 'false'}
         lists = _get_data_via_ipc('get_lists', params=ipc_params)
 
         if not lists:
@@ -120,18 +120,21 @@ def orac_lists_manager_filtered(params, addon_handle):
             return
         
         # Filter lists based on section
+        def norm_user(u):
+            return (u or '').lower().replace(' ', '_')
+
         if section == 'my_lists':
-            # My Lists: user is not 'trakt' or 'tmdb' or 'external_index'
-            lists = [item for item in lists if item.get('user') not in ['trakt', 'tmdb', 'external_index', 'flixpatrol']]
+            # My Lists: user custom lists + External Indexes (user-created indexes)
+            lists = [item for item in lists if norm_user(item.get('user')) not in ['trakt', 'tmdb', 'flixpatrol'] or norm_user(item.get('user')) == 'external_index']
         elif section == 'trakt':
             # Trakt: user is 'trakt'
-            lists = [item for item in lists if item.get('user') == 'trakt']
+            lists = [item for item in lists if norm_user(item.get('user')) == 'trakt']
         elif section == 'tmdb':
-            # TMDB: user is 'tmdb' or 'external_index'
-            lists = [item for item in lists if item.get('user') in ['tmdb', 'external_index']]
+            # TMDB: user is 'tmdb' (generic TMDB public lists)
+            lists = [item for item in lists if norm_user(item.get('user')) == 'tmdb']
         elif section == 'flixpatrol':
             # FlixPatrol: user is 'flixpatrol'
-            lists = [item for item in lists if item.get('user') == 'flixpatrol']
+            lists = [item for item in lists if norm_user(item.get('user')) == 'flixpatrol']
         
         if not lists:
             xbmcgui.Dialog().notification(ADDON.getAddonInfo('name'), f"No lists found in {category_name}.", xbmcgui.NOTIFICATION_INFO)
@@ -247,8 +250,8 @@ def get_orac_lists(params, addon_handle): # Added addon_handle parameter
 
                         if not list_name: continue
 
-                        # CLIENT-SIDE FILTER: Hide Generic Lists (Trakt/TMDB) if not in Library
-                        if user in ['trakt', 'tmdb'] and not add_to_library:
+                        # CLIENT-SIDE FILTER: Hide Generic Lists (Trakt/TMDB/External Index) if not in Library
+                        if (user in ['trakt', 'tmdb', 'External Index', 'external_index'] or (user and user.lower() in ['trakt', 'tmdb', 'external index', 'external_index'])) and not add_to_library:
                             continue
 
                         list_name_upper = " ".join(w.capitalize() for w in list_name.split())
