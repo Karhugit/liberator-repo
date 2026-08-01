@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.2.19[/B][/COLOR]
+- Added support for syncing Trakt custom lists and Movie/TV Show Collections to MDBList
+
 [COLOR dodgerblue][B]Version 2.2.18[/B][/COLOR]
 - Added service-agnostic revocation IPC notifications to update Orac Server when Trakt or Simkl authorization is revoked
 
