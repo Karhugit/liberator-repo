@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.2.20[/B][/COLOR]
+- Updated database concurrency & connection handling compatibility
+
 [COLOR dodgerblue][B]Version 2.2.19[/B][/COLOR]
 - Added support for syncing Trakt custom lists and Movie/TV Show Collections to MDBList
 
