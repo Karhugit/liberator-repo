@@ -28,9 +28,6 @@ watched_info_episode, get_database, get_next = watched_status.watched_info_episo
 
 media_extra_info, genres_choice, random_choice, keywords_choice = dialogs.media_extra_info_choice, dialogs.genres_choice, dialogs.random_choice, dialogs.keywords_choice
 person_search, person_data_dialog = people.person_search, people.person_data_dialog
-tmdb_movies_year, tmdb_tv_year, tmdb_movies_genres, tmdb_tv_genres = tmdb_api.tmdb_movies_year, tmdb_api.tmdb_tv_year, tmdb_api.tmdb_movies_genres, tmdb_api.tmdb_tv_genres
-tmdb_movies_recommendations, tmdb_tv_recommendations, tmdb_company_id = tmdb_api.tmdb_movies_recommendations, tmdb_api.tmdb_tv_recommendations, tmdb_api.tmdb_company_id
-tmdb_movies_companies, tmdb_tv_networks = tmdb_api.tmdb_movies_companies, tmdb_api.tmdb_tv_networks
 imdb_reviews, imdb_trivia, imdb_blunders, imdb_parentsguide = imdb_api.imdb_reviews, imdb_api.imdb_trivia, imdb_api.imdb_blunders, imdb_api.imdb_parentsguide
 fetch_ratings_info = omdb_api.fetch_ratings_info
 tmdb_image_base, count_insert = 'https://image.tmdb.org/t/p/%s%s', 'x%s'
@@ -209,15 +206,7 @@ class Extras(BaseDialog):
 		self.add_items(more_like_this_id, item_list)
 
 	def make_recommended(self):
-		if not recommended_id in self.enabled_lists: return
-		try:
-			function = tmdb_movies_recommendations if self.media_type == 'movie' else tmdb_tv_recommendations
-			data = function(self.tmdb_id, 1)['results']
-			item_list = list(self.make_tmdb_listitems(data))
-			self.setProperty('recommended.number', count_insert % len(item_list))
-			self.item_action_dict[recommended_id] = 'tmdb_id'
-			self.add_items(recommended_id, item_list)
-		except: pass
+		pass
 
 	def make_reviews(self):
 		if not reviews_id in self.enabled_lists: return
@@ -360,58 +349,16 @@ class Extras(BaseDialog):
 		except: pass
 
 	def make_year(self):
-		if not year_id in self.enabled_lists: return
-		try:
-			function = tmdb_movies_year if self.media_type == 'movie' else tmdb_tv_year
-			data = self.remove_current_tmdb_mediaitem(function(self.year, 1)['results'])
-			item_list = list(self.make_tmdb_listitems(data))
-			self.setProperty('more_from_year.number', count_insert % len(item_list))
-			self.item_action_dict[year_id] = 'tmdb_id'
-			self.add_items(year_id, item_list)
-		except: pass
+		pass
 
 	def make_genres(self):
-		if not genres_id in self.enabled_lists: return
-		try:
-			function, genre_list = (tmdb_movies_genres, movie_genres) if self.media_type == 'movie' else (tmdb_tv_genres, tvshow_genres)
-			genre_list = ','.join([i['id'] for i in genre_list if i['name'] in self.genre])
-			data = self.remove_current_tmdb_mediaitem(function(genre_list, 1)['results'])
-			item_list = list(self.make_tmdb_listitems(data))
-			self.setProperty('more_from_genres.number', count_insert % len(item_list))
-			self.item_action_dict[genres_id] = 'tmdb_id'
-			self.add_items(genres_id, item_list)
-		except: pass
+		pass
 
 	def make_network(self):
-		if not networks_id in self.enabled_lists: return
-		try:
-			network = self.meta_get('studio')[0]
-			network_list = tmdb_company_id(network)['results'] if self.media_type == 'movie' else networks
-			network_id = next(i['id'] for i in network_list if i['name'] == network)
-			function = tmdb_movies_companies if self.media_type == 'movie' else tmdb_tv_networks
-			data = self.remove_current_tmdb_mediaitem(function(network_id, 1)['results'])
-			item_list = list(self.make_tmdb_listitems(data))
-			self.setProperty('more_from_networks.number', count_insert % len(item_list))
-			self.item_action_dict[networks_id] = 'tmdb_id'
-			self.add_items(networks_id, item_list)
-		except: pass
+		pass
 
 	def make_collection(self):
-		if self.media_type != 'movie': return
-		if not collection_id in self.enabled_lists: return
-		try: coll_id = self.extra_info_get('collection_id')
-		except: return
-		if not coll_id: return
-		try:
-#			data = movieset_meta(coll_id, self.tmdb_api_key)
-			item_list = list(self.make_tmdb_listitems(sorted(data['parts'], key=lambda k: k['release_date'] or '2050')))
-			self.setProperty('more_from_collection.name', data['title'])
-			self.setProperty('more_from_collection.overview', data['plot'] or data['title'])
-			self.setProperty('more_from_collection.poster', data['poster'] or empty_poster)
-			self.setProperty('more_from_collection.number', count_insert % len(item_list))
-			self.item_action_dict[collection_id] = 'tmdb_id'
-			self.add_items(collection_id, item_list)
-		except: pass
+		pass
 
 	def get_omdb_ratings(self):
 		if not self.display_extra_ratings: return None

@@ -172,7 +172,7 @@ class KodiInfoTagger:
             
     def _set_episode_specific_info(self, info_tag, meta, extra_data):
         """Set episode specific info tag data"""
-        info_tag.setEpisode(meta.get('episode_number', 0))
+        info_tag.setEpisode(meta.get('episode_number') or meta.get('episode') or 0)
         info_tag.setSeason(meta.get('season', 0))
         info_tag.setTvShowTitle(meta.get('tvshowtitle') or extra_data.get('show_title', ''))
 
@@ -478,7 +478,6 @@ class KodiListItemBuilder:
             'is_external': extra_params.get('is_external', False)
         })
         
-        cm_append(('[B]Extras[/B]', run_plugin % extras_params))
         cm_append(('[B]Options[/B]', run_plugin % options_params))
 # remove metacache
 # Pass playback_choice the items it needs to identify the episode
@@ -896,7 +895,7 @@ class KodiListItemBuilder:
             tmdb_id = meta.get('tmdb_id')
             show_tmdb_id = meta.get('show_tmdb_id')
             season_number = meta.get('season', 1)
-            episode_number = meta.get('episode_number', 1)
+            episode_number = meta.get('episode_number') if meta.get('episode_number') is not None else meta.get('episode', 1)
 
             # Get watch status
             playcount = 0

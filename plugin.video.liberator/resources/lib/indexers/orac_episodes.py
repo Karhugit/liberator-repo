@@ -117,6 +117,7 @@ class orac_episodes:
                 item['rating'] = item.get('episode_rating', 0.0)
                 item['premiered'] = item.get('air_date', '')
                 item['studio'] = item.get('network', '')
+                item['episode_number'] = item.get('episode_number') or item.get('episode', 0)
                 processed_list.append((count, item))
 
             builder = KodiListItemBuilder(poster_empty, fanart_empty)

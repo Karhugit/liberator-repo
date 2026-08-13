@@ -109,7 +109,7 @@ discover_items = {
         'filter_key': 'min_user_rating', 'icon': 'rating', 'type': 'input'
     },
     'watched_status': {
-        'label': 'Watched Status', 'key': 'watched_status', 'display_key': 'watched_status_display',
+        'label': 'TV show watched status', 'key': 'watched_status', 'display_key': 'watched_status_display',
         'filter_key': 'watched_status', 'icon': 'watched', 'type': 'select', 
         'options': [
             {'name': 'All', 'value': ''}, 
@@ -119,11 +119,11 @@ discover_items = {
         ]
     },
     'air_date_gte': {
-        'label': 'Air Date >=', 'key': 'air_date_gte', 'display_key': 'air_date_gte_display',
+        'label': 'Episode Air Date >=', 'key': 'air_date_gte', 'display_key': 'air_date_gte_display',
         'filter_key': 'air_date_gte', 'icon': 'calendar', 'type': 'date', 'media_type': 'episode'
     },
     'air_date_lte': {
-        'label': 'Air Date <=', 'key': 'air_date_lte', 'display_key': 'air_date_lte_display',
+        'label': 'Episode Air Date <=', 'key': 'air_date_lte', 'display_key': 'air_date_lte_display',
         'filter_key': 'air_date_lte', 'icon': 'calendar', 'type': 'date', 'media_type': 'episode'
     },
     'first_air_date_gte': {
@@ -171,6 +171,17 @@ discover_items = {
             {'name': 'Title (Z-A)', 'value': 'title.desc'},
             {'name': 'Random', 'value': 'random'}
         ]
+    },
+    'sort_by_ep': {
+        'label': 'Sort By', 'key': 'sort_by_ep', 'display_key': 'sort_by_ep_display',
+        'filter_key': 'sort_by', 'icon': 'lists', 'type': 'select', 'media_type': 'episode',
+        'options': [
+            {'name': 'Air Date (Newest)', 'value': 'air_date.desc'}, 
+            {'name': 'Air Date (Oldest)', 'value': 'air_date.asc'},
+            {'name': 'Title (A-Z)', 'value': 'title.asc'},
+            {'name': 'Title (Z-A)', 'value': 'title.desc'},
+            {'name': 'Random', 'value': 'random'}
+        ]
     }
 }
 
@@ -202,8 +213,12 @@ class OracInternalIndexerDialog(BaseDialog):
             for key, values in discover_items.items():
                 # Skip items not relevant to this media type
                 item_media_type = values.get('media_type')
-                if item_media_type and item_media_type != self.media_type:
-                    continue
+                if item_media_type:
+                    if isinstance(item_media_type, (list, tuple, set)):
+                        if self.media_type not in item_media_type:
+                            continue
+                    elif item_media_type != self.media_type:
+                        continue
                 filter_key = values.get('filter_key')
                 if filter_key and filter_key in params:
                     param_value = str(params[filter_key])
@@ -449,8 +464,12 @@ class OracInternalIndexerDialog(BaseDialog):
             for key, values in discover_items.items():
                 # Skip items not relevant to this media type
                 item_media_type = values.get('media_type')
-                if item_media_type and item_media_type != self.media_type:
-                    continue
+                if item_media_type:
+                    if isinstance(item_media_type, (list, tuple, set)):
+                        if self.media_type not in item_media_type:
+                            continue
+                    elif item_media_type != self.media_type:
+                        continue
                 val = self.get_attribute(self, values['key'])
                 if val:
                     self.filter_dict[values['filter_key']] = val
@@ -482,8 +501,12 @@ class OracInternalIndexerDialog(BaseDialog):
             for key, values in discover_items.items():
                 # Filter by media type
                 item_media_type = values.get('media_type')
-                if item_media_type and item_media_type != self.media_type:
-                    continue
+                if item_media_type:
+                    if isinstance(item_media_type, (list, tuple, set)):
+                        if self.media_type not in item_media_type:
+                            continue
+                    elif item_media_type != self.media_type:
+                        continue
                     
                 # Mutually exclusive genres
                 if key == 'with_genres' and without_genres_set:

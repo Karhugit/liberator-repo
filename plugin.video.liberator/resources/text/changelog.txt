@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.2.21[/B][/COLOR]
+- Fixed Episode Numbering in internal index episode list views
+- Cleaned up episode context menu and ensured Extras window uses Orac DB via IPC
+
 [COLOR dodgerblue][B]Version 2.2.20[/B][/COLOR]
 - Updated database concurrency & connection handling compatibility
 

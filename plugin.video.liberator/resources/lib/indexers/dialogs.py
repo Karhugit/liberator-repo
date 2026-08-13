@@ -8,6 +8,7 @@ from caches.settings_cache import get_setting, set_setting, set_default, default
 from modules.downloader import manager
 from modules import kodi_utils, settings
 from apis.tmdb_api import episode_groups, group_details, group_episode_data, is_anime_check
+from apis.orac_api import _get_data_via_ipc
 from modules.source_utils import clear_scrapers_cache, get_aliases_titles, make_alias_dict, audio_filter_choices, source_filters
 from modules.utils import get_datetime, title_key, adjust_premiered_date, append_module_to_syspath, manual_module_import
 logger = kodi_utils.logger
@@ -756,7 +757,6 @@ def play_trailer(params):
     trailer_url = params.get('trailer_url')
 
     if not trailer_url:
-        from apis.orac_api import _get_data_via_ipc
         content = 'movie' if media_type == 'movie' else 'tvshow'
         ipc_params = {'tmdb_id': tmdb_id, 'item_type': content, 'user': get_setting('trakt.user', '')}
         mode = 'get_movie_details' if content == 'movie' else 'get_show_details'
