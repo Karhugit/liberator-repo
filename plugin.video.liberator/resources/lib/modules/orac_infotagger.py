@@ -613,8 +613,15 @@ class KodiListItemBuilder:
                 return None
                 
             # Watch status
-            percent_watched = meta.get('watched', 0)
-            if percent_watched >= 100:
+            watched_val = meta.get('watched')
+            if watched_val is None:
+                watched_val = meta.get('percent_watched', 0)
+            try:
+                percent_watched = float(watched_val or 0)
+            except (ValueError, TypeError):
+                percent_watched = 0.0
+
+            if percent_watched >= 90 or meta.get('watched_status') == 2:
                 playcount = 1
             else:
                 playcount = 0
@@ -692,7 +699,7 @@ class KodiListItemBuilder:
                 'mode': 'playback.media', 
                 'media_type': 'movie', 
                 'tmdb_id': tmdb_id,
-                'percent_watched': meta.get('watched', 0)
+                'percent_watched': percent_watched
             })
             
             extras_params = build_url({

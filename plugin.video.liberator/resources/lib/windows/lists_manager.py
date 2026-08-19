@@ -32,10 +32,9 @@ class ListsManager(BaseDialog):
             'mdblist':    'FF90EE90',  # Light Green
             'tmdb':       'FFFFFFB3',  # Light Yellow
             'simkl':      'FFCCB0FF',  # Light Purple
-            'flixpatrol': 'FFFFB347',  # Light Orange
             'imdb':       'FFFFB6C1',  # Light Pink
         }
-        _COLOR_CYCLE = ['FFADD8E6', 'FF90EE90', 'FFFFFFB3', 'FFCCB0FF', 'FFFFB347', 'FFFFB6C1']
+        _COLOR_CYCLE = ['FFADD8E6', 'FF90EE90', 'FFFFFFB3', 'FFCCB0FF', 'FFFFB6C1']
         _cycle_index = [0]
 
         def _source_color(src):

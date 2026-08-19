@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.2.22[/B][/COLOR]
+- Removed obsolete FlixPatrol listings and menu categories
+- Updated playback progress tracking and watched status synchronization
+
 [COLOR dodgerblue][B]Version 2.2.21[/B][/COLOR]
 - Fixed Episode Numbering in internal index episode list views
 - Cleaned up episode context menu and ensured Extras window uses Orac DB via IPC

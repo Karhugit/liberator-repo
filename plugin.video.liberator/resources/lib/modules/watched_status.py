@@ -136,7 +136,8 @@ def mark_movie(params):
 
     ipc_params = {'type': 'movie', 'tmdb_id': tmdb_id, 'percent_watched': resume_point}
     _get_data_via_ipc('mark_movie_watched', ipc_params)
-    refresh_container()
+    if params.get('from_playback') != 'true':
+        refresh_container()
     return
 
 def mark_season(params):
@@ -170,7 +171,8 @@ def mark_episode(params):
 
     ipc_params = {'type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'percent_watched': resume_point}
     _get_data_via_ipc('mark_episode_watched', ipc_params)
-    refresh_container()
+    if params.get('from_playback') != 'true':
+        refresh_container()
     return
 
 

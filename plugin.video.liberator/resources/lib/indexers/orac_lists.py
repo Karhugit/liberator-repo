@@ -57,11 +57,6 @@ def orac_lists_manager_categories(params, addon_handle):
                 'name': 'TMDB Lists',
                 'section': 'tmdb',
                 'description': 'TMDB generic lists'
-            },
-            {
-                'name': 'FlixPatrol Lists',
-                'section': 'flixpatrol',
-                'description': 'FlixPatrol trending lists'
             }
         ]
         
@@ -125,16 +120,13 @@ def orac_lists_manager_filtered(params, addon_handle):
 
         if section == 'my_lists':
             # My Lists: user custom lists + External Indexes (user-created indexes)
-            lists = [item for item in lists if norm_user(item.get('user')) not in ['trakt', 'tmdb', 'flixpatrol'] or norm_user(item.get('user')) == 'external_index']
+            lists = [item for item in lists if norm_user(item.get('user')) not in ['trakt', 'tmdb'] or norm_user(item.get('user')) == 'external_index']
         elif section == 'trakt':
             # Trakt: user is 'trakt'
             lists = [item for item in lists if norm_user(item.get('user')) == 'trakt']
         elif section == 'tmdb':
             # TMDB: user is 'tmdb' (generic TMDB public lists)
             lists = [item for item in lists if norm_user(item.get('user')) == 'tmdb']
-        elif section == 'flixpatrol':
-            # FlixPatrol: user is 'flixpatrol'
-            lists = [item for item in lists if norm_user(item.get('user')) == 'flixpatrol']
         
         if not lists:
             xbmcgui.Dialog().notification(ADDON.getAddonInfo('name'), f"No lists found in {category_name}.", xbmcgui.NOTIFICATION_INFO)
@@ -217,10 +209,9 @@ def get_orac_lists(params, addon_handle): # Added addon_handle parameter
             'mdblist':    'FF90EE90',  # Light Green
             'tmdb':       'FFFFFFB3',  # Light Yellow
             'simkl':      'FFCCB0FF',  # Light Purple
-            'flixpatrol': 'FFFFB347',  # Light Orange
             'imdb':       'FFFFB6C1',  # Light Pink
         }
-        _COLOR_CYCLE = ['FFADD8E6', 'FF90EE90', 'FFFFFFB3', 'FFCCB0FF', 'FFFFB347', 'FFFFB6C1']
+        _COLOR_CYCLE = ['FFADD8E6', 'FF90EE90', 'FFFFFFB3', 'FFCCB0FF', 'FFFFB6C1']
         _cycle_index = [0]  # mutable so the inner function can update it
 
         def _source_color(src):
