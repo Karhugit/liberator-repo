@@ -89,8 +89,6 @@ class LiberatorService(xbmc.Monitor):
             'remove_list_options': self.orac_client.remove_list_options,
             'add_to_list': self.orac_client.add_to_list,
             'remove_from_list': self.orac_client.remove_from_list,
-            'update_trakt_tokens': self.orac_client.update_trakt_tokens,
-            'update_simkl_tokens': self.orac_client.update_simkl_tokens,
             'get_fast_start_episode': self.orac_client.get_fast_start_episode,
             'add_ext_index': self.orac_client.add_ext_index,
             'del_ext_index': self.orac_client.del_ext_index,
@@ -109,8 +107,6 @@ class LiberatorService(xbmc.Monitor):
             'add_internal_index': self.orac_client.add_internal_index,
             'del_internal_index': self.orac_client.del_internal_index,
             'internal_index_contents': self.orac_client.internal_index_contents,
-            'update_tmdb_tokens': self.orac_client.update_tmdb_tokens,
-            'update_mdblist_tokens': self.orac_client.update_mdblist_tokens,
             'update_debrid_tokens': self.orac_client.update_debrid_tokens,
             'update_aiostreams_settings': self.orac_client.update_aiostreams_settings,
             'update_fanart_settings': self.orac_client.update_fanart_settings,
@@ -448,7 +444,6 @@ class OracStatusMonitor:
                         trakt = data.get('trakt', {})
                         simkl = data.get('simkl', {})
                         tmdb = data.get('tmdb', {})
-                        mdblist = data.get('mdblist', {})
 
                         # Trakt
                         if 'user' in trakt:
@@ -471,10 +466,6 @@ class OracStatusMonitor:
                             self._sync_setting('tmdb.user', tmdb['user'])
                         if 'session_id' in tmdb:
                             self._sync_setting('tmdb.session_id', tmdb['session_id'])
-
-                        # MDbList
-                        if 'api' in mdblist:
-                            self._sync_setting('mdblist_api', mdblist['api'])
 
                         # Debrid
                         debrid = data.get('debrid', {})

@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
-import json
-import time
-import webbrowser
-from urllib.parse import quote_plus
-from caches.settings_cache import set_setting, get_setting
+from caches.settings_cache import get_setting
 from modules.settings import tmdb_api_key
-from modules.kodi_utils import make_session, notification, progress_dialog, confirm_dialog, sleep, logger
-from apis.orac_api import _get_data_via_ipc
+from modules.kodi_utils import make_session, notification
 
 base_url = 'https://api.themoviedb.org/3'
 movies_append = 'external_ids,videos,credits,release_dates,alternative_titles,translations,images,keywords'
@@ -153,83 +148,8 @@ def get_tmdb(url):
 	except: response = None
 	return response
 
-def tmdb_authenticate(dummy=''):
-	api_key = tmdb_api_key()
-	if api_key in empty_setting_check: return no_api_key()
-	
-	try:
-		url = '%s/authentication/token/new?api_key=%s' % (base_url, api_key)
-		result = get_tmdb(url).json()
-		request_token = result['request_token']
-	except:
-		notification('Error creating TMDB Request Token', 3000)
-		return False
-		
-	auth_url = 'https://www.themoviedb.org/authenticate/%s' % request_token
-	
-	# Browser Auth Option
-	if confirm_dialog('Open default Web Browser to Authorise?', 
-					  'Use the default system browser to authorise TMDb Token.\nSelect NO to display a QR code on screen to authenticate from another device.'):
-		webbrowser.open(auth_url, new=0, autoraise=True)
-	
-	qr_url = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=%s' % quote_plus(auth_url)
-	content = 'Scan QR Code or navigate to: [B]%s[/B][CR]Click "Allow" to authorize Liberator.' % auth_url
-	
-	progressDialog = progress_dialog('TMDB Authorize', qr_url)
-	progressDialog.update(content, 0)
-	
-	expires_in = 600
-	start = time.time()
-	
-	while not progressDialog.iscanceled() and time.time() - start < expires_in:
-		try:
-			url = '%s/authentication/session/new?api_key=%s' % (base_url, api_key)
-			data = {'request_token': request_token}
-			response = session.post(url, json=data, timeout=timeout)
-			
-			logger('TMDB Auth Debug', 'Status Code: %s' % response.status_code)
-			logger('TMDB Auth Debug', 'Response: %s' % response.text)
-
-			if response.status_code == 200:
-				session_resp = response.json()
-				if session_resp.get('success'):
-					session_id = session_resp['session_id']
-					
-					account_url = '%s/account?api_key=%s&session_id=%s' % (base_url, api_key, session_id)
-					account_resp = get_tmdb(account_url).json()
-					username = account_resp['username']
-					
-					set_setting('tmdb.session_id', session_id)
-					set_setting('tmdb.user', username)
-					
-					params = {'tmdb_session_id': session_id, 'tmdb_user': username, 'tmdb_api_key': api_key}
-					_get_data_via_ipc('update_tmdb_tokens', params)
-					
-					notification('TMDB Account Authorized', 3000)
-					progressDialog.close()
-					return True
-		except Exception as e:
-			logger('TMDB Auth Error', str(e))
-		
-		sleep(2000)
-		
-		time_passed = time.time() - start
-		progress = int(100 * time_passed/expires_in)
-		progressDialog.update(content, progress)
-
-	progressDialog.close()
-	return False
-
-def tmdb_revoke_authentication(dummy=''):
-	set_setting('tmdb.session_id', 'empty_setting')
-	set_setting('tmdb.user', 'empty_setting')
-	
-	api_key = tmdb_api_key()
-	api_key_val = api_key if api_key not in empty_setting_check else ''
-	params = {'tmdb_session_id': '', 'tmdb_user': '', 'tmdb_api_key': api_key_val}
-	_get_data_via_ipc('update_tmdb_tokens', params)
-	
-	notification('TMDB Authorization Revoked', 3000)
+def tmdb_get_details(dummy=''):
+	pass
 
 # Helper metadata functions transitioned from deleted modules/metadata.py
 def episode_groups(media_id):

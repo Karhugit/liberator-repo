@@ -170,10 +170,7 @@ def set_string(params):
 	new_value = kodi_dialog().input('', defaultt=current_value)
 	if not new_value and not confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11): return set_string(params)
 	set_setting(params['setting_id'], new_value)
-	if params['setting_id'] == 'mdblist_api':
-		from apis.mdblist_api import mdblist_authenticate
-		Thread(target=mdblist_authenticate, args=({'mdblist_api': new_value},)).start()
-	elif params['setting_id'] in ('aio.username', 'aio.password', 'aio.custom_url'):
+	if params['setting_id'] in ('aio.username', 'aio.password', 'aio.custom_url'):
 		from apis.aiostreams_api import aiostreams_sync
 		Thread(target=aiostreams_sync).start()
 	elif params['setting_id'] == 'fanart_api_key':
@@ -357,8 +354,6 @@ default_settings = [
 {'setting_id': 'tmdb.session_id', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== OMDb
 {'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-#==================== MDBList
-{'setting_id': 'mdblist_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== AioStreams
 {'setting_id': 'aio.username', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'aio.password', 'setting_type': 'string', 'setting_default': 'empty_setting'},

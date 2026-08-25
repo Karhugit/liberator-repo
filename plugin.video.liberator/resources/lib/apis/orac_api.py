@@ -134,21 +134,6 @@ class OracClient:
         """Removes an item from a list via Orac."""
         return self._get_json("remove_from_list", params=params, put=True)
 
-    def update_trakt_tokens(self, params):
-        """Updates the Trakt tokens in Orac."""
-        return self._get_json("update_trakt_tokens", params=params, put=True)
-
-    def update_simkl_tokens(self, params):
-        """Updates the Simkl tokens in Orac."""
-        return self._get_json("update_simkl_tokens", params=params, put=True)
-
-    def update_tmdb_tokens(self, params):
-        """Updates the TMDB tokens/session in Orac."""
-        return self._get_json("update_tmdb_tokens", params=params, put=True)
-
-    def update_mdblist_tokens(self, params):
-        return self._get_json("update_mdblist_tokens", params=params, put=True)
-
     def update_debrid_tokens(self, params):
         return self._get_json("update_debrid_tokens", params=params, put=True)
 
