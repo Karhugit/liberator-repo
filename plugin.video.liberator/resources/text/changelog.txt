@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.2.24[/B][/COLOR]
+- Migrated Fanart.tv authentication and storage configuration to Orac Server dashboard
+- Removed legacy Fanart settings and API sync from Liberator
+
 [COLOR dodgerblue][B]Version 2.2.23[/B][/COLOR]
 - Migrated MDBList, TMDb, Simkl, and Trakt account authorizations to Orac Server web dashboard
 - Removed legacy local authorization flows and account management dialogs
