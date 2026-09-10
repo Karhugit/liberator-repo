@@ -155,7 +155,7 @@ class SourcesResults(BaseDialog):
                             else: set_properties({'source_type': 'UNCACHED'})
                             set_properties({'highlight': 'FF7C7C7C'})
                         else:
-                            cache_flag = 'UNCHECKED' if provider in ('REAL-DEBRID', 'ALLDEBRID') else '[B]CACHED[/B]'
+                            cache_flag = '[B]CACHED[/B]'
                             if highlight_type == 0: key = provider_lower
                             else: key = basic_quality
                             set_properties({'highlight': self.info_highlights_dict.get(key, '')})
@@ -331,13 +331,31 @@ class SourcesPlayback(BaseDialog):
         poster = self.meta_get('poster') or empty_poster
         fanart = self.meta_get('fanart') or addon_fanart
         clearlogo = self.meta_get('clearlogo') or ''
+        
+        if self.meta_get('media_type') == 'movie':
+            plot = self.meta_get('plot') or self.meta_get('overview', '')
+        else:
+            if self.meta_get('tvshowtitle'):
+                title = self.meta_get('tvshowtitle')
+            season = self.meta_get('season')
+            episode = self.meta_get('episode')
+            ep_title = self.meta_get('title', '')
+            overview = self.meta_get('overview', '')
+            if season is not None and episode is not None:
+                header = f"[B]S{int(season):02d}E{int(episode):02d} • {ep_title}[/B]" if ep_title else f"[B]S{int(season):02d}E{int(episode):02d}[/B]"
+                plot = f"{header}[CR]{overview}" if overview else header
+            else:
+                plot = overview
+
         self.setProperty('window_mode', self.window_mode)
+        self.setProperty('enable_busy_spinner', 'true')
         self.setProperty('title', title)
         self.setProperty('fanart', fanart)
         self.setProperty('clearlogo', clearlogo)
         self.setProperty('year', year)
         self.setProperty('poster', poster)
         self.setProperty('genre', genre_string)
+        self.setProperty('plot', plot)
 
     def set_resolver_properties(self):
         if self.meta_get('media_type') == 'movie': self.text = self.meta_get('plot') or self.meta_get('overview', '')

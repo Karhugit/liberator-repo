@@ -1,3 +1,9 @@
+[COLOR dodgerblue][B]Version 2.2.25[/B][/COLOR]
+- Offloaded Debrid cache checking and pre-resolving to Orac Server
+- Offloaded Easynews scraping and direct stream resolution to Orac Server
+- Synchronized stream sorting sequence directly with Orac Command Centre configuration
+- Enhanced scrape dialog with animated spinner, dynamic stage messages, and plot overview spotlight
+
 [COLOR dodgerblue][B]Version 2.2.24[/B][/COLOR]
 - Migrated Fanart.tv authentication and storage configuration to Orac Server dashboard
 - Removed legacy Fanart settings and API sync from Liberator

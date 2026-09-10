@@ -90,29 +90,41 @@
             <!-- Busy Spinner -->
             <control type="image">
                 <visible>String.IsEqual(Window.Property(enable_busy_spinner),true)</visible>
-                <left>715</left>
-                <top>552</top>
-                <width>30</width>
-                <height>30</height>
+                <left>942</left>
+                <top>515</top>
+                <width>36</width>
+                <height>36</height>
                 <texture flipx="true" colordiffuse="FFFAFAFA">liberator_common/spinner.png</texture>
-                <animation effect="fade" time="320" delay="400">Visible</animation>
+                <animation effect="fade" time="320" delay="200">Visible</animation>
                 <animation effect="rotate" end="360" center="auto" time="1200" loop="true" reversible="false" condition="true">Conditional</animation>
                 <animation effect="fade" start="70" time="1200" condition="true" pulse="true">Conditional</animation>
             </control>
-            <!-- Progress -->
-            <!-- Progress bar removed as per user request -->
             <!-- Scraper -->
             <control type="group">
                 <visible>String.IsEqual(Window.Property(window_mode),scraper)</visible>
+                <!-- Dynamic Status Message -->
                 <control type="textbox" id="2001">
-                    <top>550</top>
+                    <top>565</top>
                     <left>360</left>
                     <width>1200</width>
-                    <height>310</height>
+                    <height>45</height>
                     <align>center</align>
                     <aligny>top</aligny>
-                    <font>font60</font> <!-- liberator_60_BOLD -->
+                    <font>font14</font> <!-- liberator_33 -->
                     <textcolor>FFFFFFFF</textcolor>
+                </control>
+                <!-- Episode / Movie Overview Spotlight -->
+                <control type="textbox">
+                    <left>460</left>
+                    <top>625</top>
+                    <width>1000</width>
+                    <height>220</height>
+                    <font>font12</font> <!-- liberator_26 -->
+                    <align>center</align>
+                    <aligny>top</aligny>
+                    <textcolor>FFB7B4BB</textcolor>
+                    <label>$INFO[Window.Property(plot)]</label>
+                    <visible>!String.IsEmpty(Window.Property(plot))</visible>
                 </control>
             </control>
             <!-- Resolver -->

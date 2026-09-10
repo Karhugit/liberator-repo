@@ -140,6 +140,9 @@ class OracClient:
     def update_aiostreams_settings(self, params):
         return self._get_json("update_aiostreams_settings", params=params, put=True)
 
+    def update_fanart_settings(self, params):
+        return self._get_json("api/config/fanart", json_body=params, post=True)
+
     def get_fast_start_episode(self, params):
         """Fetches fast start episode details from Orac."""
         return self._get_json("fast_start_episode", params=params)
@@ -147,6 +150,10 @@ class OracClient:
     def get_orac_scrape(self, params):
         """Fetches scrape results from Orac."""
         return self._get_json("scrape", params=params)
+
+    def resolve_debrid(self, params):
+        """Resolves a debrid stream link via Orac server."""
+        return self._get_json("resolve", params=params)
 
     def add_ext_index(self, json_body):
         """Adds an external index to Orac."""

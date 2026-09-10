@@ -161,25 +161,29 @@ class Sources():
                 logger('Orac', 'Orac Scraping: No results found.')
                 return False
                 
+            # Check if Orac already checked debrid cache and resolved
+            debrid_checked_by_orac = scrape_results.get('debrid_checked') or any(i.get('debrid') or i.get('cache_provider') for i in raw_results)
+            
             processed_results = []
             for item in raw_results:
-                processed_results.append({
-                    'name': item.get('name'),
-                    'url': item.get('url'),
-                    'hash': item.get('hash', '').lower(),
-                    'quality': item.get('quality', 'SD'),
-                    'size': item.get('size', 0),
-                    'source': item.get('source', 'torrent'),
-                    'name_info': item.get('name_info'),
-                    'scrape_provider': 'external',
-                    'provider': item.get('provider', 'orac'),
-                })
+                entry = dict(item)
+                entry['external'] = True
+                entry.setdefault('scrape_provider', 'external')
+                entry.setdefault('provider', item.get('provider', 'orac'))
+                entry.setdefault('quality', item.get('quality', 'SD'))
+                entry.setdefault('quality_rank', self._get_quality_rank(entry['quality']))
+                entry.setdefault('display_name', item.get('display_name') or clean_file_name(item.get('name', 'Unknown')))
+                entry.setdefault('size_label', item.get('size_label') or ('%.2f GB' % float(item.get('size', 0) or 0)))
+                entry.setdefault('extraInfo', item.get('extraInfo', ''))
+                processed_results.append(entry)
             
-            # Normalize results
-            processed_results = self.process_external_results('orac', processed_results)
-            
-            # Check debrid cache
-            orac_results = self.check_debrid_cache(processed_results)
+            if debrid_checked_by_orac:
+                logger('Orac', f'Orac Scraping: Received {len(processed_results)} pre-checked Debrid sources from Orac (skipping local cache check).')
+                orac_results = processed_results
+            else:
+                # Normalize and check debrid cache locally
+                processed_results = self.process_external_results('orac', processed_results)
+                orac_results = self.check_debrid_cache(processed_results)
             
             if orac_results:
                 logger('Orac', f'Orac Scraping: {len(orac_results)} cached results found. Adding to sources.')
@@ -211,6 +215,8 @@ class Sources():
 
     def determine_scrapers_status(self):
         self.active_internal_scrapers = active_internal_scrapers()
+        if self.orac_scraping and 'easynews' in self.active_internal_scrapers:
+            self.active_internal_scrapers.remove('easynews')
         self.debrid_enabled = debrid.debrid_enabled()
         self.active_external = False
 
@@ -293,12 +299,16 @@ class Sources():
 
     def sort_results(self, results):
         for item in results:
-            provider = item['scrape_provider']
-            if provider == 'external': account_type = item['debrid'].lower() if 'debrid' in item else 'orac'
-            else: account_type = provider.lower()
-            item['provider_rank'] = self._get_provider_rank(account_type)
+            provider = item.get('scrape_provider')
+            if item.get('provider_rank') is None:
+                if provider == 'external': account_type = item['debrid'].lower() if 'debrid' in item else 'orac'
+                else: account_type = provider.lower() if provider else 'orac'
+                item['provider_rank'] = self._get_provider_rank(account_type)
             item['quality_rank'] = self._get_quality_rank(item.get('quality', 'SD'))
-        results.sort(key=self.sort_function)
+        if self.orac_scraping:
+            return results
+        else:
+            results.sort(key=self.sort_function)
         results = self._sort_uncached_results(results)
         return results
 
@@ -479,12 +489,18 @@ class Sources():
                 try:
                     if 'name_info' in i and i.get('name_info'): 
                         quality, extraInfo = get_file_info(name_info=i_get('name_info'))
+                    elif i_get('quality') and i_get('quality') != 'SD':
+                        quality = i_get('quality')
+                        extraInfo = i_get('extraInfo', '')
+                    elif i_get('name'):
+                        from modules.source_utils import release_info_format
+                        quality, extraInfo = get_file_info(name_info=release_info_format(i_get('name')), default_quality=i_get('quality', 'SD'))
                     else: 
                         quality, extraInfo = get_file_info(url=i_get('url'))
                 except Exception as e:
                     # Fallback to existing quality or SD
                     quality = i_get('quality', 'SD')
-                    extraInfo = ''
+                    extraInfo = i_get('extraInfo', '')
                 
                 # Try to format size
                 try:
@@ -565,9 +581,21 @@ class Sources():
         def _scraperDialog():
             monitor = xbmc_monitor()
             start_time = time.time()
-            self.progress_dialog.update_scraper(0, 0, 0, 0, 0, 'Scraping...', 0)
+            last_status = None
             while not self.progress_dialog.iscanceled() and not monitor.abortRequested():
                 try:
+                    elapsed = time.time() - start_time
+                    if elapsed < 1.2:
+                        status_msg = 'Searching top indexers & Easynews...'
+                    elif elapsed < 2.5:
+                        status_msg = 'Checking Debrid cloud cache...'
+                    else:
+                        status_msg = 'Preparing stream sources...'
+
+                    if status_msg != last_status:
+                        self.progress_dialog.update_scraper(0, 0, 0, 0, 0, status_msg, 0)
+                        last_status = status_msg
+
                     remaining_providers = [x.getName() for x in _threads if x.is_alive() is True]
                     self._process_internal_results()
                     sleep(self.sleep_time)
@@ -1156,6 +1184,11 @@ class Sources():
             
             logger('Sources', 'resolve_sources: media_type=%s, meta_exists=%s' % (self.media_type, meta is not None))
             
+            # Fast-path: use pre-resolved URL if available from Orac
+            if item.get('stream_url'):
+                logger('Sources', 'Using pre-resolved stream_url from Orac: %s' % (item['stream_url'][:60] if item.get('stream_url') else ''))
+                return item['stream_url']
+
             url = None
             if 'cache_provider' in item:
                 cache_provider = item['cache_provider']
@@ -1169,7 +1202,30 @@ class Sources():
                     season, episode, pack = None, None, False
                 
                 logger('Sources', 'Resolving cached: %s | %s | %s' % (cache_provider, title, item['hash']))
-                if cache_provider in debrid_providers: url = self.resolve_cached(cache_provider, item['url'], item['hash'], title, season, episode, pack)
+
+                # Try resolving via Orac server first
+                try:
+                    resolve_params = {
+                        'provider': cache_provider,
+                        'magnet': item.get('url', ''),
+                        'hash': item.get('hash', ''),
+                        'title': title or '',
+                    }
+                    if season is not None: resolve_params['season'] = str(season)
+                    if episode is not None: resolve_params['episode'] = str(episode)
+                    res = _get_data_via_ipc('resolve_debrid', resolve_params)
+                    if res and res.get('success') and res.get('stream_url'):
+                        url = res.get('stream_url')
+                        logger('Sources', 'Resolved stream via Orac /resolve: %s' % (url[:60] if url else 'None'))
+                except Exception as e:
+                    logger('Sources', 'Error resolving via Orac IPC: %s' % str(e))
+
+                # Fallback to local resolving if Orac did not resolve
+                if not url:
+                    if cache_provider in debrid_providers:
+                        url = self.resolve_cached(cache_provider, item['url'], item['hash'], title, season, episode, pack)
+                    elif cache_provider == 'EasyNews':
+                        url = self.resolve_internal('easynews', item.get('id', item.get('url_dl', item.get('url'))), item.get('url_dl', item.get('url')), direct_debrid_link=False)
 
             elif item.get('scrape_provider', None) in default_internal_scrapers:
                 url = self.resolve_internal(item['scrape_provider'], item['id'], item['url_dl'], item.get('direct_debrid_link', False))
