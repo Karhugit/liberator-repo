@@ -1,3 +1,8 @@
+[COLOR dodgerblue][B]Version 2.2.26[/B][/COLOR]
+- Offloaded Premiumize authentication and revocation to Orac Server web dashboard
+- Routed Premiumize cloud file operations directly through Orac Server
+- Removed obsolete local Premiumize credentials, settings, and authorization flows
+
 [COLOR dodgerblue][B]Version 2.2.25[/B][/COLOR]
 - Offloaded Debrid cache checking and pre-resolving to Orac Server
 - Offloaded Easynews scraping and direct stream resolution to Orac Server

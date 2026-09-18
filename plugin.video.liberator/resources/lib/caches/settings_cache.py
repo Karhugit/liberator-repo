@@ -167,9 +167,6 @@ def set_string(params):
 	new_value = kodi_dialog().input('', defaultt=current_value)
 	if not new_value and not confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11): return set_string(params)
 	set_setting(params['setting_id'], new_value)
-	if params['setting_id'] in ('aio.username', 'aio.password', 'aio.custom_url'):
-		from apis.aiostreams_api import aiostreams_sync
-		Thread(target=aiostreams_sync).start()
 
 def set_numeric(params):
 	setting_id = params['setting_id']
@@ -204,9 +201,6 @@ def set_from_list(params):
 	if not new_value: return
 	setting_value = new_value[1]
 	set_setting(setting_id, setting_value)
-	if setting_id == 'aiostreams_instance':
-		from apis.aiostreams_api import aiostreams_sync
-		Thread(target=aiostreams_sync).start()
 
 def set_source_folder_path(params):
 	setting_id = params['setting_id']
@@ -237,7 +231,6 @@ default_settings = [
 {'setting_id': 'orac_address', 'setting_type': 'string', 'setting_default': '127.0.0.1'},
 {'setting_id': 'orac_port', 'setting_type': 'string', 'setting_default': '5555'},
 {'setting_id': 'orac_scraping', 'setting_type': 'boolean', 'setting_default': 'false'},
-{'setting_id': 'orac_use_aiostreams', 'setting_type': 'boolean', 'setting_default': 'true'},
 {'setting_id': 'orac.strict_dedupe', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac.force_english_audio', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': default_addon_fanart, 'browse_mode': '2'},
@@ -342,17 +335,6 @@ default_settings = [
 {'setting_id': 'tmdb.session_id', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== OMDb
 {'setting_id': 'omdb_api', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-#==================== AioStreams
-{'setting_id': 'aio.username', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-{'setting_id': 'aio.password', 'setting_type': 'string', 'setting_default': 'empty_setting'},
-{'setting_id': 'aiostreams_instance', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {
-    '0': 'https://aiostreams.stremio.ru',
-    '1': 'Custom URL',
-    '2': 'https://aiostreams.viren070.me',
-    '3': 'https://aiostreams.fortheweak.cloud',
-    '4': 'https://aiostreamsfortheweebsstable.midnightignite.me'
-}},
-{'setting_id': 'aio.custom_url', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 #==================== External
 {'setting_id': 'provider.external', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'external_scraper.name', 'setting_type': 'string', 'setting_default': 'empty_setting'},

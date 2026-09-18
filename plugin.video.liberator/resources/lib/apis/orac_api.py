@@ -137,9 +137,6 @@ class OracClient:
     def update_debrid_tokens(self, params):
         return self._get_json("update_debrid_tokens", params=params, put=True)
 
-    def update_aiostreams_settings(self, params):
-        return self._get_json("update_aiostreams_settings", params=params, put=True)
-
     def update_fanart_settings(self, params):
         return self._get_json("api/config/fanart", json_body=params, post=True)
 
@@ -276,6 +273,37 @@ class OracClient:
         if result and result.get("success"):
             return result.get("providers", [])
         return []
+
+    def premiumize_cloud(self, params=None):
+        """Fetches Premiumize cloud folder listing live from Orac (no caching)."""
+        return self._get_json("api/debrid/premiumize/cloud", params=params)
+
+    def premiumize_transfers(self, params=None):
+        """Fetches Premiumize transfers list live from Orac."""
+        return self._get_json("api/debrid/premiumize/transfers", params=params)
+
+    def premiumize_account_info(self, params=None):
+        """Fetches Premiumize account info live from Orac."""
+        return self._get_json("api/debrid/premiumize/account_info", params=params)
+
+    def premiumize_rename(self, body_or_params):
+        """Renames a Premiumize file/folder via Orac."""
+        return self._get_json("api/debrid/premiumize/rename", post=True, json_body=body_or_params)
+
+    def premiumize_delete(self, body_or_params):
+        """Deletes a Premiumize file/folder via Orac."""
+        return self._get_json("api/debrid/premiumize/delete", post=True, json_body=body_or_params)
+
+    def premiumize_item_details(self, params=None):
+        """Fetches Premiumize item details live from Orac."""
+        if params and 'item_id' in params and 'id' not in params:
+            params = dict(params)
+            params['id'] = params.pop('item_id')
+        return self._get_json("api/debrid/premiumize/item_details", params=params)
+
+    def premiumize_cloud_all(self, params=None):
+        """Fetches all Premiumize cloud files live from Orac (no caching)."""
+        return self._get_json("api/debrid/premiumize/cloud_all", params=params)
 
 
 class OracClientError(Exception):

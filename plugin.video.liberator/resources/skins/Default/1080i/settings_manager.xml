@@ -458,14 +458,6 @@
                         </item>
                         <item>
                             <visible>Container(2000).HasFocus(5)</visible>
-                            <property name="setting_label">Use AIOstreams</property>
-                            <property name="setting_type">boolean</property>
-                            <property name="setting_value">$INFO[Window(10000).Property(liberator.orac_use_aiostreams)]</property>
-                            <property name="setting_description">Use AIOstreams aggregator for Orac scraping</property>
-                            <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=orac_use_aiostreams)</onclick>
-                        </item>
-                        <item>
-                            <visible>Container(2000).HasFocus(5)</visible>
                             <property name="setting_label">Force English Audio Track</property>
                             <property name="setting_type">boolean</property>
                             <property name="setting_value">$INFO[Window(10000).Property(liberator.orac.force_english_audio)]</property>
@@ -1075,46 +1067,6 @@
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=omdb_api)</onclick>
                       </item>
 
-        <!-- AioStreams -->
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <property name="setting_label">AioStreams</property>
-                          <property name="setting_type">separator</property>
-                          <onclick>noop</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <property name="setting_label">AioStreams URL Selection</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.aiostreams_instance_name)]</property>
-                          <property name="setting_description">Select the URL instance to use for AioStreams scraper.</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_from_list&amp;setting_id=aiostreams_instance)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <visible>String.IsEqual(Window(10000).Property(liberator.aiostreams_instance),1)</visible>
-                          <property name="setting_label">    - Custom URL</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.aio.custom_url)]</property>
-                          <property name="setting_description">Enter custom URL for AioStreams scraper.</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=aio.custom_url)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <property name="setting_label">AioStreams Username</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.aio.username)]</property>
-                          <property name="setting_description">Enter here your AioStreams username.</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=aio.username)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <property name="setting_label">AioStreams Password</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.aio.password)]</property>
-                          <property name="setting_description">Enter here your AioStreams password.</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_string&amp;setting_id=aio.password)</onclick>
-                      </item>
         <!-- Real Debrid -->
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
@@ -1223,11 +1175,20 @@
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
                           <visible>String.IsEqual(Window(10000).Property(liberator.pm.token),empty_setting)</visible>
-                          <property name="setting_label">Authorize</property>
+                          <property name="setting_label">Status</property>
                           <property name="setting_type">action</property>
-                          <property name="setting_value">...</property>
-                          <property name="setting_description">Authorize your Premiumize account and use it within Liberator</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=premiumize.authenticate)</onclick>
+                          <property name="setting_value">Not authorised (Manage in Orac)</property>
+                          <property name="setting_description">Premiumize authorization is configured via the Orac Server Web Dashboard</property>
+                          <onclick>noop</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(liberator.pm.token),empty_setting)</visible>
+                          <property name="setting_label">Account ID</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(liberator.pm.account_id)]</property>
+                          <property name="setting_description">Authorised via Orac Server. Revoke or manage via the Orac Server Web Dashboard</property>
+                          <onclick>noop</onclick>
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
@@ -1237,16 +1198,6 @@
                           <property name="setting_value">$INFO[Window(10000).Property(liberator.pm.enabled)]</property>
                           <property name="setting_description">Enable the use of your Premiumize account</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=pm.enabled)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(liberator.pm.token),empty_setting)</visible>
-                          <visible>String.IsEqual(Window(10000).Property(liberator.pm.enabled),true)</visible>
-                          <property name="setting_label">Revoke Authorization</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.pm.account_id)]</property>
-                          <property name="setting_description">Revoke authorization of your Premiumize account</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=premiumize.revoke_authentication)</onclick>
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>

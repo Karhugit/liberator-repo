@@ -7,70 +7,17 @@ from threading import Thread
 from urllib.parse import urlencode
 from caches.main_cache import cache_object
 from caches.settings_cache import get_setting, set_setting
-from modules.utils import copy2clip
 from modules.source_utils import supported_video_extensions, seas_ep_filter, EXTRAS
 from modules import kodi_utils
 logger = kodi_utils.logger
 
-notification = kodi_utils.notification
-xbmc_monitor, progress_dialog, get_icon = kodi_utils.xbmc_monitor, kodi_utils.progress_dialog, kodi_utils.get_icon
-sleep, confirm_dialog, ok_dialog = kodi_utils.sleep, kodi_utils.confirm_dialog, kodi_utils.ok_dialog
 base_url = 'https://www.premiumize.me/api/'
-client_id = '888228107'
 user_agent = 'Liberator for Kodi'
 timeout = 20.0
-icon = get_icon('premiumize')
 
 class PremiumizeAPI:
 	def __init__(self):
 		self.token = get_setting('liberator.pm.token', 'empty_setting')
-
-	def auth(self):
-		self.token = ''
-		line = '%s[CR]%s[CR]%s'
-		data = {'response_type': 'device_code', 'client_id': client_id}
-		url = 'https://www.premiumize.me/token'
-		response = self._post(url, data)
-		user_code = response['user_code']
-		try: copy2clip(user_code)
-		except: pass
-		content = 'Authorize Debrid Services[CR]Navigate to: [B]%s[/B][CR]Enter the following code: [B]%s[/B]' % (response.get('verification_uri'), user_code)
-		progressDialog = progress_dialog('Premiumize Authorize', get_icon('pm_qrcode'))
-		progressDialog.update(content, 0)
-		device_code = response['device_code']
-		expires_in = int(response['expires_in'])
-		sleep_interval = int(response['interval'])
-		poll_url = 'https://www.premiumize.me/token'
-		data = {'grant_type': 'device_code', 'client_id': client_id, 'code': device_code}
-		start, time_passed = time.time(), 0
-		while not progressDialog.iscanceled() and time_passed < expires_in and not self.token:
-			sleep(1000 * sleep_interval)
-			response = self._post(poll_url, data)
-			if 'error' in response:
-				time_passed = time.time() - start
-				progress = int(100 * time_passed/float(expires_in))
-				progressDialog.update(content, progress)
-				continue
-			try:
-				progressDialog.close()
-				self.token = str(response['access_token'])
-				set_setting('pm.token', self.token)
-			except:
-				 ok_dialog(text='Error')
-				 break
-		try: progressDialog.close()
-		except: pass
-		if self.token:
-			account_info = self.account_info()
-			set_setting('pm.account_id', str(account_info['customer_id']))
-			set_setting('pm.enabled', 'true')
-			ok_dialog(text='Success')
-
-	def revoke(self):
-		set_setting('pm.token', 'empty_setting')
-		set_setting('pm.account_id', 'empty_setting')
-		set_setting('pm.enabled', 'false')
-		notification('Premiumize Authorization Reset', 3000)
 
 	def account_info(self):
 		url = 'account/info'

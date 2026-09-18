@@ -109,7 +109,6 @@ class LiberatorService(xbmc.Monitor):
             'del_internal_index': self.orac_client.del_internal_index,
             'internal_index_contents': self.orac_client.internal_index_contents,
             'update_debrid_tokens': self.orac_client.update_debrid_tokens,
-            'update_aiostreams_settings': self.orac_client.update_aiostreams_settings,
             'update_fanart_settings': self.orac_client.update_fanart_settings,
             'get_available_languages': self.orac_client.get_available_languages,
             'tags': self.orac_client.handle_tags,
@@ -118,6 +117,13 @@ class LiberatorService(xbmc.Monitor):
             'mark_undesirable': self.orac_client.mark_undesirable,
             'get_providers': self.orac_client.get_watch_providers,
             'get_collections': self.orac_client.get_collections,
+            'pm_cloud': self.orac_client.premiumize_cloud,
+            'pm_transfers': self.orac_client.premiumize_transfers,
+            'pm_account_info': self.orac_client.premiumize_account_info,
+            'pm_rename': self.orac_client.premiumize_rename,
+            'pm_delete': self.orac_client.premiumize_delete,
+            'pm_item_details': self.orac_client.premiumize_item_details,
+            'pm_cloud_all': self.orac_client.premiumize_cloud_all,
         }
         self.log_counter = 0
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)

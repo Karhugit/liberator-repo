@@ -252,12 +252,6 @@ def routing(sys):
             if mode == 'premiumize.pm_account_info':
                 from indexers.premiumize import pm_account_info
                 return pm_account_info()
-            if mode == 'premiumize.authenticate':
-                from apis.premiumize_api import PremiumizeAPI
-                return PremiumizeAPI().auth()
-            if mode == 'premiumize.revoke_authentication':
-                from apis.premiumize_api import PremiumizeAPI
-                return PremiumizeAPI().revoke()
             if mode == 'premiumize.rename':
                 from indexers.premiumize import pm_rename
                 return pm_rename(_get('file_type'), _get('id'), _get('name'))

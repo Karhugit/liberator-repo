@@ -4,7 +4,7 @@ import sys
 import json
 import math
 from datetime import datetime
-from apis.premiumize_api import PremiumizeAPI
+from apis.orac_api import _get_data_via_ipc
 from modules import kodi_utils
 from modules.source_utils import supported_video_extensions
 from modules.utils import clean_file_name, normalize
@@ -16,7 +16,6 @@ show_busy_dialog, hide_busy_dialog, show_text, set_view_mode = kodi_utils.show_b
 confirm_dialog, ok_dialog, kodi_dialog = kodi_utils.confirm_dialog, kodi_utils.ok_dialog, kodi_utils.kodi_dialog
 execute_builtin, default_pm_icon, fanart = kodi_utils.execute_builtin, kodi_utils.get_icon('premiumize'), kodi_utils.get_addon_fanart()
 extensions = supported_video_extensions()
-Premiumize = PremiumizeAPI()
 
 def pm_cloud(folder_id=None, folder_name=None):
 	def _builder():
@@ -55,8 +54,10 @@ def pm_cloud(folder_id=None, folder_name=None):
 				yield (url, listitem, is_folder)
 			except: pass
 	try:
-		cloud_files = Premiumize.user_cloud(folder_id)['content']
-		cloud_files = [i for i in cloud_files if ('link' in i and i['link'].lower().endswith(tuple(extensions))) or i['type'] == 'folder']
+		params = {'folder_id': folder_id} if folder_id else {}
+		resp = _get_data_via_ipc('pm_cloud', params=params)
+		cloud_files = resp.get('content', []) if isinstance(resp, dict) else []
+		cloud_files = [i for i in cloud_files if ('link' in i and i['link'].lower().endswith(tuple(extensions))) or i.get('type') == 'folder']
 		cloud_files.sort(key=lambda k: k['name'])
 		cloud_files.sort(key=lambda k: k['type'], reverse=True)
 	except: cloud_files = []
@@ -83,8 +84,9 @@ def pm_transfers():
 					url_params = {'mode': 'premiumize.pm_cloud', 'id': item['folder_id'], 'folder_name': normalize(item['name'])}
 				else:
 					is_folder = False
-					details = Premiumize.get_item_details(file_id)
-					url_link, size = details['link'], details['size']
+					details = _get_data_via_ipc('pm_item_details', params={'id': file_id})
+					url_link = details.get('link', '') if isinstance(details, dict) else ''
+					size = details.get('size', 0) if isinstance(details, dict) else 0
 					if url_link.startswith('/'): url_link = 'https' + url_link
 					display_size = float(int(size))/1073741824
 					display = '%02d | %s%% | [B]FILE[/B] | %.2f GB | [I]%s [/I]' % (count, str(progress), display_size, name)
@@ -100,7 +102,9 @@ def pm_transfers():
 				info_tag.setPlot(' ')
 				yield (url, listitem, is_folder)
 			except: pass
-	try: transfer_files = Premiumize.transfers_list()['transfers']
+	try:
+		data = _get_data_via_ipc('pm_transfers', params={})
+		transfer_files = data.get('transfers', []) if isinstance(data, dict) else []
 	except: transfer_files = []
 	handle = int(sys.argv[1])
 	add_items(handle, list(_builder()))
@@ -111,32 +115,33 @@ def pm_transfers():
 def pm_rename(file_type, file_id, current_name):
 	new_name = kodi_dialog().input('Liberator', defaultt=current_name)
 	if not new_name: return
-	result = Premiumize.rename_cache_item(file_type, file_id, new_name)
-	if result == 'success':
-		Premiumize.clear_cache()
+	resp = _get_data_via_ipc('pm_rename', json_body={'file_type': file_type, 'id': file_id, 'name': new_name})
+	if isinstance(resp, dict) and resp.get('status') == 'success':
 		execute_builtin('Container.Refresh')
 	else:
-		return ok_dialog(text='Error')
+		return ok_dialog(text=resp.get('message', 'Error') if isinstance(resp, dict) else 'Error')
 
 def pm_delete(file_type, file_id):
 	if not confirm_dialog(): return
-	result = Premiumize.delete_object(file_type, file_id)
-	if result == 'success':
-		Premiumize.clear_cache()
+	resp = _get_data_via_ipc('pm_delete', json_body={'file_type': file_type, 'id': file_id})
+	if isinstance(resp, dict) and resp.get('status') == 'success':
 		execute_builtin('Container.Refresh')
 	else:
-		return ok_dialog(text='Error')
+		return ok_dialog(text=resp.get('message', 'Error') if isinstance(resp, dict) else 'Error')
 
 def pm_account_info():
 	try:
 		show_busy_dialog()
-		account_info = Premiumize.account_info()
-		customer_id = account_info['customer_id']
-		expires = datetime.fromtimestamp(account_info['premium_until'])
+		account_info = _get_data_via_ipc('pm_account_info', params={})
+		if not account_info or account_info.get('status') != 'success':
+			hide_busy_dialog()
+			return ok_dialog(text='Failed to retrieve Premiumize account info')
+		customer_id = account_info.get('customer_id', 'Unknown')
+		expires = datetime.fromtimestamp(account_info.get('premium_until', 0))
 		days_remaining = (expires - datetime.today()).days
-		points_used = int(math.floor(float(account_info['space_used']) / 1073741824.0))
-		space_used = float(int(account_info['space_used']))/1073741824
-		percentage_used = str(round(float(account_info['limit_used']) * 100.0, 1))
+		points_used = int(math.floor(float(account_info.get('space_used', 0)) / 1073741824.0))
+		space_used = float(int(account_info.get('space_used', 0))) / 1073741824
+		percentage_used = str(round(float(account_info.get('limit_used', 0)) * 100.0, 1))
 		body = []
 		append = body.append
 		append('[B]Customer ID:[/B] %s' % customer_id)
@@ -152,8 +157,8 @@ def pm_account_info():
 
 def active_days():
 	try:
-		account_info = Premiumize.account_info()
-		expires = datetime.fromtimestamp(account_info['premium_until'])
+		account_info = _get_data_via_ipc('pm_account_info', params={})
+		expires = datetime.fromtimestamp(account_info.get('premium_until', 0))
 		days_remaining = (expires - datetime.today()).days
 	except: days_remaining = 0
 	return days_remaining
