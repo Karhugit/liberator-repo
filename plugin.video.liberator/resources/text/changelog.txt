@@ -1,3 +1,8 @@
+[COLOR dodgerblue][B]Version 2.2.27[/B][/COLOR]
+- Added Simkl Lists category and filtering to Lists Manager
+- Added support for Simkl trending and popular discovery feeds from Orac Server
+- Improved generic lists filtering and library synchronization for Simkl lists
+
 [COLOR dodgerblue][B]Version 2.2.26[/B][/COLOR]
 - Offloaded Premiumize authentication and revocation to Orac Server web dashboard
 - Routed Premiumize cloud file operations directly through Orac Server

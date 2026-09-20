@@ -57,6 +57,11 @@ def orac_lists_manager_categories(params, addon_handle):
                 'name': 'TMDB Lists',
                 'section': 'tmdb',
                 'description': 'TMDB generic lists'
+            },
+            {
+                'name': 'Simkl Lists',
+                'section': 'simkl',
+                'description': 'Simkl generic lists'
             }
         ]
         
@@ -120,13 +125,16 @@ def orac_lists_manager_filtered(params, addon_handle):
 
         if section == 'my_lists':
             # My Lists: user custom lists + External Indexes (user-created indexes)
-            lists = [item for item in lists if norm_user(item.get('user')) not in ['trakt', 'tmdb'] or norm_user(item.get('user')) == 'external_index']
+            lists = [item for item in lists if norm_user(item.get('user')) not in ['trakt', 'tmdb', 'simkl'] or norm_user(item.get('user')) == 'external_index']
         elif section == 'trakt':
             # Trakt: user is 'trakt'
             lists = [item for item in lists if norm_user(item.get('user')) == 'trakt']
         elif section == 'tmdb':
             # TMDB: user is 'tmdb' (generic TMDB public lists)
             lists = [item for item in lists if norm_user(item.get('user')) == 'tmdb']
+        elif section == 'simkl':
+            # Simkl: user is 'simkl' (generic Simkl public lists)
+            lists = [item for item in lists if norm_user(item.get('user')) == 'simkl']
         
         if not lists:
             xbmcgui.Dialog().notification(ADDON.getAddonInfo('name'), f"No lists found in {category_name}.", xbmcgui.NOTIFICATION_INFO)
@@ -241,8 +249,8 @@ def get_orac_lists(params, addon_handle): # Added addon_handle parameter
 
                         if not list_name: continue
 
-                        # CLIENT-SIDE FILTER: Hide Generic Lists (Trakt/TMDB/External Index) if not in Library
-                        if (user in ['trakt', 'tmdb', 'External Index', 'external_index'] or (user and user.lower() in ['trakt', 'tmdb', 'external index', 'external_index'])) and not add_to_library:
+                        # CLIENT-SIDE FILTER: Hide Generic Lists (Trakt/TMDB/Simkl/External Index) if not in Library
+                        if (user in ['trakt', 'tmdb', 'simkl', 'External Index', 'external_index'] or (user and user.lower() in ['trakt', 'tmdb', 'simkl', 'external index', 'external_index'])) and not add_to_library:
                             continue
 
                         list_name_upper = " ".join(w.capitalize() for w in list_name.split())
