@@ -32,6 +32,7 @@ class ListsManager(BaseDialog):
             'mdblist':    'FF90EE90',  # Light Green
             'tmdb':       'FFFFFFB3',  # Light Yellow
             'simkl':      'FFCCB0FF',  # Light Purple
+            'punchplay':  'FFFFC04D',  # Golden Amber
             'imdb':       'FFFFB6C1',  # Light Pink
         }
         _COLOR_CYCLE = ['FFADD8E6', 'FF90EE90', 'FFFFFFB3', 'FFCCB0FF', 'FFFFB6C1']
