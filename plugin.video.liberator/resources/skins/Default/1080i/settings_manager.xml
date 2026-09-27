@@ -464,6 +464,14 @@
                             <property name="setting_description">Force the player to select the English audio track if multiple streams are available</property>
                             <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=orac.force_english_audio)</onclick>
                         </item>
+                        <item>
+                            <visible>Container(2000).HasFocus(5)</visible>
+                            <property name="setting_label">Skip Intro If Possible</property>
+                            <property name="setting_type">boolean</property>
+                            <property name="setting_value">$INFO[Window(10000).Property(liberator.orac.skip_intro)]</property>
+                            <property name="setting_description">Automatically skip past the TV show intro if segment timestamps are available from Orac</property>
+                            <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=orac.skip_intro)</onclick>
+                        </item>
 <!-- GENERAL 10-->
         <!-- General -->
                       <item>

@@ -87,6 +87,9 @@ def orac_scraping():
 def orac_strict_dedupe():
 	return get_setting('liberator.orac.strict_dedupe', 'false') == 'true'
 
+def orac_skip_intro():
+	return get_setting('liberator.orac.skip_intro', 'false') == 'true'
+
 
 def source_folders_directory(media_type, source):
 	setting = 'liberator.%s.movies_directory' % source if media_type == 'movie' else 'liberator.%s.tv_shows_directory' % source

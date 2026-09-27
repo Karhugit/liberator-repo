@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.2.29[/B][/COLOR]
+- Added "Skip Intro If Possible" setting in Orac settings pane
+- Automatically skip TV show intros during playback when segment timestamps are provided by Orac Server
+
 [COLOR dodgerblue][B]Version 2.2.28[/B][/COLOR]
 - Added PunchPlay Lists category and filtering to Lists Manager
 - Added support for PunchPlay trending movies, shows, and anime feeds from Orac Server

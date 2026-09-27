@@ -233,6 +233,7 @@ default_settings = [
 {'setting_id': 'orac_scraping', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac.strict_dedupe', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'orac.force_english_audio', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'orac.skip_intro', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'default_addon_fanart', 'setting_type': 'path', 'setting_default': default_addon_fanart, 'browse_mode': '2'},
 #==================== Manage Updates
 {'setting_id': 'update.action', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'Prompt', '1': 'Automatic', '2': 'Notification', '3': 'Off'}},

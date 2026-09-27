@@ -166,6 +166,24 @@ class LiberatorPlayer(xbmc_player):
                         self.last_progress_point = int(self.current_point // 5) * 5
                         if not self.media_marked: self.media_watched_marker()
 
+                    # Auto-skip intro if available and enabled
+                    if self.media_type == 'episode' and not getattr(self, 'intro_skipped', False) and getattr(self, 'intro', None):
+                        try:
+                            from modules.settings import orac_skip_intro
+                            if orac_skip_intro():
+                                intro_start = float(self.intro.get('start_sec', self.intro.get('start', 0)))
+                                intro_end = float(self.intro.get('end_sec', self.intro.get('end', 0)))
+                                if intro_end > intro_start and intro_end > 0:
+                                    if self.curr_time >= intro_end:
+                                        self.intro_skipped = True
+                                    elif self.curr_time >= intro_start:
+                                        logger("orac", f"[LiberatorPlayer] Skipping intro: seeking from {self.curr_time:.1f}s to {intro_end:.1f}s")
+                                        self.seekTime(intro_end)
+                                        self.intro_skipped = True
+                                        notification('Skipped Intro', 3000)
+                        except Exception as e:
+                            logger("orac", f"[LiberatorPlayer] Error in skip intro: {e}")
+
                     if self.current_point >= set_watched:
                         if play_random_continual: self.run_random_continual(); break
                         if not self.media_marked: self.media_watched_marker()
@@ -403,6 +421,23 @@ class LiberatorPlayer(xbmc_player):
             self.playback_successful, self.cancel_all_playback = None, False
             self.playing_item = self.sources_object.playing_item
             logger("orac", f"Playing item set to: {self.playing_item}")
+            
+            # Intro / Outro segment timestamps
+            self.intro = self.orac_meta.get('intro') if self.orac_meta else None
+            self.outro = self.orac_meta.get('outro') if self.orac_meta else None
+            if isinstance(self.intro, str) and self.intro:
+                try: self.intro = json.loads(self.intro)
+                except Exception: self.intro = None
+            if isinstance(self.outro, str) and self.outro:
+                try: self.outro = json.loads(self.outro)
+                except Exception: self.outro = None
+            self.intro_skipped = False
+            if self.intro:
+                logger("orac", f"[LiberatorPlayer] Intro timestamps detected: {self.intro}")
+            if self.outro:
+                logger("orac", f"[LiberatorPlayer] Outro timestamps detected: {self.outro}")
+        else:
+            self.intro, self.outro, self.intro_skipped = None, None, False
 
     def set_playback_properties(self):
         try:

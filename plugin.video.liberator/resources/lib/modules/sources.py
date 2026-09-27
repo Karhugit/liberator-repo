@@ -831,7 +831,9 @@ class Sources():
                             'premiered': episode.get('first_aired'),
                             'overview': episode.get('episode_overview'),
                             'title': episode.get('episode_title'),
-                            'percent_watched': episode.get('percent_watched', 0)})
+                            'percent_watched': episode.get('percent_watched', 0),
+                            'intro': episode.get('intro') or self.params.get('intro'),
+                            'outro': episode.get('outro') or self.params.get('outro')})
                         aired_date = episode.get('air_date')
                         if get_datetime(aired_date, '%Y-%m-%d') > get_datetime(get_datetime(), '%Y-%m-%d'):
                             show_pack_enable = False
