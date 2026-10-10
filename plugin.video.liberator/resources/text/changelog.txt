@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.2.30[/B][/COLOR]
+- Removed legacy Premiumize configuration controls from Accounts tab in Settings
+
 [COLOR dodgerblue][B]Version 2.2.29[/B][/COLOR]
 - Added "Skip Intro If Possible" setting in Orac settings pane
 - Automatically skip TV show intros during playback when segment timestamps are provided by Orac Server
