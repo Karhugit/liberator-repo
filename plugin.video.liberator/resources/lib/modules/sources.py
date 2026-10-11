@@ -83,6 +83,9 @@ class Sources():
         self.count_tuple = (('sources_4k', '4K', self._quality_length), ('sources_1080p', '1080p', self._quality_length), ('sources_720p', '720p', self._quality_length),
                             ('sources_sd', '', self._quality_length_sd), ('sources_total', '', self._quality_length_final))
         self.playback_successful = None
+        # Kodi only honours the first setResolvedUrl() call per plugin handle. Once used,
+        # fallback sources must be started with Player.play() instead.
+        self.resolved_handle_used = False
         self.scrape_start_time = time.time()
 
     def playback_prep(self, params=None):

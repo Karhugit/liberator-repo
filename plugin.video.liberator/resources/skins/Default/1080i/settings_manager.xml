@@ -1425,11 +1425,20 @@
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
                           <visible>String.IsEqual(Window(10000).Property(liberator.tb.token),empty_setting)</visible>
-                          <property name="setting_label">Authorize</property>
+                          <property name="setting_label">Status</property>
                           <property name="setting_type">action</property>
-                          <property name="setting_value">...</property>
-                          <property name="setting_description">Authorize your TorBox account and use it within Liberator</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=torbox.authenticate)</onclick>
+                          <property name="setting_value">Not authorised (Manage in Orac)</property>
+                          <property name="setting_description">TorBox authorization is configured via the Orac Server Web Dashboard</property>
+                          <onclick>noop</onclick>
+                      </item>
+                      <item>
+                          <visible>Container(2000).HasFocus(50)</visible>
+                          <visible>!String.IsEqual(Window(10000).Property(liberator.tb.token),empty_setting)</visible>
+                          <property name="setting_label">Account ID</property>
+                          <property name="setting_type">action</property>
+                          <property name="setting_value">$INFO[Window(10000).Property(liberator.tb.account_id)]</property>
+                          <property name="setting_description">Authorised via Orac Server. Revoke or manage via the Orac Server Web Dashboard</property>
+                          <onclick>noop</onclick>
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>
@@ -1439,16 +1448,6 @@
                           <property name="setting_value">$INFO[Window(10000).Property(liberator.tb.enabled)]</property>
                           <property name="setting_description">Enable the use of your TorBox account</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=tb.enabled)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(liberator.tb.token),empty_setting)</visible>
-                          <visible>String.IsEqual(Window(10000).Property(liberator.tb.enabled),true)</visible>
-                          <property name="setting_label">Revoke Authorization</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.tb.token)]</property>
-                          <property name="setting_description">Revoke authorization of your TorBox account</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=torbox.revoke_authentication)</onclick>
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>

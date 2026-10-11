@@ -164,25 +164,6 @@ class TorBoxAPI:
 			if item['filename'].endswith('.m2ts'): return True
 		return False
 
-	def auth(self):
-		api_key = kodi_dialog().input('TorBox API Key:')
-		if not api_key: return
-		try:
-			self.token = api_key
-			r = self.account_info()
-			customer = r['data']['customer']
-			set_setting('tb.token', api_key)
-			set_setting('tb.enabled', 'true')
-			message = 'Success'
-		except: message = 'An Error Occurred'
-		ok_dialog(text=message)
-
-	def revoke(self):
-		if not confirm_dialog(): return
-		set_setting('tb.token', 'empty_setting')
-		set_setting('tb.enabled', 'false')
-		notification('TorBox Authorization Reset', 3000)
-
 	def clear_cache(self, clear_hashes=True):
 		try:
 			from caches.debrid_cache import debrid_cache

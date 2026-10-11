@@ -322,12 +322,6 @@ def routing(sys):
             if mode == 'torbox.tb_account_info':
                 from indexers.torbox import tb_account_info
                 return tb_account_info()
-            if mode == 'torbox.authenticate':
-                from apis.torbox_api import TorBoxAPI
-                return TorBoxAPI().auth()
-            if mode == 'torbox.revoke_authentication':
-                from apis.torbox_api import TorBoxAPI
-                return TorBoxAPI().revoke()
             if mode == 'torbox.delete':
                 from indexers.torbox import tb_delete
                 return tb_delete(_get('folder_id'), _get('media_type'))

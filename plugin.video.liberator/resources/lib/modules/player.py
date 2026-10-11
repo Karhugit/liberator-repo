@@ -40,18 +40,28 @@ class LiberatorPlayer(xbmc_player):
         volume_checker()
         
         listitem = self.make_listing()
-        # Use setResolvedUrl to let Kodi handle playback if possible
+        # Use setResolvedUrl to let Kodi handle playback if possible.
+        # Kodi only honours setResolvedUrl() ONCE per plugin handle; repeat calls are silently
+        # ignored. So when a previous source failed (e.g. an Easynews timeout) the fallback
+        # sources must be started with self.play(), otherwise they never start and time out.
         played_via_resolve = False
-        try:
-            # Check if we have a valid handle and this is a plugin call that expects resolution
-            handle = int(sys.argv[1])
-            if handle > 0:
-                xbmcplugin.setResolvedUrl(handle, True, listitem)
-                played_via_resolve = True
-        except:
-            pass
+        handle_used = getattr(self.sources_object, 'resolved_handle_used', False)
+        if handle_used:
+            self._stop_previous_attempt()
+        else:
+            try:
+                # Check if we have a valid handle and this is a plugin call that expects resolution
+                handle = int(sys.argv[1])
+                if handle > 0:
+                    xbmcplugin.setResolvedUrl(handle, True, listitem)
+                    played_via_resolve = True
+                    try: self.sources_object.resolved_handle_used = True
+                    except: pass
+            except:
+                pass
 
         if not played_via_resolve:
+            logger("orac", f"play_video: starting via Player.play() (handle_already_used={handle_used})")
             self.play(self.url, listitem)
 
         if not self.is_generic:
@@ -70,6 +80,21 @@ class LiberatorPlayer(xbmc_player):
                 self.stop()
             try: del self.kodi_monitor
             except: pass
+
+    def _stop_previous_attempt(self, max_wait_ms=5000):
+        """Ensure a previous, failed/hung stream (e.g. a timed-out Easynews open) is fully
+        stopped before the fallback source is started, so Kodi's player is free."""
+        try:
+            if not self.isPlaying(): return
+            logger("orac", "play_video: stopping previous attempt before fallback")
+            self.stop()
+            waited = 0
+            while self.isPlaying() and waited < max_wait_ms:
+                sleep(100)
+                waited += 100
+            sleep(250)
+        except Exception as e:
+            logger("orac", f"play_video: error stopping previous attempt - {e}")
 
     def seek_to_resume(self):
         """After playback is confirmed running, seek to the stored resume time if

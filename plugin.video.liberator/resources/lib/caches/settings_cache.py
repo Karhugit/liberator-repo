@@ -89,7 +89,7 @@ def set_setting(setting_id, value):
 		'pm.token', 'pm.enabled', 'pm.account_id',
 		'oc.token', 'oc.enabled',
 		'ed.token', 'ed.enabled',
-		'tb.token', 'tb.enabled',
+		'tb.token', 'tb.enabled', 'tb.account_id',
 		'easynews_user', 'easynews_password', 'provider.easynews'
 	}
 	if setting_id in debrid_settings and get_property('liberator.syncing_from_orac') != 'true':
@@ -385,6 +385,7 @@ default_settings = [
 #==================== TorBox
 {'setting_id': 'tb.token', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'tb.enabled', 'setting_type': 'boolean', 'setting_default': 'false'},
+{'setting_id': 'tb.account_id', 'setting_type': 'string', 'setting_default': 'empty_setting'},
 {'setting_id': 'store_resolved_to_cloud.torbox', 'setting_type': 'action', 'setting_default': '0', 'settings_options': {'0': 'None', '1': 'All', '2': 'Show Packs Only'}},
 {'setting_id': 'provider.tb_cloud', 'setting_type': 'boolean', 'setting_default': 'false'},
 {'setting_id': 'tb_cloud.title_filter', 'setting_type': 'boolean', 'setting_default': 'true'},
