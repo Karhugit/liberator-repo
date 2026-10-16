@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.2.32[/B][/COLOR]
+- Moved EasyNews authorisation to Orac Server web dashboard and removed legacy EasyNews settings from Accounts tab
+
 [COLOR dodgerblue][B]Version 2.2.31[/B][/COLOR]
 - Fixed fallback sources timing out after a failed/timed-out initial playback attempt
 - Moved TorBox authorization to Orac Server web dashboard and display status in settings
