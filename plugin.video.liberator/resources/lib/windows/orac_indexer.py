@@ -349,7 +349,9 @@ class OracIndexer(BaseDialog):
         if self.media_type == 'movie': sort_by_list = movie_sorts
         else: sort_by_list = tvshow_sorts
         choice = self.selection_dialog(self.chosen_item['label'], [{'name': i['name']} for i in sort_by_list], sort_by_list)
-        if choice != None: self.set_key_values(choice['id'], choice['name'])
+        if choice != None:
+            clean_id = str(choice['id']).lstrip('&').removeprefix('sort_by=')
+            self.set_key_values(clean_id, choice['name'])
 
     def countries(self):
         country_list = meta_lists.regions
@@ -579,6 +581,14 @@ class OracIndexer(BaseDialog):
                             for genre_id in genre_ids:
                                 genre_names.append(next((i['name'] for i in genre_list if str(i['id']) == genre_id), genre_id))
                             display_value = '|'.join(genre_names)
+                        elif key == 'with_sort':
+                            clean_sort = str(param_value).lstrip('&').removeprefix('sort_by=')
+                            self.set_attribute(self, values['key'], clean_sort)
+                            sort_list = movie_sorts if self.media_type == 'movie' else tvshow_sorts
+                            display_value = next(
+                                (i['name'] for i in sort_list if str(i['id']).lstrip('&').removeprefix('sort_by=') == clean_sort),
+                                clean_sort
+                            )
                         else: display_value = param_value
                         self.set_attribute(self, values['display_key'], display_value)
                 self.active_attributes = self.get_active_attributes()

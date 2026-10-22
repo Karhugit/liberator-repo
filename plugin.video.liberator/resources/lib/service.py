@@ -124,6 +124,13 @@ class LiberatorService(xbmc.Monitor):
             'pm_delete': self.orac_client.premiumize_delete,
             'pm_item_details': self.orac_client.premiumize_item_details,
             'pm_cloud_all': self.orac_client.premiumize_cloud_all,
+            'get_anime_list': self.orac_client.get_anime_list,
+            'get_anime_info': self.orac_client.get_anime_info,
+            'resolve_anime_coordinates': self.orac_client.resolve_anime_coordinates,
+            'get_anime_aliases': self.orac_client.get_anime_aliases,
+            'get_anime_status': self.orac_client.get_anime_status,
+            'sync_anime_mappings': self.orac_client.sync_anime_mappings,
+            'mark_anime_watched': self.orac_client.mark_anime_watched,
         }
         self.log_counter = 0
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)

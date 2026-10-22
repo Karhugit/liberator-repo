@@ -126,6 +126,27 @@ def routing(sys):
                     return orac_recommendations.display_shelf(params)
                 return orac_recommendations.build_recommendations(params)
 
+            if 'orac.anime' in mode:
+                from indexers import orac_anime
+                if mode == 'orac.anime.list':
+                    return orac_anime.build_anime_list(params, ADDON_HANDLE)
+                if mode == 'orac.anime.episodes':
+                    return orac_anime.build_anime_episodes(params, ADDON_HANDLE)
+                if mode == 'orac.anime.relations':
+                    return orac_anime.build_anime_relations(params, ADDON_HANDLE)
+                if mode == 'orac.anime.seasonal_menu':
+                    return orac_anime.build_anime_seasonal_menu(params, ADDON_HANDLE)
+                if mode == 'orac.anime.my_lists':
+                    return orac_anime.build_anime_my_lists_menu(params, ADDON_HANDLE)
+                if mode == 'orac.anime.search':
+                    return orac_anime.anime_search_dialog(params)
+                if mode == 'orac.anime.mark_watched':
+                    return orac_anime.mark_anime_watched_action(params)
+                if mode == 'orac.anime.mapping_info':
+                    return orac_anime.show_anime_mapping_info(params)
+                if mode == 'orac.anime.status':
+                    return orac_anime.show_anime_bridge_status(params)
+
         if 'navigator.' in mode:
             if mode == 'navigator.collections':
                 from windows.collections_window import open_collections_window

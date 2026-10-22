@@ -16,6 +16,7 @@ anime_random_converts = {'navigator.genres': 'tmdb_anime_genres', 'navigator.pro
 
 root_list = [
 {'name': 'My Library', 'mode': 'navigator.my_library', 'iconImage': 'lists'},
+{'name': 'Anime', 'mode': 'navigator.anime', 'iconImage': 'anime'},
 {'name': 'External Indexes', 'mode': 'navigator.index', 'iconImage': 'lists'},
 {'name': 'Search', 'mode': 'navigator.search', 'iconImage': 'search'},
 {'name': 'Lists Manager', 'mode': 'orac.list.list_manager', 'iconImage': 'lists'},

@@ -135,6 +135,10 @@ def mark_movie(params):
         resume_point = 100
 
     ipc_params = {'type': 'movie', 'tmdb_id': tmdb_id, 'percent_watched': resume_point}
+    if params.get('anilist_id'):
+        ipc_params['anilist_id'] = str(params['anilist_id'])
+    if params.get('abs_ep') or params.get('absolute_episode'):
+        ipc_params['absolute_episode'] = str(params.get('abs_ep') or params.get('absolute_episode'))
     _get_data_via_ipc('mark_movie_watched', ipc_params)
     if params.get('from_playback') != 'true':
         refresh_container()
@@ -170,6 +174,10 @@ def mark_episode(params):
         resume_point = 100
 
     ipc_params = {'type': 'episode', 'tmdb_id': tmdb_id, 'season': season, 'episode': episode, 'percent_watched': resume_point}
+    if params.get('anilist_id'):
+        ipc_params['anilist_id'] = str(params['anilist_id'])
+    if params.get('abs_ep') or params.get('absolute_episode'):
+        ipc_params['absolute_episode'] = str(params.get('abs_ep') or params.get('absolute_episode'))
     _get_data_via_ipc('mark_episode_watched', ipc_params)
     if params.get('from_playback') != 'true':
         refresh_container()

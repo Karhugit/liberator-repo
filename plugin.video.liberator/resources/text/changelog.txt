@@ -1,3 +1,11 @@
+[COLOR dodgerblue][B]Version 2.2.33[/B][/COLOR]
+- Added dedicated Anime hub to main root menu powered by Orac Server's Dual-Indexing Bridge
+- Added native AniList discovery lists (Trending, Popular, Top 100, Currently Airing, Seasonal Anime, Movies, User Lists, and Search)
+- Added absolute episode coordinate mapping badges [SxxExx] for anime releases
+- Integrated bidirectional watch progress tracking between AniList, Trakt, Simkl, and PunchPlay
+- Added Anime Bridge Status & Sync tool to view dataset metrics and trigger mapping updates
+- Added automatic metadata fallback using Romaji/fansub title queries when TMDb entries are absent or merged
+
 [COLOR dodgerblue][B]Version 2.2.32[/B][/COLOR]
 - Moved EasyNews authorisation to Orac Server web dashboard and removed legacy EasyNews settings from Accounts tab
 

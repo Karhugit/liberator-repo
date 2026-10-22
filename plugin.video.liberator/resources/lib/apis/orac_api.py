@@ -305,6 +305,34 @@ class OracClient:
         """Fetches all Premiumize cloud files live from Orac (no caching)."""
         return self._get_json("api/debrid/premiumize/cloud_all", params=params)
 
+    def get_anime_list(self, params=None):
+        """Fetches an anime list (trending, popular, airing, seasonal, search, user_*) from Orac."""
+        return self._get_json("anime/list", params=params)
+
+    def get_anime_info(self, params=None):
+        """Fetches detailed anime info + coordinate-mapped episode list from Orac."""
+        return self._get_json("anime/info", params=params)
+
+    def resolve_anime_coordinates(self, params=None):
+        """Bidirectionally resolves (anilist_id, episode) <-> (tmdb_id, season, episode)."""
+        return self._get_json("anime/resolve", params=params)
+
+    def get_anime_aliases(self, params=None):
+        """Fetches Romaji, English, Native, and synonym titles + scraper queries from Orac."""
+        return self._get_json("anime/aliases", params=params)
+
+    def get_anime_status(self, params=None):
+        """Fetches Anime Bridge database counts, watermarks, and auth status from Orac."""
+        return self._get_json("anime/status", params=params)
+
+    def sync_anime_mappings(self, params=None):
+        """Triggers a background sync of Manami & AniBridge datasets on Orac."""
+        return self._get_json("anime/sync_mappings", params=params, post=True)
+
+    def mark_anime_watched(self, params=None):
+        """Scrobbles anime playback via Orac's bidirectional /anime/watched endpoint."""
+        return self._get_json("anime/watched", params=params, put=True)
+
 
 class OracClientError(Exception):
     """Custom exception for Orac client errors."""

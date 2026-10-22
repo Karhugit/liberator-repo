@@ -109,6 +109,8 @@ class Sources():
         self.folders_ignore_filters = get_setting('liberator.results.folders_ignore_filters', 'false') == 'true'
         self.filter_size_method = int(get_setting('liberator.results.filter_size_method', '0'))
         self.media_type, self.tmdb_id = params_get('media_type'), params_get('tmdb_id')
+        self.anilist_id = params_get('anilist_id')
+        self.abs_ep = params_get('abs_ep') or params_get('absolute_episode')
         self.custom_title, self.custom_year = params_get('custom_title', None), params_get('custom_year', None)
         self.episode_group_label = params_get('episode_group_label', '')
         try:
@@ -761,8 +763,37 @@ class Sources():
     def get_meta(self):
         self.orac_meta = None
         if self.media_type == 'movie':
-            ipc_params = {'tmdb_id': self.tmdb_id, 'item_type': 'movie'}
-            movies = _get_data_via_ipc('get_movie_details',params=ipc_params)
+            movies = None
+            if self.tmdb_id:
+                ipc_params = {'tmdb_id': self.tmdb_id, 'item_type': 'movie'}
+                movies = _get_data_via_ipc('get_movie_details', params=ipc_params)
+            if (not movies or not isinstance(movies, dict) or not movies.get('title')) and getattr(self, 'anilist_id', None):
+                anime_data = _get_data_via_ipc('get_anime_info', params={'anilist_id': str(self.anilist_id)})
+                if anime_data and anime_data.get('success'):
+                    disp_title = anime_data.get('title') or anime_data.get('english_title') or anime_data.get('romaji_title')
+                    movies = {
+                        'tmdb_id': anime_data.get('tmdb_id') or self.tmdb_id,
+                        'imdb_id': anime_data.get('imdb_id') or '',
+                        'title': disp_title,
+                        'original_title': anime_data.get('romaji_title'),
+                        'year': anime_data.get('year') or anime_data.get('season_year'),
+                        'runtime': anime_data.get('duration') or 90,
+                        'poster_path': anime_data.get('poster_path'),
+                        'fanart_path': anime_data.get('fanart_path'),
+                        'clearlogo_path': '',
+                        'genres': anime_data.get('genres', []),
+                        'overview': anime_data.get('overview'),
+                        'release_date': '',
+                        'rating': anime_data.get('rating', 0.0),
+                        'studio': (anime_data.get('studios') or [''])[0] if anime_data.get('studios') else '',
+                        'tagline': '',
+                        'country': ['JP'],
+                        'watched': 0
+                    }
+                    if anime_data.get('tmdb_id'):
+                        self.tmdb_id = str(anime_data['tmdb_id'])
+            if not movies:
+                movies = {}
 # Build orac_meta dict with everything needed for movies
             self.orac_movie_meta = {
                 'media_type': 'movie',
@@ -793,8 +824,73 @@ class Sources():
             logger('Sources', 'get_meta (movie) orac_movie_meta: %s' % ('Success' if self.orac_movie_meta else 'Failed'))
             return
         else:
-            ipc_params = {'tmdb_id': self.tmdb_id, 'item_type': 'tvshow', 'season': self.season}
-            show_meta = _get_data_via_ipc('get_show_details', params=ipc_params)
+            show_meta = None
+            if self.tmdb_id:
+                ipc_params = {'tmdb_id': self.tmdb_id, 'item_type': 'tvshow', 'season': self.season}
+                show_meta = _get_data_via_ipc('get_show_details', params=ipc_params)
+
+            if (not show_meta or not isinstance(show_meta, dict) or not show_meta.get('title')) and getattr(self, 'anilist_id', None):
+                logger('Sources', f'get_meta: Falling back to get_anime_info for AniList #{self.anilist_id}')
+                anime_data = _get_data_via_ipc('get_anime_info', params={'anilist_id': str(self.anilist_id)})
+                if anime_data and anime_data.get('success'):
+                    episodes_list = anime_data.get('episode_list') or []
+                    matched_ep = None
+                    abs_int = int(self.abs_ep) if getattr(self, 'abs_ep', None) else int(self.episode or 1)
+                    for ep in episodes_list:
+                        if ep.get('absolute_episode') == abs_int or ep.get('episode') == abs_int:
+                            matched_ep = ep
+                            break
+                    if not matched_ep and episodes_list:
+                        matched_ep = episodes_list[min(abs_int - 1, len(episodes_list) - 1)]
+
+                    disp_title = anime_data.get('title') or anime_data.get('english_title') or anime_data.get('romaji_title')
+                    self.orac_meta = {
+                        'title': disp_title,
+                        'original_title': anime_data.get('romaji_title'),
+                        'year': anime_data.get('year') or anime_data.get('season_year'),
+                        'poster_path': anime_data.get('poster_path'),
+                        'fanart_path': anime_data.get('fanart_path'),
+                    }
+                    self.meta = self.orac_meta
+                    self.orac_episode_meta = {
+                        'media_type': 'episode',
+                        'background': self.background,
+                        'custom_title': self.custom_title or disp_title,
+                        'custom_year': self.custom_year or (anime_data.get('year') or anime_data.get('season_year')),
+                        'tmdb_id': (matched_ep or {}).get('tmdb_id') or anime_data.get('tmdb_id') or self.tmdb_id,
+                        'imdb_id': anime_data.get('imdb_id') or '',
+                        'original_title': anime_data.get('romaji_title'),
+                        'year': anime_data.get('year') or anime_data.get('season_year'),
+                        'season': (matched_ep or {}).get('western_season') or self.season or 1,
+                        'episode': (matched_ep or {}).get('western_episode') or self.episode or abs_int,
+                        'tvshowtitle': disp_title,
+                        'genre': anime_data.get('genres', []),
+                        'status': anime_data.get('status'),
+                        'tvdb_id': (matched_ep or {}).get('tvdb_id') or anime_data.get('tvdb_id', 0),
+                        'rating': anime_data.get('rating', 0.0),
+                        'network': (anime_data.get('studios') or [''])[0] if anime_data.get('studios') else '',
+                        'tagline': '',
+                        'country': ['JP'],
+                        'total_seasons': 1,
+                        'episode_count': len(episodes_list) or anime_data.get('episodes', 1),
+                        'duration': anime_data.get('duration') or 24,
+                        'poster': (matched_ep or {}).get('thumbnail_path') or anime_data.get('poster_path'),
+                        'fanart': anime_data.get('fanart_path'),
+                        'clearlogo': '',
+                        'premiered': '',
+                        'overview': anime_data.get('overview'),
+                        'title': (matched_ep or {}).get('title') or f'Episode {abs_int}',
+                        'percent_watched': 0,
+                        'show_pack_enable': False,
+                        'season_pack_enable': False,
+                        'total_episodes': len(episodes_list) or anime_data.get('episodes', 1),
+                    }
+                    new_tmdb = (matched_ep or {}).get('tmdb_id') or anime_data.get('tmdb_id')
+                    if new_tmdb and str(new_tmdb).isdigit():
+                        self.tmdb_id = str(new_tmdb)
+                    logger('Sources', 'get_meta (episode via get_anime_info) success: %s' % disp_title)
+                    return
+
             self.orac_meta = show_meta if show_meta else {}
             self.meta = self.orac_meta
             self.orac_episode_meta = {
@@ -863,6 +959,11 @@ class Sources():
                                 'expiry_times': expiry_times,
                                 'total_seasons': self.orac_episode_meta.get('total_seasons', 1),
                                 'tvshowtitle': self.orac_episode_meta.get('tvshowtitle')}
+            if getattr(self, 'anilist_id', None):
+                self.search_info['anilist_id'] = str(self.anilist_id)
+            if getattr(self, 'abs_ep', None):
+                self.search_info['absolute_episode'] = str(self.abs_ep)
+                self.search_info['abs_ep'] = str(self.abs_ep)
             return
 
         else:
@@ -872,6 +973,11 @@ class Sources():
             expiry_times = (168,240,240)
             self.search_info = {'media_type': self.media_type, 'item_type': self.media_type, 'title': title, 'year': str(year), 'tmdb_id': self.tmdb_id, 'imdb_id': self.orac_movie_meta.get('imdb_id'),
                                 'aliases': aliases, 'tvdb_id': self.orac_movie_meta.get('tvdb_id',0), 'expiry_times': expiry_times}
+            if getattr(self, 'anilist_id', None):
+                self.search_info['anilist_id'] = str(self.anilist_id)
+            if getattr(self, 'abs_ep', None):
+                self.search_info['absolute_episode'] = str(self.abs_ep)
+                self.search_info['abs_ep'] = str(self.abs_ep)
             return
 
     def _get_module(self, module_type, function):

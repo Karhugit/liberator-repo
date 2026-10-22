@@ -140,6 +140,22 @@ class Navigator:
         self.add({'mode': 'orac.force_sync', 'isFolder': 'false'}, 'Force Resync', 'settings')
         self.end_directory()
 
+    def anime(self):
+        self.add({'mode': 'orac.anime.list', 'list_type': 'trending', 'name': 'Trending Anime'}, 'Trending Anime', 'anime')
+        self.add({'mode': 'orac.anime.list', 'list_type': 'popular', 'name': 'Popular Anime'}, 'Popular Anime', 'anime')
+        self.add({'mode': 'orac.anime.list', 'list_type': 'airing', 'name': 'Currently Airing'}, 'Currently Airing', 'anime')
+        self.add({'mode': 'orac.anime.seasonal_menu', 'name': 'Seasonal Anime'}, 'Seasonal Anime', 'anime')
+        self.add({'mode': 'orac.anime.list', 'list_type': 'top_rated', 'name': 'Top Rated Anime'}, 'Top Rated Anime', 'anime')
+        self.add({'mode': 'orac.anime.list', 'list_type': 'upcoming', 'name': 'Upcoming Anime'}, 'Upcoming Anime', 'anime')
+        self.add({'mode': 'orac.anime.list', 'list_type': 'movies', 'name': 'Anime Movies'}, 'Anime Movies', 'movies')
+        self.add({'mode': 'orac.anime.my_lists', 'name': 'My AniList'}, 'My AniList', 'trakt')
+        self.add({'mode': 'orac.anime.search', 'name': 'Search Anime', 'isFolder': 'false'}, 'Search Anime', 'search')
+        self.add({'mode': 'orac.anime.status', 'name': 'Anime Bridge Status', 'isFolder': 'false'}, 'Anime Bridge Status & Sync', 'settings')
+        self.end_directory()
+
+    def ml_anime(self):
+        return self.anime()
+
     def ml_movies(self):
         self.add({'mode': 'orac.list.get_orac_lists', 'list_type': 'my_lists', 'category_name': 'My Lists', 'item_type': 'movie'}, 'My Lists', 'trakt')
         self.add({'mode': 'orac.list.get_orac_lists', 'list_type': 'generic_lists', 'category_name': 'Generic Lists', 'item_type': 'movie'}, 'Generic Lists', 'trakt')

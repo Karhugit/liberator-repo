@@ -363,10 +363,18 @@ class LiberatorPlayer(xbmc_player):
         logger("orac", "In media_watched_marker")
         if self.media_marked and not force_watched: return
         try:
+            anilist_id = getattr(self.sources_object, 'anilist_id', None)
+            abs_ep = getattr(self.sources_object, 'abs_ep', None)
+
             if self.current_point >= set_watched or force_watched:
                 watched_params = {'action': 'mark_as_watched', 'tmdb_id': self.tmdb_id, 'title': self.title, 'year': self.year, 'season': self.season, 'episode': self.episode,
                                     'tvdb_id': self.tvdb_id, 'from_playback': 'true',
                                     'media_type': self.media_type}
+                if anilist_id:
+                    watched_params['anilist_id'] = str(anilist_id)
+                if abs_ep:
+                    watched_params['abs_ep'] = str(abs_ep)
+                    watched_params['absolute_episode'] = str(abs_ep)
                 self.media_marked = True
                 if self.media_type == 'episode':
                     result = mark_episode(watched_params)
@@ -375,6 +383,11 @@ class LiberatorPlayer(xbmc_player):
             else:
                 progress_params = {'media_type': self.media_type, 'tmdb_id': self.tmdb_id, 'curr_time': self.curr_time, 'total_time': self.total_time,
                                     'title': self.title, 'season': self.season, 'episode': self.episode, 'from_playback': 'true'}
+                if anilist_id:
+                    progress_params['anilist_id'] = str(anilist_id)
+                if abs_ep:
+                    progress_params['abs_ep'] = str(abs_ep)
+                    progress_params['absolute_episode'] = str(abs_ep)
                 if self.media_type == 'episode':
                     result = mark_episode(progress_params)
                 else:
