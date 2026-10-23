@@ -1,3 +1,8 @@
+[COLOR dodgerblue][B]Version 2.2.34[/B][/COLOR]
+- Added date-based episode scraping and query generation for daily and date-formatted TV shows (e.g. Jeopardy, talk shows)
+- Integrated AniList user authorisation and account management in Orac Server Services tab
+- Maintained dedicated Anime Hub directly on the Main Root Menu
+
 [COLOR dodgerblue][B]Version 2.2.33[/B][/COLOR]
 - Added dedicated Anime hub to main root menu powered by Orac Server's Dual-Indexing Bridge
 - Added native AniList discovery lists (Trending, Popular, Top 100, Currently Airing, Seasonal Anime, Movies, User Lists, and Search)

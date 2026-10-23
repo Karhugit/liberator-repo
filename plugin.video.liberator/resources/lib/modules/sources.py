@@ -956,6 +956,8 @@ class Sources():
                                 'aliases': aliases,
                                 'season': str(self.get_season()), 'episode': str(self.get_episode()), 'tvdb_id': self.orac_episode_meta.get('tvdb_id',0),
                                 'ep_name': self.orac_episode_meta.get('title'),
+                                'premiered': self.orac_episode_meta.get('premiered') or self.orac_episode_meta.get('air_date'),
+                                'air_date': self.orac_episode_meta.get('air_date') or self.orac_episode_meta.get('premiered'),
                                 'expiry_times': expiry_times,
                                 'total_seasons': self.orac_episode_meta.get('total_seasons', 1),
                                 'tvshowtitle': self.orac_episode_meta.get('tvshowtitle')}
