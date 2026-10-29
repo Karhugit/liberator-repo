@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.2.35[/B][/COLOR]
+- Updated Trakt default client credentials to support public client ID
+- Added support for Orac Server v1.5.5 Trakt Calendars and Anime Hub discovery feeds
+
 [COLOR dodgerblue][B]Version 2.2.34[/B][/COLOR]
 - Added date-based episode scraping and query generation for daily and date-formatted TV shows (e.g. Jeopardy, talk shows)
 - Integrated AniList user authorisation and account management in Orac Server Services tab
