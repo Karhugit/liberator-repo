@@ -73,6 +73,9 @@ def routing(sys):
                 if '.build_orac_list' in mode:
                     from indexers.orac_lists import build_orac_list
                     return build_orac_list(params, ADDON_HANDLE)
+                if '.list_manager_window' in mode or '.open_manager_window' in mode:
+                    from indexers.orac_lists import orac_lists_manager_window
+                    return orac_lists_manager_window(params)
                 if '.list_manager_filtered' in mode:
                     from indexers.orac_lists import orac_lists_manager_filtered
                     return orac_lists_manager_filtered(params, ADDON_HANDLE)

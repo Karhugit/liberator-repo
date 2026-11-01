@@ -36,12 +36,26 @@ from apis.orac_api import OracClientError
 ADDON_ID = 'plugin.video.liberator'
 ADDON = xbmcaddon.Addon(ADDON_ID)
 
-# This method shows the three main categories for organizing lists
+# This method shows the main categories for organizing lists
 def orac_lists_manager_categories(params, addon_handle):
     logger("orac_lists_manager_categories", "Displaying list categories")
     
     try:
-        # Create three category folders
+        # Dialog view item at the top
+        dialog_params = {
+            'mode': 'orac.list.list_manager_window',
+            'section': 'all',
+            'category_name': 'All Lists'
+        }
+        dialog_url = build_url(dialog_params)
+        dialog_item = make_listitem()
+        dialog_item.setLabel('[COLOR dodgerblue][B]Lists Manager (Interactive Dialog)[/B][/COLOR]')
+        dialog_item.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': fanart})
+        dialog_info = dialog_item.getVideoInfoTag()
+        dialog_info.setPlot('Open interactive window to manage and toggle lists in library')
+        add_item(addon_handle, dialog_url, dialog_item, False)
+
+        # Create category folders
         categories = [
             {
                 'name': 'My Lists',
@@ -84,11 +98,20 @@ def orac_lists_manager_categories(params, addon_handle):
             info_tag = listitem.getVideoInfoTag()
             info_tag.setPlot(category['description'])
             
-            add_item(addon_handle, url, listitem, False)
+            sec_dialog_params = {
+                'mode': 'orac.list.list_manager_window',
+                'section': category['section'],
+                'category_name': category['name']
+            }
+            listitem.addContextMenuItems([
+                ('[B]Open in Lists Manager Dialog[/B]', f'RunPlugin({build_url(sec_dialog_params)})')
+            ])
+
+            add_item(addon_handle, url, listitem, True)
         
         set_content(addon_handle, 'files')
         set_category(addon_handle, 'Lists Manager')
-        set_sort_method(addon_handle, 'label')
+        set_sort_method(addon_handle, 'none')
         end_directory(addon_handle)
         set_view_mode('view.main')
         
@@ -100,8 +123,7 @@ def orac_lists_manager_categories(params, addon_handle):
         xbmcplugin.endOfDirectory(addon_handle, succeeded=False)
 
 
-# This method gets a list of lists filtered by section, and formats them for display including item count.
-# The URL attached to each item drives what happens in routing if the list is selected
+# This method gets a list of lists filtered by section, and formats them for display as browsable directory items.
 def orac_lists_manager_filtered(params, addon_handle):
     logger("orac_lists_manager_filtered", f"Params={params}")
     
@@ -110,9 +132,9 @@ def orac_lists_manager_filtered(params, addon_handle):
     category_name = params.get('category_name', 'Lists')
     
     list_type = 'my_lists'
-    item_type = 'all'
+    item_type = params.get('item_type', 'all')
 
-    lists = [] # Initialize your list of lists/categories
+    lists = []
 
     try:
         ipc_params = {'name': list_type, 'item_type': item_type, 'exclude_empty': 'false'}
@@ -147,16 +169,154 @@ def orac_lists_manager_filtered(params, addon_handle):
         if not lists:
             xbmcgui.Dialog().notification(ADDON.getAddonInfo('name'), f"No lists found in {category_name}.", xbmcgui.NOTIFICATION_INFO)
             logger("Orac Lists", f"No lists in section {section}")
+            xbmcplugin.endOfDirectory(addon_handle, succeeded=True)
             return
 
-        # New UI: Open Lists Manager Window
+        _SOURCE_COLORS = {
+            'trakt':      'FFADD8E6',  # Light Blue
+            'mdblist':    'FF90EE90',  # Light Green
+            'tmdb':       'FFFFFFB3',  # Light Yellow
+            'simkl':      'FFCCB0FF',  # Light Purple
+            'punchplay':  'FFFFC04D',  # Golden Amber
+            'imdb':       'FFFFB6C1',  # Light Pink
+        }
+
+        def _process_orac_list_category_items():
+            for item in lists:
+                try:
+                    cm = []
+                    cm_append = cm.append
+
+                    list_name = item.get('name')
+                    user = item.get('user')
+                    owner = item.get('owner', user)
+                    slug = item.get('slug')
+                    item_count = item.get('item_count', 0)
+                    add_to_library = item.get('add_to_library', False)
+                    source = item.get('source', '')
+
+                    if not list_name:
+                        continue
+
+                    list_name_upper = " ".join(w.capitalize() for w in list_name.split())
+                    
+                    url_params = {
+                        'mode': 'orac.list.build_orac_list',
+                        'user': owner or user,
+                        'slug': slug,
+                        'list_type': list_type,
+                        'list_name': list_name,
+                        'item_type': item_type,
+                        'add_to_library': 'true' if add_to_library else 'false'
+                    }
+                    url = build_url(url_params)
+
+                    # Context Menu: Add/Remove from Library
+                    update = 'Remove' if add_to_library else 'Add'
+                    add_to_lib_params = {
+                        'mode': 'orac.add_to_library',
+                        'list_name': list_name,
+                        'item_type': item_type,
+                        'url': url,
+                        'update': update,
+                        'user': user,
+                        'slug': slug
+                    }
+                    if add_to_library:
+                        cm_append(('[B]Remove from Library[/B]', f'RunPlugin({build_url(add_to_lib_params)})'))
+                    else:
+                        cm_append(('[B]Add to Library[/B]', f'RunPlugin({build_url(add_to_lib_params)})'))
+
+                    # Unlike Trakt list if applicable
+                    trakt_user = get_setting('liberator.trakt.user')
+                    if source == 'trakt' and (user != 'trakt' and user != trakt_user):
+                        unlike_list_params = {
+                            'mode': 'orac.list.unlike_list',
+                            'list_name': list_name,
+                            'user': user,
+                            'slug': slug
+                        }
+                        cm_append(('[B]Unlike Trakt List[/B]', f'RunPlugin({build_url(unlike_list_params)})'))
+
+                    # Open in Interactive Dialog
+                    open_dialog_params = {
+                        'mode': 'orac.list.list_manager_window',
+                        'section': section,
+                        'category_name': category_name
+                    }
+                    cm_append(('[B]Open in Lists Manager Dialog[/B]', f'RunPlugin({build_url(open_dialog_params)})'))
+
+                    # Color and library status badge
+                    color = _SOURCE_COLORS.get((source or '').lower(), 'FFADD8E6')
+                    status_tag = '[COLOR lime][In Library][/COLOR]' if add_to_library else '[COLOR orange][Not in Library][/COLOR]'
+                    display = f"[COLOR {color}]{list_name_upper}[/COLOR] {status_tag} [I]({owner}) (x{item_count})[/I]"
+
+                    listitem = make_listitem()
+                    listitem.setLabel(display)
+                    listitem.setArt({'icon': trakt_icon, 'poster': trakt_icon, 'thumb': trakt_icon, 'fanart': fanart, 'banner': fanart})
+                    info_tag = listitem.getVideoInfoTag()
+                    info_tag.setPlot(f"{list_name} - {status_tag}")
+                    listitem.addContextMenuItems(cm)
+                    yield (url, listitem, True)
+                except Exception as e:
+                    logger("Liberator", f"Lists: Error processing list item: {e}")
+                    pass
+
+        add_items(addon_handle, list(_process_orac_list_category_items()))
+        set_content(addon_handle, 'files')
+        set_category(addon_handle, category_name)
+        set_sort_method(addon_handle, 'label')
+        end_directory(addon_handle)
+        set_view_mode('view.main')
+
+    except Exception as e:
+        logger("orac_lists_manager_filtered", f"An unexpected error occurred: {e}")
+        import traceback
+        logger("orac_lists_manager_filtered", f"Traceback: {traceback.format_exc()}")
+        xbmcgui.Dialog().notification(ADDON.getAddonInfo('name'), f"Error loading Orac list categories: {e}", xbmcgui.NOTIFICATION_ERROR)
+        xbmcplugin.endOfDirectory(addon_handle, succeeded=False)
+
+
+# Opens the interactive modal window dialog for managing lists
+def orac_lists_manager_window(params):
+    logger("orac_lists_manager_window", f"Params={params}")
+    section = params.get('section', 'all')
+    category_name = params.get('category_name', 'Lists Manager')
+    list_type = 'my_lists'
+    item_type = params.get('item_type', 'all')
+
+    try:
+        ipc_params = {'name': list_type, 'item_type': item_type, 'exclude_empty': 'false'}
+        lists = _get_data_via_ipc('get_lists', params=ipc_params)
+
+        if not lists:
+            xbmcgui.Dialog().notification(ADDON.getAddonInfo('name'), "No lists found from Orac.", xbmcgui.NOTIFICATION_INFO)
+            return
+
+        def norm_user(u):
+            return (u or '').lower().replace(' ', '_')
+
+        if section == 'my_lists':
+            lists = [item for item in lists if norm_user(item.get('user')) not in ['trakt', 'tmdb', 'simkl', 'punchplay'] or norm_user(item.get('user')) == 'external_index']
+        elif section == 'trakt':
+            lists = [item for item in lists if norm_user(item.get('user')) == 'trakt']
+        elif section == 'tmdb':
+            lists = [item for item in lists if norm_user(item.get('user')) == 'tmdb']
+        elif section == 'simkl':
+            lists = [item for item in lists if norm_user(item.get('user')) == 'simkl']
+        elif section == 'punchplay':
+            lists = [item for item in lists if norm_user(item.get('user')) == 'punchplay']
+
+        if not lists:
+            xbmcgui.Dialog().notification(ADDON.getAddonInfo('name'), f"No lists found in {category_name}.", xbmcgui.NOTIFICATION_INFO)
+            return
+
         from windows.lists_manager import ListsManager
         window = ListsManager('lists_manager.xml', kodi_utils.addon_path(), lists=lists, category_name=category_name, item_type=item_type)
         selected_list = window.run()
         del window
-        
+
         if selected_list:
-            # Navigate to the contents of the selected list
             url_params = {
                 'mode': 'orac.list.build_orac_list',
                 'user': selected_list.get('user'),
@@ -167,25 +327,13 @@ def orac_lists_manager_filtered(params, addon_handle):
                 'add_to_library': 'true' if selected_list.get('add_to_library') else 'false'
             }
             url = build_url(url_params)
-            # Use Container.Update to navigate within the plugin
             xbmc.executebuiltin(f'Container.Update({url})')
-        
-        # We don't need to endDirectory if we opened a modal and then navigated? 
-        # Actually since this function was called by the plugin router, it expects a directory listing OR a redirect.
-        # Since we ran a modal loop blocking, we are still in the original call.
-        # If we didn't select anything (cancelled), we should probably show the categories again or go back?
-        # But since we are here via a 'folder' click, we are inside "orac.list.list_manager_filtered".
-        # If we don't return listitems, we should probably close, or endDirectory empty.
-        # Let's just endDirectory(succeeded=False) or True?
-        # xbmcplugin.endOfDirectory(addon_handle, succeeded=False) # This usually closes the spinner if active
-
-
 
     except Exception as e:
-        logger("get_orac_lists", "An unexpected error occurred: {e}")
+        logger("orac_lists_manager_window", f"Error: {e}")
         import traceback
-        logger("get_orac_lists", "Traceback: {traceback.format_exc()}")
-        xbmcgui.Dialog().notification(ADDON.getAddonInfo('name'), f"Error loading Orac list categories: {e}", xbmcaddon.NOTIFICATION_ERROR)
+        logger("orac_lists_manager_window", f"Traceback: {traceback.format_exc()}")
+        xbmcgui.Dialog().notification(ADDON.getAddonInfo('name'), f"Error loading Lists Manager: {e}", xbmcgui.NOTIFICATION_ERROR)
 
 
 
