@@ -538,7 +538,6 @@ def options_menu_choice(params, meta=None):
         if menu_type in ('movie', 'tvshow'):
             listing_append(('Re-Cache %s Info' % ('Movies' if menu_type == 'movie' else 'TV Shows'), 'Clear %s Cache' % rootname, 'clear_media_cache'))
         if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append(('Clear Scrapers Cache', '', 'clear_scrapers_cache'))
-        if menu_type in ('tvshow', 'season', 'episode'): listing_append(('TV Shows Progress Manager', ''))
         listing_append(('Open Download Manager', '', 'open_download_manager'))
         listing_append(('Open Tools', '', 'open_tools'))
 
@@ -546,7 +545,7 @@ def options_menu_choice(params, meta=None):
     list_items = [{'line1': item[0], 'line2': item[1] or item[0], 'icon': poster} for item in listing]
     heading = rootname or 'Options...'
     kwargs = {'items': json.dumps(list_items), 'heading': heading, 'multi_line': 'true'}
-    choice = select_dialog([i[2] for i in listing], **kwargs)
+    choice = select_dialog([i[2] for i in listing if len(i) > 2], **kwargs)
     if choice == None: return
     if choice == 'clear_media_cache':
         close_all_dialog()

@@ -1,3 +1,6 @@
+[COLOR dodgerblue][B]Version 2.2.38[/B][/COLOR]
+- Fixed IndexError in Options context menu choice when opened on TV shows, seasons, or episodes
+
 [COLOR dodgerblue][B]Version 2.2.37[/B][/COLOR]
 - Added support for Orac Server local folders media scraping and playback streaming
 - Added 'Orac Server' option when configuring folder source slots in Settings Manager
