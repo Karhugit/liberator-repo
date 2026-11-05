@@ -1,3 +1,8 @@
+[COLOR dodgerblue][B]Version 2.2.37[/B][/COLOR]
+- Added support for Orac Server local folders media scraping and playback streaming
+- Added 'Orac Server' option when configuring folder source slots in Settings Manager
+- Enabled direct HTTP byte-range streaming for video files stored on Orac Server
+
 [COLOR dodgerblue][B]Version 2.2.36[/B][/COLOR]
 - Added browsable directory navigation and Kodi skin widget support for Lists Manager categories
 - Enabled drill-down selection of Trakt, TMDB, Simkl, PunchPlay, and custom lists in skin widget setups

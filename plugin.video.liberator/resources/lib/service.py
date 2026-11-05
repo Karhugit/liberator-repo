@@ -131,6 +131,7 @@ class LiberatorService(xbmc.Monitor):
             'get_anime_status': self.orac_client.get_anime_status,
             'sync_anime_mappings': self.orac_client.sync_anime_mappings,
             'mark_anime_watched': self.orac_client.mark_anime_watched,
+            'scan_local_folder': self.orac_client.scan_local_folder,
         }
         self.log_counter = 0
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)

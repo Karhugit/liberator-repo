@@ -30,7 +30,10 @@ class source:
 			self.tmdb_id = info.get('tmdb_id')
 			self.title_query = clean_title(normalize(title))
 			self.folder_query = self._season_query_list() if self.media_type == 'episode' else self._year_query_list()
-			self._scrape_directory(self.folder_path, first_run=True)
+			if str(self.folder_path).lower() == 'orac':
+				self._scrape_orac(info)
+			else:
+				self._scrape_directory(self.folder_path, first_run=True)
 			if not self.scrape_results: return internal_results(self.scraper_name, self.sources)
 			aliases = get_aliases_titles(info.get('aliases', []))
 			def _process():
@@ -103,3 +106,40 @@ class source:
 
 	def _season_query_list(self):
 		return ('season%02d' % int(self.season), 'season%s' % self.season)
+
+	def _scrape_orac(self, info):
+		try:
+			import json
+			from apis.orac_api import _get_data_via_ipc
+			from urllib.parse import quote
+			from caches.settings_cache import get_setting
+			params = {
+				'folder_id': self.scrape_provider,
+				'media_type': self.media_type,
+				'title': info.get('title'),
+				'year': self.year,
+				'season': self.season,
+				'episode': self.episode,
+				'aliases': json.dumps(info.get('aliases', []))
+			}
+			data = _get_data_via_ipc('scan_local_folder', params=params)
+			if not data or not isinstance(data, dict):
+				return
+			results = data.get('results', [])
+			orac_address = get_setting('orac_address')
+			orac_port = get_setting('orac_port') or '5555'
+			if not orac_address.startswith('http'):
+				orac_base = 'http://%s:%s' % (orac_address, orac_port)
+			else:
+				orac_base = orac_address.rstrip('/')
+				if ':' not in orac_base[7:]:
+					orac_base = '%s:%s' % (orac_base, orac_port)
+			for item in results:
+				fname = item.get('name')
+				fpath = item.get('path')
+				size_gb = item.get('size_gb') or round(float(item.get('size', 0)) / 1073741824, 2)
+				stream_url = '%s/api/local_folders/stream?file=%s' % (orac_base, quote(fpath))
+				self.scrape_results.append((fname, stream_url, size_gb))
+		except Exception as e:
+			from modules.kodi_utils import logger
+			logger('Liberator folders _scrape_orac Exception', str(e))

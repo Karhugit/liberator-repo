@@ -205,9 +205,23 @@ def set_from_list(params):
 def set_source_folder_path(params):
 	setting_id = params['setting_id']
 	current_setting = get_setting('liberator.%s' % setting_id)
+	choices = [
+		('Browse Kodi / Local Storage...', 'browse'),
+		('Orac Server', 'orac')
+	]
 	if current_setting not in (None, 'None', ''):
-		if confirm_dialog(text='Enter Blank Value?', ok_label='Yes', cancel_label='Re-Enter Value', default_control=11): return set_setting(setting_id, 'None')
-	return set_path(params)
+		choices.append(('Clear Value', 'clear'))
+	list_items = [{'line1': item[0]} for item in choices]
+	kwargs = {'items': json.dumps(list_items), 'narrow_window': 'true', 'heading': 'Select Folder Source'}
+	choice = select_dialog([item[1] for item in choices], **kwargs)
+	if choice is None:
+		return
+	if choice == 'browse':
+		return set_path(params)
+	elif choice == 'orac':
+		set_setting(setting_id, 'orac')
+	elif choice == 'clear':
+		set_setting(setting_id, 'None')
 
 def restore_setting_default(params):
 	silent = params.get('silent', 'false') == 'true'

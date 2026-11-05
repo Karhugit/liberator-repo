@@ -333,6 +333,10 @@ class OracClient:
         """Scrobbles anime playback via Orac's bidirectional /anime/watched endpoint."""
         return self._get_json("anime/watched", params=params, put=True)
 
+    def scan_local_folder(self, params=None):
+        """Scans Orac server local media folders."""
+        return self._get_json("api/local_folders/scan", params=params)
+
 
 class OracClientError(Exception):
     """Custom exception for Orac client errors."""

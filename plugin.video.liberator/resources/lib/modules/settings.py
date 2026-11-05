@@ -93,7 +93,10 @@ def orac_skip_intro():
 
 def source_folders_directory(media_type, source):
 	setting = 'liberator.%s.movies_directory' % source if media_type == 'movie' else 'liberator.%s.tv_shows_directory' % source
-	if get_setting(setting) not in ('', 'None', None): return translate_path( get_setting(setting))
+	val = get_setting(setting)
+	if val not in ('', 'None', None):
+		if val.lower() == 'orac': return 'orac'
+		return translate_path(val)
 	else: return False
 
 def paginate(is_home):
