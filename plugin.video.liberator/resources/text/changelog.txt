@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.2.39[/B][/COLOR]
+- Fixed episode alias generation to use show title instead of episode title
+- Added country suffix detection and alias expansion for shows with country variants (e.g. Survivor USA)
+
 [COLOR dodgerblue][B]Version 2.2.38[/B][/COLOR]
 - Fixed IndexError in Options context menu choice when opened on TV shows, seasons, or episodes
 

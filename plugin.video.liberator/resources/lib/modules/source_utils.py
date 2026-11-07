@@ -84,11 +84,25 @@ def get_aliases_titles(aliases):
 def make_alias_dict(meta, title):
 	aliases = []
 	alternative_titles = meta.get('alternative_titles', [])
-	original_title = meta['original_title']
+	original_title = meta.get('original_title')
 	country_codes = set([i.replace('GB', 'UK') for i in meta.get('country_codes', [])])
+	if meta.get('country'):
+		c = meta['country']
+		if isinstance(c, str):
+			country_codes.add(c.replace('GB', 'UK'))
+		elif isinstance(c, list):
+			country_codes.update([i.replace('GB', 'UK') for i in c])
 	if alternative_titles: aliases = [{'title': i, 'country': ''} for i in alternative_titles]
-	if original_title not in alternative_titles: aliases.append({'title': original_title, 'country': ''})
-	if country_codes: aliases.extend([{'title': '%s %s' % (title, i), 'country': ''} for i in country_codes])
+	if original_title and original_title not in alternative_titles: aliases.append({'title': original_title, 'country': ''})
+	if country_codes:
+		if 'US' in country_codes: country_codes.add('USA')
+		aliases.extend([{'title': '%s %s' % (title, i), 'country': ''} for i in country_codes])
+	import re
+	m = re.search(r'[\s._\-\[\(]+(US|USA|UK|GB|AU|NZ|CA)[\s._\-\]\)]*$', title, re.I)
+	if m:
+		base = title[:m.start()].strip()
+		if base and base not in [a['title'] for a in aliases]:
+			aliases.append({'title': base, 'country': ''})
 	return aliases
 
 def internal_results(provider, sources):

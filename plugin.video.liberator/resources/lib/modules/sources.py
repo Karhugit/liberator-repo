@@ -948,9 +948,9 @@ class Sources():
     def make_search_info(self):
 # The search info for episodes comes from the show data
         if self.media_type == 'episode':
-
+            show_title = self.orac_episode_meta.get('tvshowtitle') or self.orac_episode_meta.get('title')
             title, year, ep_name = self.orac_episode_meta.get('title'), self.orac_episode_meta.get('year'), self.orac_episode_meta.get('title')
-            aliases = make_alias_dict(self.orac_episode_meta, title)
+            aliases = make_alias_dict(self.orac_episode_meta, show_title)
             expiry_times = (168,240,240)
             self.search_info = {'media_type': self.media_type, 'item_type': self.media_type, 'title': title, 'year': str(year), 'tmdb_id': self.tmdb_id, 'imdb_id': self.orac_episode_meta.get('imdb_id'),
                                 'aliases': aliases,
