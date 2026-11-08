@@ -60,12 +60,16 @@ class KodiInfoTagger:
         if media_type == 'tvshow':
             art_dict.update({
                 'tvshow.poster': poster,
-                'tvshow.clearlogo': clearlogo
+                'tvshow.clearlogo': clearlogo,
+                'tvshow.fanart': fanart,
+                'tvshow.landscape': landscape
             })
         elif media_type == 'movie':
             art_dict.update({
                 'movie.poster': poster,
-                'movie.clearlogo': clearlogo
+                'movie.clearlogo': clearlogo,
+                'movie.fanart': fanart,
+                'movie.landscape': landscape
             })
         elif media_type == 'season':
             art_dict.update({
@@ -82,19 +86,36 @@ class KodiInfoTagger:
         extra_data = extra_data or {}
         
         # Common fields
-        title = meta.get('title', '')
-        year = meta.get('year') or meta.get('show_year', '2050')
+        title = meta.get('title') or ''
+        year = meta.get('year') or meta.get('show_year')
+        try:
+            year_int = int(year) if year is not None else 0
+        except (ValueError, TypeError):
+            year_int = 0
         
         info_tag.setMediaType(media_type)
         info_tag.setTitle(title)
-        info_tag.setOriginalTitle(meta.get('original_title', ''))
-        info_tag.setYear(int(year))
-        info_tag.setPlot(meta.get('overview', ''))
-        info_tag.setTagLine(meta.get('tagline', ''))
-        info_tag.setTrailer(meta.get('trailer', ''))
-        info_tag.setRating(meta.get('rating', 0))
-        info_tag.setVotes(meta.get('votes', 0))
-        info_tag.setMpaa(meta.get('certification', ''))
+        info_tag.setOriginalTitle(meta.get('original_title') or '')
+        info_tag.setYear(year_int)
+        info_tag.setPlot(meta.get('overview') or '')
+        info_tag.setTagLine(meta.get('tagline') or '')
+        info_tag.setTrailer(meta.get('trailer') or '')
+
+        rating = meta.get('rating')
+        try:
+            rating_float = float(rating) if rating is not None else 0.0
+        except (ValueError, TypeError):
+            rating_float = 0.0
+        info_tag.setRating(rating_float)
+
+        votes = meta.get('votes')
+        try:
+            votes_int = int(votes) if votes is not None else 0
+        except (ValueError, TypeError):
+            votes_int = 0
+        info_tag.setVotes(votes_int)
+
+        info_tag.setMpaa(meta.get('certification') or '')
         
         # Handle premiered/release date
         if media_type == 'tvshow':
@@ -172,22 +193,34 @@ class KodiInfoTagger:
             
     def _set_episode_specific_info(self, info_tag, meta, extra_data):
         """Set episode specific info tag data"""
-        info_tag.setEpisode(meta.get('episode_number') or meta.get('episode') or 0)
-        info_tag.setSeason(meta.get('season', 0))
-        info_tag.setTvShowTitle(meta.get('tvshowtitle') or extra_data.get('show_title', ''))
-
-        runtime = meta.get('runtime', 0)
         try:
-            runtime = int(runtime)
+            ep_num = int(meta.get('episode_number') or meta.get('episode') or 0)
+        except (ValueError, TypeError):
+            ep_num = 0
+        info_tag.setEpisode(ep_num)
+
+        try:
+            season_num = int(meta.get('season') or 0)
+        except (ValueError, TypeError):
+            season_num = 0
+        info_tag.setSeason(season_num)
+
+        info_tag.setTvShowTitle(meta.get('tvshowtitle') or extra_data.get('show_title') or '')
+
+        runtime = meta.get('runtime')
+        try:
+            runtime = int(runtime) if runtime is not None else 0
         except (ValueError, TypeError):
             runtime = 0
             
         if runtime:
             info_tag.setDuration(runtime * 60)
             
-        if 'playcount' in extra_data:
-            info_tag.setPlaycount(extra_data['playcount'])
-            
+        if 'playcount' in extra_data and extra_data['playcount'] is not None:
+            try:
+                info_tag.setPlaycount(int(extra_data['playcount']))
+            except (ValueError, TypeError):
+                pass
 
         # Set resume point if progress is available
         progress = extra_data.get('progress') or meta.get('percent_watched')
@@ -203,17 +236,27 @@ class KodiInfoTagger:
             except (ValueError, TypeError):
                 pass
 
-
-
-        info_tag.setRating(meta.get('episode_rating', 0))
+        ep_rating = meta.get('episode_rating')
+        try:
+            ep_rating_float = float(ep_rating) if ep_rating is not None else 0.0
+        except (ValueError, TypeError):
+            ep_rating_float = 0.0
+        info_tag.setRating(ep_rating_float)
 
     def _set_season_specific_info(self, info_tag, meta, extra_data):
         """Set season specific info tag data"""
-        info_tag.setSeason(meta.get('season', 0))
-        info_tag.setTvShowTitle(extra_data.get('show_title', ''))
+        try:
+            season_num = int(meta.get('season') or 0)
+        except (ValueError, TypeError):
+            season_num = 0
+        info_tag.setSeason(season_num)
+        info_tag.setTvShowTitle(extra_data.get('show_title') or '')
         
-        if 'playcount' in extra_data:
-            info_tag.setPlaycount(extra_data['playcount'])
+        if 'playcount' in extra_data and extra_data['playcount'] is not None:
+            try:
+                info_tag.setPlaycount(int(extra_data['playcount']))
+            except (ValueError, TypeError):
+                pass
             
 
 class KodiListItemBuilder:
@@ -1033,13 +1076,13 @@ class KodiListItemBuilder:
                 return None
                 
             # Get episode counts - handle different metadata formats
-            total_episodes = (meta.get('total_episodes', 0) or 
-                            meta.get('total_aired_eps', 0) or
-                            meta.get('number_of_episodes', 0))
+            total_episodes = (meta.get('total_episodes') or 
+                            meta.get('total_aired_eps') or
+                            meta.get('number_of_episodes') or 0)
             
-            total_watched_episodes = meta.get('total_watched_episodes', 0)
-            total_unaired_episodes = meta.get('total_unaired_episodes', 0)
-            total_seasons = meta.get('total_seasons', 1) or meta.get('number_of_seasons', 1)
+            total_watched_episodes = meta.get('total_watched_episodes') or 0
+            total_unaired_episodes = meta.get('total_unaired_episodes') or 0
+            total_seasons = meta.get('total_seasons') or meta.get('number_of_seasons') or 1
             
             # Calculate progress and watch status
             total_aired_episodes = total_episodes - total_unaired_episodes if total_episodes else 0

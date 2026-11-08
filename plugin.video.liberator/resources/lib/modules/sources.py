@@ -263,7 +263,7 @@ class Sources():
     def collect_prescrape_results(self):
         threads_append = self.prescrape_threads.append
         if self.active_folders:
-            if self.autoplay or check_prescrape_sources('folders', self.media_type):
+            if self.autoplay:
                 self.append_folder_scrapers(self.prescrape_scrapers)
                 self.remove_scrapers.append('folders')
         self.prescrape_scrapers.extend(self.internal_sources(True))
@@ -383,7 +383,7 @@ class Sources():
         active_internal_scrapers = [i for i in self.active_internal_scrapers if not i in self.remove_scrapers]
         if self.prescrape and not any([check_prescrape_sources(i, self.media_type) for i in active_internal_scrapers]): return False
         if 'folders' in active_internal_scrapers:
-            self.folder_info = [i for i in self.get_folderscraper_info() if source_folders_directory(self.media_type, i[1])]
+            self.folder_info = self.get_folderscraper_info()
             if self.folder_info:
                 self.active_folders = True
                 self.internal_scraper_names = [i for i in active_internal_scrapers if not i == 'folders'] + [i[0] for i in self.folder_info]
@@ -461,8 +461,7 @@ class Sources():
         current_list.extend(self.folder_sources())
 
     def get_folderscraper_info(self):
-        folder_info = [(get_setting('liberator.%s.display_name' % i), i, source_folders_directory(self.media_type, i)) for i in folder_scrapers]
-        return [i for i in folder_info if not i[0] in (None, 'None', '') and i[2]]
+        return [('Orac Local', 'folder1', 'orac')]
 
     def process_external_results(self, provider, sources):
         for i in sources:
@@ -752,7 +751,7 @@ class Sources():
         return self.provider_sort_ranks[account_type] or 11
 
     def _sort_folder_to_top(self, provider):
-        if provider == 'folders': return 0
+        if provider in ('folders', 'orac'): return 0
         else: return 1
 
     def _sort_uncached_results(self, results):

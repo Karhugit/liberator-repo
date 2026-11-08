@@ -531,13 +531,13 @@ def options_menu_choice(params, meta=None):
                 autoscrape_next_status, autoscrape_next_toggle = (on_str, 'false') if autoscrape_next_episode() else (off_str, 'true')
                 listing_append((base_str1 % ('Autoscrape Next Episode', ''), base_str2 % autoscrape_next_status, 'toggle_autoscrape_next'))
         listing_append((base_str1 % ('Quality Limit', ' (%s)' % content), base_str2 % current_quality_status, 'set_quality'))
-        listing_append((base_str1 % ('', 'Enable Scrapers'), base_str2 % current_scrapers_status, 'enable_scrapers'))
-        if menu_type == 'episode' or menu_type in single_ep_list:
-            listing_append(('Assign an Episode Group to %s' % rootname, 'Currently %s' % episode_groups_cache.get(tmdb_id).get('name', 'None'), 'episode_group'))
+        if menu_type == 'movie':
+            listing_append((base_str1 % ('', 'Enable Scrapers'), base_str2 % current_scrapers_status, 'enable_scrapers'))
     if not from_extras:
         if menu_type in ('movie', 'tvshow'):
             listing_append(('Re-Cache %s Info' % ('Movies' if menu_type == 'movie' else 'TV Shows'), 'Clear %s Cache' % rootname, 'clear_media_cache'))
-        if menu_type in ('movie', 'episode') or menu_type in single_ep_list: listing_append(('Clear Scrapers Cache', '', 'clear_scrapers_cache'))
+        if menu_type == 'movie':
+            listing_append(('Clear Scrapers Cache', '', 'clear_scrapers_cache'))
         listing_append(('Open Download Manager', '', 'open_download_manager'))
         listing_append(('Open Tools', '', 'open_tools'))
 

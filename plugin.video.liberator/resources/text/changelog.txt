@@ -1,3 +1,10 @@
+[COLOR dodgerblue][B]Version 2.2.40[/B][/COLOR]
+- Streamlined Local Folders scraping to utilize Orac Server exclusively
+- Fixed TMDb list background fanart display defaulting to addon icon
+- Fixed listitem creation error with null numeric metadata fields
+- Removed obsolete direct Debrid and OMDb authentication options from Accounts settings
+- Removed Update Utilities from Tools menu
+
 [COLOR dodgerblue][B]Version 2.2.39[/B][/COLOR]
 - Fixed episode alias generation to use show title instead of episode title
 - Added country suffix detection and alias expansion for shows with country variants (e.g. Survivor USA)

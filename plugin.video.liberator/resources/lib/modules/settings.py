@@ -11,7 +11,7 @@ results_window_numbers_dict = {'List': 2000, 'Rows': 2001, 'WideList': 2002}
 default_action_dict = {'0': 'play', '1': 'cancel', '2': 'pause'}
 paginate_dict = {True: 'liberator.paginate.limit_widgets', False: 'liberator.paginate.limit_addon'}
 nextep_sort_key_dict = {0: 'last_played', 1: 'first_aired', 2: 'name'}
-prescrape_scrapers_tuple = ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'oc_cloud', 'tb_cloud', 'folders')
+prescrape_scrapers_tuple = ('easynews', 'rd_cloud', 'pm_cloud', 'ad_cloud', 'oc_cloud', 'tb_cloud')
 sort_to_top_dict = {'folders': 'liberator.results.sort_folders_first', 'rd_cloud': 'liberator.results.sort_rdcloud_first', 'pm_cloud': 'liberator.results.sort_pmcloud_first',
 					'ad_cloud': 'liberator.results.sort_adcloud_first', 'oc_cloud': 'liberator.results.sort_occloud_first', 'tb_cloud': 'liberator.results.sort_tbcloud_first'}
 internal_scrapers_clouds_list = [('rd', 'provider.rd_cloud'), ('pm', 'provider.pm_cloud'), ('ad', 'provider.ad_cloud'), ('oc', 'provider.oc_cloud'), ('tb', 'provider.tb_cloud')]
@@ -92,12 +92,7 @@ def orac_skip_intro():
 
 
 def source_folders_directory(media_type, source):
-	setting = 'liberator.%s.movies_directory' % source if media_type == 'movie' else 'liberator.%s.tv_shows_directory' % source
-	val = get_setting(setting)
-	if val not in ('', 'None', None):
-		if val.lower() == 'orac': return 'orac'
-		return translate_path(val)
-	else: return False
+	return 'orac'
 
 def paginate(is_home):
 	paginate_lists = int(get_setting('liberator.paginate.lists', '0'))
@@ -248,7 +243,7 @@ def provider_sort_ranks():
 	ed_priority = int(get_setting('liberator.ed.priority', '10'))
 	tb_priority = int(get_setting('liberator.tb.priority', '10'))
 	return {'easynews': en_priority, 'real-debrid': rd_priority, 'premiumize.me': pm_priority, 'alldebrid': ad_priority, 'offcloud': oc_priority, 'easydebrid': ed_priority,
-			'torbox': tb_priority, 'rd_cloud': rd_priority, 'pm_cloud': pm_priority, 'ad_cloud': ad_priority, 'oc_cloud': oc_priority, 'tb_cloud': tb_priority, 'folders': 0}
+			'torbox': tb_priority, 'rd_cloud': rd_priority, 'pm_cloud': pm_priority, 'ad_cloud': ad_priority, 'oc_cloud': oc_priority, 'tb_cloud': tb_priority, 'folders': 0, 'orac': 0}
 
 def sort_to_top(provider):
 	return get_setting(sort_to_top_dict[provider]) == 'true'

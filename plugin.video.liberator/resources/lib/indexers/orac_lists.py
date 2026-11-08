@@ -63,6 +63,11 @@ def orac_lists_manager_categories(params, addon_handle):
                 'description': 'Personal and liked lists'
             },
             {
+                'name': 'Orac Local',
+                'section': 'orac_local',
+                'description': 'Media stored in local Orac server folders'
+            },
+            {
                 'name': 'Trakt Lists',
                 'section': 'trakt',
                 'description': 'Trakt generic lists'
@@ -151,8 +156,11 @@ def orac_lists_manager_filtered(params, addon_handle):
             return (u or '').lower().replace(' ', '_')
 
         if section == 'my_lists':
-            # My Lists: user custom lists + External Indexes (user-created indexes)
-            lists = [item for item in lists if norm_user(item.get('user')) not in ['trakt', 'tmdb', 'simkl', 'punchplay'] or norm_user(item.get('user')) == 'external_index']
+            # My Lists: user custom lists + External Indexes (user-created indexes), excluding local
+            lists = [item for item in lists if (norm_user(item.get('user')) not in ['trakt', 'tmdb', 'simkl', 'punchplay', 'orac_local'] and item.get('source') != 'local') or norm_user(item.get('user')) == 'external_index']
+        elif section == 'orac_local':
+            # Orac Local: media from local server folders
+            lists = [item for item in lists if norm_user(item.get('user')) == 'orac_local' or item.get('source') == 'local']
         elif section == 'trakt':
             # Trakt: user is 'trakt'
             lists = [item for item in lists if norm_user(item.get('user')) == 'trakt']
@@ -179,6 +187,8 @@ def orac_lists_manager_filtered(params, addon_handle):
             'simkl':      'FFCCB0FF',  # Light Purple
             'punchplay':  'FFFFC04D',  # Golden Amber
             'imdb':       'FFFFB6C1',  # Light Pink
+            'orac_local': 'FF00FFCC',  # Turquoise
+            'local':      'FF00FFCC',  # Turquoise
         }
 
         def _process_orac_list_category_items():
@@ -297,7 +307,9 @@ def orac_lists_manager_window(params):
             return (u or '').lower().replace(' ', '_')
 
         if section == 'my_lists':
-            lists = [item for item in lists if norm_user(item.get('user')) not in ['trakt', 'tmdb', 'simkl', 'punchplay'] or norm_user(item.get('user')) == 'external_index']
+            lists = [item for item in lists if (norm_user(item.get('user')) not in ['trakt', 'tmdb', 'simkl', 'punchplay', 'orac_local'] and item.get('source') != 'local') or norm_user(item.get('user')) == 'external_index']
+        elif section == 'orac_local':
+            lists = [item for item in lists if norm_user(item.get('user')) == 'orac_local' or item.get('source') == 'local']
         elif section == 'trakt':
             lists = [item for item in lists if norm_user(item.get('user')) == 'trakt']
         elif section == 'tmdb':
@@ -375,6 +387,8 @@ def get_orac_lists(params, addon_handle): # Added addon_handle parameter
             'simkl':      'FFCCB0FF',  # Light Purple
             'punchplay':  'FFFFC04D',  # Golden Amber
             'imdb':       'FFFFB6C1',  # Light Pink
+            'orac_local': 'FF00FFCC',  # Turquoise
+            'local':      'FF00FFCC',  # Turquoise
         }
         _COLOR_CYCLE = ['FFADD8E6', 'FF90EE90', 'FFFFFFB3', 'FFCCB0FF', 'FFFFB6C1']
         _cycle_index = [0]  # mutable so the inner function can update it

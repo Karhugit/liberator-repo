@@ -194,16 +194,22 @@ class SourcesResults(BaseDialog):
                             if not (i.getProperty('quality') in duplicates or duplicates.add(i.getProperty('quality'))) \
                             and not i.getProperty('quality') == '']
         if any(i in prerelease_values for i in qualities): qualities = [i for i in qualities if not i in prerelease_values] + [prerelease_key]
-        qualities.sort(key=quality_choices.index)
+        def _quality_sort(x):
+            try: return quality_choices.index(x)
+            except ValueError: return 999
+        qualities.sort(key=_quality_sort)
         duplicates = set()
         providers = [i.getProperty('provider') for i in self.item_list \
                             if not (i.getProperty('provider') in duplicates or duplicates.add(i.getProperty('provider'))) \
                             and not i.getProperty('provider') == '']
         sort_ranks = provider_sort_ranks()
-        sort_ranks['premiumize'] = sort_ranks.pop('premiumize.me')
+        sort_ranks['premiumize'] = sort_ranks.pop('premiumize.me', 10)
         provider_choices = sorted(sort_ranks.keys(), key=sort_ranks.get)
         provider_choices = [upper(i) for i in provider_choices]
-        providers.sort(key=provider_choices.index)
+        def _provider_sort(x):
+            try: return provider_choices.index(x)
+            except ValueError: return 999
+        providers.sort(key=_provider_sort)
         qualities = [('Show [B]%s[/B] Only' % i, 'quality', i) for i in qualities]
         providers = [('Show [B]%s[/B] Only' % i, 'provider', i) for i in providers]
         data = qualities + providers

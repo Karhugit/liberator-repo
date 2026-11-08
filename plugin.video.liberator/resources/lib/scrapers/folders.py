@@ -46,6 +46,11 @@ class source:
 						try: size = item[2]
 						except: size = self._get_size(file_dl)
 						video_quality, details = get_file_info(name_info=release_info_format(file_name))
+						meta_item = item[3] if len(item) > 3 and isinstance(item[3], dict) else {}
+						if meta_item.get('quality'):
+							video_quality = meta_item['quality']
+						if meta_item.get('extraInfo'):
+							details = ('%s | %s' % (meta_item['extraInfo'], details)).strip('| ') if details else meta_item['extraInfo']
 						source_item = {'name': file_name, 'display_name': display_name, 'quality': video_quality, 'size': size, 'size_label': '%.2f GB' % size,
 									'extraInfo': details, 'url_dl': file_dl, 'id': file_dl, self.scrape_provider : True, 'direct': True, 'source': self.scraper_name,
 									'scrape_provider': 'folders'}
@@ -77,7 +82,12 @@ class source:
 					if self.media_type == 'episode' and not seas_ep_filter(self.season, self.episode, normalized): return
 					url_path = self.url_path(folder_name, item[0])
 					size = self._get_size(url_path)
-					scrape_results_append((item[0], url_path, size))
+					try:
+						from modules.media_inspector import inspect_media_file
+						meta_info = inspect_media_file(url_path)
+					except:
+						meta_info = None
+					scrape_results_append((item[0], url_path, size, meta_info))
 			elif self.title_query in item_name or any(x in item_name for x in self.folder_query):
 					folder_results_append((os.path.join(folder_name, item[0])))
 		folder_results = []
@@ -114,7 +124,7 @@ class source:
 			from urllib.parse import quote
 			from caches.settings_cache import get_setting
 			params = {
-				'folder_id': self.scrape_provider,
+				'folder_id': 'all',
 				'media_type': self.media_type,
 				'title': info.get('title'),
 				'year': self.year,
@@ -139,7 +149,7 @@ class source:
 				fpath = item.get('path')
 				size_gb = item.get('size_gb') or round(float(item.get('size', 0)) / 1073741824, 2)
 				stream_url = '%s/api/local_folders/stream?file=%s' % (orac_base, quote(fpath))
-				self.scrape_results.append((fname, stream_url, size_gb))
+				self.scrape_results.append((fname, stream_url, size_gb, item))
 		except Exception as e:
 			from modules.kodi_utils import logger
 			logger('Liberator folders _scrape_orac Exception', str(e))

@@ -209,7 +209,7 @@ def check_title(title, release_title, aliases, year, season, episode):
 			else:
 				try: hdlr = seas_ep_filter(season, episode, release_title, return_match=True)
 				except: return False
-		else: hdlr = year
+		else: hdlr = year if year in release_title else ''
 		if hdlr:
 			release_title = release_title.split(hdlr.lower())[0]
 			release_title = release_title.replace(year, '').replace('(', '').replace(')', '').replace('&', 'and').rstrip('.-').rstrip('.').rstrip('-').replace(':', '')

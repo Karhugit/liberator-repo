@@ -240,7 +240,6 @@ class Navigator:
         self.add({'mode': 'navigator.changelog_utils'}, 'Changelog & Log Utils', 'settings2')
         self.add({'mode': 'navigator.shortcut_folders'}, 'Shortcut Folders Manager', 'settings2')
         self.add({'mode': 'navigator.maintenance'}, 'Database & Cache Maintenance', 'settings2')
-        self.add({'mode': 'navigator.update_utils'}, 'Update Utilities', 'settings2')
         self.add({'mode': 'toggle_language_invoker', 'isFolder': 'false'}, 'Toggle Language Invoker (ADVANCED!!)', 'settings2')
         self.end_directory()
 
@@ -269,12 +268,6 @@ class Navigator:
         self.add({'mode': 'navigator.choose_view', 'view_type': 'view.episodes', 'content': 'episodes'}, 'Set Episodes', 'next_episodes')
         self.add({'mode': 'navigator.choose_view', 'view_type': 'view.episodes_single', 'content': 'episodes', 'name': 'episode lists'}, 'Set Episode Lists', 'calender')
         self.add({'mode': 'navigator.choose_view', 'view_type': 'view.premium', 'content': 'files', 'name': 'premium files'}, 'Set Premium Files', 'premium')
-        self.end_directory()
-
-    def update_utils(self):
-        self.add({'mode': 'updater.update_check', 'isFolder': 'false'}, 'Check For Updates', 'github')
-        # self.add({'mode': 'updater.rollback_check', 'isFolder': 'false'}, 'Rollback to a Previous Version', 'github')
-        self.add({'mode': 'updater.get_changes', 'isFolder': 'false'}, 'Check Online Version Changelog', 'github')
         self.end_directory()
 
     def changelog_utils(self):
