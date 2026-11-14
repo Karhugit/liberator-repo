@@ -114,7 +114,7 @@
                           <property name="setting_label">Single Episode Lists</property>
                       </item>
                       <item id="50">
-                          <property name="setting_label">Accounts</property>
+                          <property name="setting_label">Local Media</property>
                       </item>
                       <item id="60">
                         <property name="setting_label">Results</property>
@@ -1055,23 +1055,7 @@
                           <property name="setting_label">Show Future Days</property>
                           <property name="setting_type">numeric</property>
                           <property name="setting_value">$INFO[Window(10000).Property(liberator.trakt.calendar_future_days)]</property>
-<!-- ACCOUNTS 50 -->
-
-        <!-- Accounts Managed via Orac -->
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <property name="setting_label">Accounts</property>
-                          <property name="setting_type">separator</property>
-                          <onclick>noop</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <property name="setting_label">Accounts Managed in Orac</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">Configured via Orac Server</property>
-                          <property name="setting_description">Debrid accounts (Real Debrid, TorBox, OffCloud, EasyDebrid) and metadata services (OMDb, TMDb, Trakt) are configured and managed centrally via the Orac Server Web Dashboard</property>
-                          <onclick>noop</onclick>
-                      </item>
+<!-- LOCAL MEDIA 50 -->
 
         <!-- Local Media Folders -->
                       <item>
@@ -1087,15 +1071,6 @@
                           <property name="setting_value">$INFO[Window(10000).Property(liberator.provider.folders)]</property>
                           <property name="setting_description">Enables Orac local folder scraping</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=provider.folders)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(50)</visible>
-                          <visible>String.IsEqual(Window(10000).Property(liberator.provider.folders),true)</visible>
-                          <property name="setting_label">Filter Results by Name</property>
-                          <property name="setting_type">boolean</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.folders.title_filter)]</property>
-                          <property name="setting_description">Enable this and Liberator will perform extra name matching functions on your local media folders results. Will help to limit incorrect results, but may also filter some relevant results</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=folders.title_filter)</onclick>
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(50)</visible>

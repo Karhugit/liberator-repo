@@ -1,3 +1,7 @@
+[COLOR dodgerblue][B]Version 2.2.41[/B][/COLOR]
+- Added Next Episodes sorting support using Liberator sort type (Recently Watched, Airdate, Title) and sort order (Ascending/Descending) settings
+- Renamed Accounts settings tab to Local Media and removed obsolete Accounts section and Filter Results by Name option
+
 [COLOR dodgerblue][B]Version 2.2.40[/B][/COLOR]
 - Streamlined Local Folders scraping to utilize Orac Server exclusively
 - Fixed TMDb list background fanart display defaulting to addon icon

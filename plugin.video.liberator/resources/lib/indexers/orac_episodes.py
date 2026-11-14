@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 from modules import kodi_utils, settings
-from modules.utils import jsondate_to_datetime
+from modules.utils import jsondate_to_datetime, title_key
 from apis.orac_api import _get_data_via_ipc
 from caches.settings_cache import get_setting
 from modules.orac_infotagger import KodiListItemBuilder, build_content_batch
@@ -33,6 +33,27 @@ def build_episodes_list(params={}):
             if not episodes_data:
                 end_directory(handle, cacheToDisc=False)
                 return
+
+            sort_key = settings.nextep_sort_key()
+            sort_direction = settings.nextep_sort_direction()
+            if sort_key == 'last_played':
+                if sort_direction:
+                    episodes_data.sort(key=lambda ep: ep.get('last_watched_at') or '', reverse=True)
+                else:
+                    episodes_data.sort(key=lambda ep: (not ep.get('last_watched_at'), ep.get('last_watched_at') or ''))
+            elif sort_key == 'first_aired':
+                if sort_direction:
+                    episodes_data.sort(key=lambda ep: ep.get('air_date') or '', reverse=True)
+                else:
+                    episodes_data.sort(key=lambda ep: (not ep.get('air_date'), ep.get('air_date') or ''))
+            elif sort_key == 'name':
+                episodes_data.sort(
+                    key=lambda ep: title_key(ep.get('title') or ep.get('show_title') or '').lower(),
+                    reverse=sort_direction
+                )
+
+            if settings.nextep_limit_history():
+                episodes_data = episodes_data[:settings.nextep_limit()]
         elif params.get('episode_list'):
             tmdb_id = params.get('tmdb_id')
             ipc_params = {'tmdb_id': tmdb_id, 'user': get_setting('trakt.user', '')}
