@@ -1,5 +1,6 @@
 from modules.kodi_utils import logger, build_url, make_listitem
 from typing import Tuple
+from datetime import date
 
 container_update = 'Container.Update(%s)'
 run_plugin = 'RunPlugin(%s)'
@@ -86,7 +87,7 @@ class KodiInfoTagger:
         extra_data = extra_data or {}
         
         # Common fields
-        title = meta.get('title') or ''
+        title = extra_data.get('title') or meta.get('title') or ''
         year = meta.get('year') or meta.get('show_year')
         try:
             year_int = int(year) if year is not None else 0
@@ -941,7 +942,7 @@ class KodiListItemBuilder:
         """Build a complete episode listitem using templates"""
         try:
             title = meta.get('episode_title', '')
-            show_title = meta.get('show_title', '')
+            show_title = meta.get('show_title') or meta.get('tvshowtitle') or ''
             tmdb_id = meta.get('tmdb_id')
             show_tmdb_id = meta.get('show_tmdb_id')
             season_number = meta.get('season', 1)
@@ -969,14 +970,26 @@ class KodiListItemBuilder:
             })
             
             # Create listitem with formatted title
+            air_date = meta.get('air_date') or ''
+            current_date_str = extra_params.get('current_date_str') or date.today().strftime('%Y-%m-%d')
+            is_unaired = bool(meta.get('unaired')) or not air_date or str(air_date)[:10] > current_date_str
+
             display_format = extra_params.get('display_format', 0)
             str_season_zfill2, str_episode_zfill2 = str(season_number).zfill(2), str(episode_number).zfill(2)
+            ep_part = f"{str_season_zfill2}x{str_episode_zfill2} - {title}"
+            if is_unaired:
+                ep_part_formatted = f"[COLOR red][I]{ep_part}[/I][/COLOR]"
+                title_formatted = f"[COLOR red][I]{title}[/I][/COLOR]"
+            else:
+                ep_part_formatted = ep_part
+                title_formatted = title
+
             if display_format == 0:
-                display_title = f"{show_title}: {str_season_zfill2}x{str_episode_zfill2} - {title}"
+                display_title = f"{show_title}: {ep_part_formatted}"
             elif display_format == 1:
-                display_title = f"{str_season_zfill2}x{str_episode_zfill2} - {title}"
+                display_title = ep_part_formatted
             else: # 2
-                display_title = title
+                display_title = title_formatted
                 
             listitem = self.infotagger.create_base_listitem(display_title)
             
@@ -995,7 +1008,8 @@ class KodiListItemBuilder:
             extra_data = {
                 'playcount': playcount,
                 'show_title': show_title,
-                'progress': meta.get('progress') or meta.get('percent_watched')
+                'progress': meta.get('progress') or meta.get('percent_watched'),
+                'title': title_formatted if is_unaired else title
             }
             self.infotagger.set_video_info_tag(listitem, meta, 'episode', extra_data)
             

@@ -23,9 +23,11 @@ def build_episodes_list(params={}):
     try:
         if params.get('next_episode'):
             # ipc_params = {'user': get_setting('trakt.user', '')}
-            # episodes_data = _get_data_via_ipc('get_next_episodes', params=ipc_params)
             # Remove user param to avoid case sensitivity issues on server
-            episodes_data = _get_data_via_ipc('get_next_episodes')
+            ipc_params = {
+                'include_unaired': 'true' if settings.nextep_include_unaired() else 'false'
+            }
+            episodes_data = _get_data_via_ipc('get_next_episodes', params=ipc_params)
             
             category_name = 'Next Episodes'
             if episodes_data and not settings.show_specials():
@@ -51,9 +53,6 @@ def build_episodes_list(params={}):
                     key=lambda ep: title_key(ep.get('title') or ep.get('show_title') or '').lower(),
                     reverse=sort_direction
                 )
-
-            if settings.nextep_limit_history():
-                episodes_data = episodes_data[:settings.nextep_limit()]
         elif params.get('episode_list'):
             tmdb_id = params.get('tmdb_id')
             ipc_params = {'tmdb_id': tmdb_id, 'user': get_setting('trakt.user', '')}
@@ -131,7 +130,9 @@ class orac_episodes:
             processed_list = []
             for count, item in self.list:
                 # Capture show title before overwriting 'title' with episode title
-                item['tvshowtitle'] = item.get('title', item.get('show_title', ''))
+                show_name = item.get('show_title') or item.get('title') or ''
+                item['tvshowtitle'] = show_name
+                item['show_title'] = show_name
                 
                 item['title'] = item.get('episode_title', '')
                 item['overview'] = item.get('episode_overview', item.get('show_overview', ''))

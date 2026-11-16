@@ -505,31 +505,6 @@
                           <property name="setting_description">Restore default Liberator background</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.restore_setting_default&amp;setting_id=default_addon_fanart)</onclick>
                       </item>
-        <!-- Manage Addon Updates -->
-                      <item>
-                          <visible>Container(2000).HasFocus(10)</visible>
-                          <property name="setting_label">Manage Addon Updates</property>
-                          <property name="setting_type">separator</property>
-                          <onclick>noop</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(10)</visible>
-                          <property name="setting_label">Update Action</property>
-                          <property name="setting_type">action</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.update.action_name)]</property>
-                          <property name="setting_description">Choose the manner in which Liberator handles updates</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_from_list&amp;setting_id=update.action)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(10)</visible>
-                          <visible>!String.IsEqual(Window(10000).Property(liberator.update.action),3)</visible>
-                          <property name="setting_label">    - Delay Before Running (secs)</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.update.delay)]</property>
-                          <property name="setting_description">Choose the delay time before Liberator checks for updates after Kodi start</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_numeric&amp;setting_id=update.delay)</onclick>
-                      </item>
-
         <!-- UTC Time Offset -->
                       <item>
                           <visible>Container(2000).HasFocus(10)</visible>
@@ -931,14 +906,6 @@
                           <property name="setting_description">Choose the display format Liberator uses when naming single episodes for widgets. Applicable for lists like Next Episodes, In Progress Episodes etc</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_from_list&amp;setting_id=single_ep_display_widget)</onclick>
                       </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(40)</visible>
-                          <property name="setting_label">Provide Unwatched Episodes Info</property>
-                          <property name="setting_type">boolean</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.single_ep_unwatched_episodes)]</property>
-                          <property name="setting_description">Enable this to share with Kodi the number of unwatched episodes for the TV Show of each episode in single episode lists</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=single_ep_unwatched_episodes)</onclick>
-                      </item>
         <!-- Next Episodes -->
                       <item>
                           <visible>Container(2000).HasFocus(40)</visible>
@@ -972,23 +939,6 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(40)</visible>
-                          <property name="setting_label">Limit Used Watched History</property>
-                          <property name="setting_type">boolean</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.nextep.limit_history)]</property>
-                          <property name="setting_description">Enable this to limit the amount of watched history used to determine Next Episodes</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=nextep.limit_history)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(40)</visible>
-                          <visible>String.IsEqual(Window(10000).Property(liberator.nextep.limit_history),true)</visible>
-                          <property name="setting_label">    - Limit</property>
-                          <property name="setting_type">numeric</property>
-                          <property name="setting_value">$INFO[Window(10000).Property(liberator.nextep.limit)]</property>
-                          <property name="setting_description">A setting of "20" will limit the history used based on the previous 20 watched episodes. This means a 20 limit will not usually result in 20 items in your Next Episodes list, rather the previous 20 watched episodes will be used as history</property>
-                          <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_numeric&amp;setting_id=nextep.limit)</onclick>
-                      </item>
-                      <item>
-                          <visible>Container(2000).HasFocus(40)</visible>
                           <property name="setting_label">Include Trakt Watchlist/Liberator Favorites</property>
                           <property name="setting_type">action</property>
                           <property name="setting_value">$INFO[Window(10000).Property(liberator.nextep.include_unwatched_name)]</property>
@@ -1013,10 +963,10 @@
                       </item>
                       <item>
                           <visible>Container(2000).HasFocus(40)</visible>
-                          <property name="setting_label">Include Unaired Episodes When Within 7 Days</property>
+                          <property name="setting_label">Include Next Episode When Unaired</property>
                           <property name="setting_type">boolean</property>
                           <property name="setting_value">$INFO[Window(10000).Property(liberator.nextep.include_unaired)]</property>
-                          <property name="setting_description">Enable this to include unaired episodes within Next Episodes. They will show with a RED highlight and become visible within 7 days of their airdate</property>
+                          <property name="setting_description">Enable this to include unaired episodes within Next Episodes. They will show with a RED highlight</property>
                           <onclick>RunPlugin(plugin://plugin.video.liberator/?mode=settings_manager.set_boolean&amp;setting_id=nextep.include_unaired)</onclick>
                       </item>
         <!-- Trakt Calendar

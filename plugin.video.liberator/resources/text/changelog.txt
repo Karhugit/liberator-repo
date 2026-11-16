@@ -1,3 +1,8 @@
+[COLOR dodgerblue][B]Version 2.2.42[/B][/COLOR]
+- Added Include Next Episode When Unaired support (passes include_unaired to Orac Server and highlights unaired episodes in red italics)
+- Fixed missing show title in Next Episodes display format (Title: SxxExx - Episode)
+- Cleaned up Settings Manager: removed Limit Used Watched History, Provide Unwatched Episodes Info, and Manage Addon Updates
+
 [COLOR dodgerblue][B]Version 2.2.41[/B][/COLOR]
 - Added Next Episodes sorting support using Liberator sort type (Recently Watched, Airdate, Title) and sort order (Ascending/Descending) settings
 - Renamed Accounts settings tab to Local Media and removed obsolete Accounts section and Filter Results by Name option
