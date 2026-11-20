@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings version="1">
+    <section id="plugin.video.liberator2">
+        <category id="orac" label="32000">
+            <group id="connection" label="32001">
+                <setting id="orac_address" type="string" label="32002">
+                    <level>0</level>
+                    <default>127.0.0.1</default>
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string"/>
+                </setting>
+                <setting id="orac_port" type="string" label="32003">
+                    <level>0</level>
+                    <default>5555</default>
+                    <control type="edit" format="string"/>
+                </setting>
+                <setting id="trakt.user" type="string" label="32004">
+                    <level>0</level>
+                    <default/>
+                    <constraints>
+                        <allowempty>true</allowempty>
+                    </constraints>
+                    <control type="edit" format="string"/>
+                </setting>
+            </group>
+        </category>
+
+        <category id="browsing" label="32100">
+            <group id="lists" label="32101">
+                <setting id="paginate.lists" type="boolean" label="32102">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="paginate.limit_addon" type="integer" label="32103">
+                    <level>0</level>
+                    <default>20</default>
+                    <constraints>
+                        <minimum>10</minimum>
+                        <step>5</step>
+                        <maximum>100</maximum>
+                    </constraints>
+                    <control type="slider" format="integer"/>
+                </setting>
+                <setting id="paginate.limit_widgets" type="integer" label="32104">
+                    <level>0</level>
+                    <default>20</default>
+                    <constraints>
+                        <minimum>5</minimum>
+                        <step>5</step>
+                        <maximum>50</maximum>
+                    </constraints>
+                    <control type="slider" format="integer"/>
+                </setting>
+                <setting id="widget_hide_watched" type="boolean" label="32105">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="widget_hide_next_page" type="boolean" label="32106">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+            </group>
+            <group id="tvshows" label="32110">
+                <setting id="show_specials" type="boolean" label="32111">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="default_all_episodes" type="integer" label="32112">
+                    <level>0</level>
+                    <default>0</default>
+                    <constraints>
+                        <options>
+                            <option label="32113">0</option>
+                            <option label="32114">1</option>
+                            <option label="32115">2</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="nextep.include_unaired" type="boolean" label="32116">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="nextep.sort_key" type="string" label="32117">
+                    <level>0</level>
+                    <default>last_played</default>
+                    <constraints>
+                        <options>
+                            <option label="32118">last_played</option>
+                            <option label="32119">first_aired</option>
+                            <option label="32120">name</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="nextep.sort_descending" type="boolean" label="32121">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+            </group>
+            <group id="open_action" label="32130">
+                <setting id="media_open_action.movie" type="integer" label="32131">
+                    <level>0</level>
+                    <default>0</default>
+                    <constraints>
+                        <options>
+                            <option label="32132">0</option>
+                            <option label="32133">1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="media_open_action.tvshow" type="integer" label="32134">
+                    <level>0</level>
+                    <default>0</default>
+                    <constraints>
+                        <options>
+                            <option label="32135">0</option>
+                            <option label="32133">1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+            </group>
+            <group id="views" label="32140">
+                <setting id="use_viewtypes" type="boolean" label="32141">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+            </group>
+        </category>
+
+        <category id="playback" label="32200">
+            <group id="general" label="32201">
+                <setting id="autoplay_movies" type="boolean" label="32202">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="autoplay_episodes" type="boolean" label="32203">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="orac.strict_dedupe" type="boolean" label="32204">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="orac.use_local_files" type="boolean" label="32208">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="orac.skip_intro" type="boolean" label="32205">
+                    <level>0</level>
+                    <default>false</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="nextep.auto_prompt" type="boolean" label="32206">
+                    <level>0</level>
+                    <default>true</default>
+                    <control type="toggle"/>
+                </setting>
+                <setting id="nextep.prompt_seconds" type="integer" label="32207">
+                    <level>0</level>
+                    <default>30</default>
+                    <constraints>
+                        <minimum>10</minimum>
+                        <step>5</step>
+                        <maximum>120</maximum>
+                    </constraints>
+                    <control type="slider" format="integer"/>
+                </setting>
+            </group>
+        </category>
+
+        <category id="appearance" label="32300">
+            <group id="highlight" label="32301">
+                <setting id="sources.highlight_mode" type="string" label="32302">
+                    <level>0</level>
+                    <default>provider</default>
+                    <constraints>
+                        <options>
+                            <option label="32303">provider</option>
+                            <option label="32304">quality</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+            </group>
+            <group id="provider_colors" label="32305">
+                <setting id="color.provider.realdebrid" type="string" label="32306">
+                    <level>0</level>
+                    <default>FF4ADE80</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.provider.premiumize" type="string" label="32307">
+                    <level>0</level>
+                    <default>FFFF6B35</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.provider.torbox" type="string" label="32308">
+                    <level>0</level>
+                    <default>FFA855F7</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.provider.alldebrid" type="string" label="32309">
+                    <level>0</level>
+                    <default>FFFACC15</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.provider.offcloud" type="string" label="32310">
+                    <level>0</level>
+                    <default>FF38BDF8</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.provider.easydebrid" type="string" label="32311">
+                    <level>0</level>
+                    <default>FFF472B6</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.provider.easynews" type="string" label="32312">
+                    <level>0</level>
+                    <default>FF22D3EE</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.provider.local" type="string" label="32313">
+                    <level>0</level>
+                    <default>FF2DD4BF</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+            </group>
+            <group id="quality_colors" label="32320">
+                <setting id="color.quality.4k" type="string" label="32321">
+                    <level>0</level>
+                    <default>FFD946EF</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.quality.1080p" type="string" label="32322">
+                    <level>0</level>
+                    <default>FF38BDF8</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.quality.720p" type="string" label="32323">
+                    <level>0</level>
+                    <default>FF4ADE80</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+                <setting id="color.quality.sd" type="string" label="32324">
+                    <level>0</level>
+                    <default>FFFB923C</default>
+                    <constraints>
+                        <options>
+                            <option label="32340">FF4ADE80</option>
+                            <option label="32341">FF22C55E</option>
+                            <option label="32342">FF2DD4BF</option>
+                            <option label="32343">FF22D3EE</option>
+                            <option label="32344">FF38BDF8</option>
+                            <option label="32345">FF60A5FA</option>
+                            <option label="32346">FF818CF8</option>
+                            <option label="32347">FFA855F7</option>
+                            <option label="32348">FFD946EF</option>
+                            <option label="32349">FFF472B6</option>
+                            <option label="32350">FFF87171</option>
+                            <option label="32351">FFFF6B35</option>
+                            <option label="32352">FFFB923C</option>
+                            <option label="32353">FFFACC15</option>
+                            <option label="32354">FFA3E635</option>
+                            <option label="32355">FFCBD5E1</option>
+                        </options>
+                    </constraints>
+                    <control type="list" format="string"/>
+                </setting>
+            </group>
+        </category>
+    </section>
+</settings>

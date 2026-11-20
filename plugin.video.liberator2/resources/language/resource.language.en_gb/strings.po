@@ -1,0 +1,315 @@
+# Kodi Media Center language file
+# Addon Name: Liberator 2
+# Addon id: plugin.video.liberator2
+# Addon Provider: Karhu
+msgid ""
+msgstr ""
+"Project-Id-Version: plugin.video.liberator2\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+msgctxt "#32000"
+msgid "Orac Server"
+msgstr ""
+
+msgctxt "#32001"
+msgid "Connection"
+msgstr ""
+
+msgctxt "#32002"
+msgid "Orac Server Address (IP or hostname)"
+msgstr ""
+
+msgctxt "#32003"
+msgid "Orac Server Port"
+msgstr ""
+
+msgctxt "#32004"
+msgid "Orac / Trakt User"
+msgstr ""
+
+msgctxt "#32100"
+msgid "Browsing & UI"
+msgstr ""
+
+msgctxt "#32101"
+msgid "Lists & Pagination"
+msgstr ""
+
+msgctxt "#32102"
+msgid "Paginate Lists"
+msgstr ""
+
+msgctxt "#32103"
+msgid "Items Per Page (Addon)"
+msgstr ""
+
+msgctxt "#32104"
+msgid "Items Per Page (Widgets)"
+msgstr ""
+
+msgctxt "#32105"
+msgid "Hide Watched Items in Widgets"
+msgstr ""
+
+msgctxt "#32106"
+msgid "Hide Next Page in Widgets"
+msgstr ""
+
+msgctxt "#32110"
+msgid "TV Shows & Episodes"
+msgstr ""
+
+msgctxt "#32111"
+msgid "Show Specials (Season 0)"
+msgstr ""
+
+msgctxt "#32112"
+msgid "Default All Episodes View"
+msgstr ""
+
+msgctxt "#32113"
+msgid "Never"
+msgstr ""
+
+msgctxt "#32114"
+msgid "If Only One Season"
+msgstr ""
+
+msgctxt "#32115"
+msgid "Always"
+msgstr ""
+
+msgctxt "#32116"
+msgid "Include Unaired in Next Episodes"
+msgstr ""
+
+msgctxt "#32117"
+msgid "Next Episodes Sort By"
+msgstr ""
+
+msgctxt "#32118"
+msgid "Last Played"
+msgstr ""
+
+msgctxt "#32119"
+msgid "First Aired"
+msgstr ""
+
+msgctxt "#32120"
+msgid "Name"
+msgstr ""
+
+msgctxt "#32121"
+msgid "Next Episodes Sort Descending"
+msgstr ""
+
+msgctxt "#32130"
+msgid "Item Open Action"
+msgstr ""
+
+msgctxt "#32131"
+msgid "Movies Open Action"
+msgstr ""
+
+msgctxt "#32132"
+msgid "Play"
+msgstr ""
+
+msgctxt "#32133"
+msgid "Open Extras"
+msgstr ""
+
+msgctxt "#32134"
+msgid "TV Shows Open Action"
+msgstr ""
+
+msgctxt "#32135"
+msgid "Browse Seasons"
+msgstr ""
+
+msgctxt "#32140"
+msgid "View Modes"
+msgstr ""
+
+msgctxt "#32141"
+msgid "Use Saved View Modes"
+msgstr ""
+
+msgctxt "#32200"
+msgid "Playback"
+msgstr ""
+
+msgctxt "#32201"
+msgid "General"
+msgstr ""
+
+msgctxt "#32202"
+msgid "Autoplay Movies"
+msgstr ""
+
+msgctxt "#32203"
+msgid "Autoplay Episodes"
+msgstr ""
+
+msgctxt "#32204"
+msgid "Strict Source Deduplication"
+msgstr ""
+
+msgctxt "#32205"
+msgid "Auto-Skip Intros"
+msgstr ""
+
+msgctxt "#32206"
+msgid "Show Next Episode Prompt"
+msgstr ""
+
+msgctxt "#32207"
+msgid "Next Episode Prompt Seconds Before End"
+msgstr ""
+
+msgctxt "#32208"
+msgid "Use Local Orac Files"
+msgstr ""
+
+msgctxt "#32300"
+msgid "Source Appearance"
+msgstr ""
+
+msgctxt "#32301"
+msgid "Highlight Mode"
+msgstr ""
+
+msgctxt "#32302"
+msgid "Highlight Sources By"
+msgstr ""
+
+msgctxt "#32303"
+msgid "Provider"
+msgstr ""
+
+msgctxt "#32304"
+msgid "Quality"
+msgstr ""
+
+msgctxt "#32305"
+msgid "Provider Colors"
+msgstr ""
+
+msgctxt "#32306"
+msgid "Real-Debrid"
+msgstr ""
+
+msgctxt "#32307"
+msgid "Premiumize"
+msgstr ""
+
+msgctxt "#32308"
+msgid "TorBox"
+msgstr ""
+
+msgctxt "#32309"
+msgid "AllDebrid"
+msgstr ""
+
+msgctxt "#32310"
+msgid "Offcloud"
+msgstr ""
+
+msgctxt "#32311"
+msgid "EasyDebrid"
+msgstr ""
+
+msgctxt "#32312"
+msgid "Easynews"
+msgstr ""
+
+msgctxt "#32313"
+msgid "Orac Local"
+msgstr ""
+
+msgctxt "#32320"
+msgid "Quality Colors"
+msgstr ""
+
+msgctxt "#32321"
+msgid "4K"
+msgstr ""
+
+msgctxt "#32322"
+msgid "1080p"
+msgstr ""
+
+msgctxt "#32323"
+msgid "720p"
+msgstr ""
+
+msgctxt "#32324"
+msgid "SD"
+msgstr ""
+
+msgctxt "#32340"
+msgid "[COLOR FF4ADE80][B]Bright Green[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32341"
+msgid "[COLOR FF22C55E][B]Forest Green[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32342"
+msgid "[COLOR FF2DD4BF][B]Mint Teal[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32343"
+msgid "[COLOR FF22D3EE][B]Bright Cyan[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32344"
+msgid "[COLOR FF38BDF8][B]Sky Blue[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32345"
+msgid "[COLOR FF60A5FA][B]Cobalt Blue[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32346"
+msgid "[COLOR FF818CF8][B]Indigo[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32347"
+msgid "[COLOR FFA855F7][B]Electric Purple[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32348"
+msgid "[COLOR FFD946EF][B]Magenta[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32349"
+msgid "[COLOR FFF472B6][B]Rose Pink[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32350"
+msgid "[COLOR FFF87171][B]Crimson Red[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32351"
+msgid "[COLOR FFFF6B35][B]Tangerine[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32352"
+msgid "[COLOR FFFB923C][B]Warm Amber[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32353"
+msgid "[COLOR FFFACC15][B]Golden Yellow[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32354"
+msgid "[COLOR FFA3E635][B]Lime[/B][/COLOR]"
+msgstr ""
+
+msgctxt "#32355"
+msgid "[COLOR FFCBD5E1][B]Silver White[/B][/COLOR]"
+msgstr ""

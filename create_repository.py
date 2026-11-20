@@ -14,9 +14,11 @@ def create_md5(file_path):
 def zip_directory(path, zip_name):
     with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as ziph:
         for root, dirs, files in os.walk(path):
+            if '.git' in root or '__pycache__' in root:
+                continue
             for file in files:
-                # Avoid zipping git files or existing zips
-                if '.git' in root or file.endswith('.zip'):
+                # Avoid zipping git, bytecode, or existing zip files
+                if file == '.gitignore' or file.endswith(('.zip', '.pyc')):
                     continue
                 ziph.write(os.path.join(root, file), 
                            os.path.relpath(os.path.join(root, file), 
@@ -25,7 +27,7 @@ def zip_directory(path, zip_name):
 # Setup paths
 repo_root = os.getcwd()
 zips_path = os.path.join(repo_root, 'zips')
-addons = ['plugin.video.liberator', 'repository.liberator']
+addons = ['plugin.video.liberator', 'plugin.video.liberator2', 'repository.liberator']
 
 # Ensure zips folder exists
 if not os.path.exists(zips_path):
@@ -54,6 +56,10 @@ for addon_id in addons:
         # 4. Zip it up
         zip_name = f"{addon_id}-{version}.zip"
         zip_directory(addon_path, os.path.join(dest_folder, zip_name))
+        for asset_name in ('icon.png', 'fanart.jpg'):
+            asset_src = os.path.join(addon_path, asset_name)
+            if os.path.exists(asset_src):
+                shutil.copy2(asset_src, os.path.join(dest_folder, asset_name))
         print(f"Created zip for {addon_id} version {version}")
 
 # Save master XML
