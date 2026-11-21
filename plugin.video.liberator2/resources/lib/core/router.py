@@ -14,6 +14,7 @@ ROUTES = {
     'navigator.anime': ('views.navigator', 'Navigator.anime'),
     'navigator.search': ('views.navigator', 'Navigator.search'),
     'navigator.premium': ('views.navigator', 'Navigator.premium'),
+    'navigator.service_menu': ('views.navigator', 'Navigator.service_menu'),
     'navigator.tools': ('views.navigator', 'Navigator.tools'),
     'navigator.open_settings': ('views.navigator', 'open_addon_settings'),
     'navigator.test_orac': ('views.navigator', 'test_orac_connection'),
@@ -94,7 +95,13 @@ ROUTES = {
     'anime.search': ('views.anime', 'search'),
     'anime.status': ('views.anime', 'status'),
 
-    # Premiumize Cloud (via Orac)
+    # My Services / Debrid Cloud (via Orac)
+    'cloud.files': ('views.cloud', 'service_cloud'),
+    'cloud.browse': ('views.cloud', 'service_browse'),
+    'cloud.downloads': ('views.cloud', 'service_downloads'),
+    'cloud.play': ('views.cloud', 'service_play'),
+    'cloud.delete': ('views.cloud', 'service_delete'),
+    'cloud.account_info': ('views.cloud', 'service_account_info'),
     'cloud.pm_files': ('views.cloud', 'pm_files'),
     'cloud.pm_play': ('views.cloud', 'pm_play'),
     'cloud.pm_delete': ('views.cloud', 'pm_delete'),

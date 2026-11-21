@@ -123,10 +123,72 @@ class Navigator:
         self._finish('Search')
 
     def premium(self):
-        self._add({'mode': 'cloud.pm_files'}, 'Cloud Storage', icon='premiumize')
-        self._add({'mode': 'cloud.pm_transfers'}, 'Transfers', icon='premiumize')
-        self._add({'mode': 'cloud.pm_account'}, 'Account Info', icon='premiumize', is_folder=False)
-        self._finish('Premiumize Cloud')
+        from orac.client import OracClientError, get_orac_client
+
+        services = []
+        try:
+            resp = get_orac_client().get_debrid_services() or {}
+            services = resp.get('services') or []
+        except OracClientError:
+            # Backward-compatible fallback if Orac Server hasn't been restarted with /api/debrid/services
+            services = [{
+                'id': 'premiumize',
+                'name': 'Premiumize.me',
+                'icon': 'premiumize',
+                'has_cloud': True,
+                'has_history': True,
+                'has_account': True,
+            }]
+
+        if not services:
+            self._add(
+                {'mode': 'noop'},
+                'No services authorised on Orac Server (configure in Orac web dashboard)',
+                icon='settings',
+                is_folder=False,
+            )
+            self._finish('My Services')
+            return
+
+        for svc in services:
+            svc_id = svc.get('id', '')
+            svc_name = svc.get('name', svc_id.title())
+            svc_icon = svc.get('icon', svc_id or 'folder')
+            self._add(
+                {
+                    'mode': 'navigator.service_menu',
+                    'service': svc_id,
+                    'name': svc_name,
+                    'icon': svc_icon,
+                    'has_cloud': str(bool(svc.get('has_cloud', False))).lower(),
+                    'has_history': str(bool(svc.get('has_history', False))).lower(),
+                    'has_account': str(bool(svc.get('has_account', True))).lower(),
+                },
+                svc_name,
+                icon=svc_icon,
+            )
+        self._finish('My Services')
+
+    def service_menu(self):
+        svc = (self.params.get('service') or '').lower()
+        name = self.params.get('name') or svc.title()
+        icon = self.params.get('icon') or svc or 'folder'
+        has_cloud = self.params.get('has_cloud', 'true') == 'true'
+        has_history = self.params.get('has_history', 'false') == 'true'
+        has_account = self.params.get('has_account', 'true') == 'true'
+
+        if svc == 'premiumize':
+            self._add({'mode': 'cloud.pm_files', 'name': f'{name} Cloud Storage'}, 'Cloud Storage', icon=icon)
+            self._add({'mode': 'cloud.pm_transfers', 'name': f'{name} History'}, 'History', icon=icon)
+            self._add({'mode': 'cloud.account_info', 'service': svc, 'name': name}, 'Account Info', icon=icon, is_folder=False)
+        else:
+            if has_cloud:
+                self._add({'mode': 'cloud.files', 'service': svc, 'name': f'{name} Cloud Storage', 'icon': icon}, 'Cloud Storage', icon=icon)
+            if has_history:
+                self._add({'mode': 'cloud.downloads', 'service': svc, 'name': f'{name} History', 'icon': icon}, 'History', icon=icon)
+            if has_account:
+                self._add({'mode': 'cloud.account_info', 'service': svc, 'name': name}, 'Account Info', icon=icon, is_folder=False)
+        self._finish(name)
 
     def tools(self):
         self._add({'mode': 'navigator.open_settings'}, 'Addon Settings', icon='settings', is_folder=False)

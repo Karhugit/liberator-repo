@@ -32,7 +32,7 @@ DEFAULT_ROOT_MENU = [
     {'name': 'Lists Manager', 'mode': 'lists.manager_categories', 'icon': 'trakt', 'is_folder': True},
     {'name': 'Shortcut Folders', 'mode': 'shortcuts.folders', 'icon': 'folder', 'is_folder': True},
     {'name': 'Search', 'mode': 'navigator.search', 'icon': 'search', 'is_folder': True},
-    {'name': 'Premiumize Cloud', 'mode': 'navigator.premium', 'icon': 'premiumize', 'is_folder': True},
+    {'name': 'My Services', 'mode': 'navigator.premium', 'icon': 'folder', 'is_folder': True},
     {'name': 'Tools & Settings', 'mode': 'navigator.tools', 'icon': 'settings', 'is_folder': True},
 ]
 

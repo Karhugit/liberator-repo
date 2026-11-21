@@ -1,3 +1,8 @@
+[COLOR dodgerblue][B]Version 0.1.2[/B][/COLOR]
+- Replaced Premiumize Cloud with full My Services section supporting cloud storage, history, deletion, and account info for all Orac-authorised services (Real-Debrid, Premiumize.me, TorBox, AllDebrid, Offcloud, EasyDebrid, Easynews)
+- Fixed cloud storage playback leaving Kodi's busy spinner stuck on screen by handing streams back via xbmcplugin.setResolvedUrl
+- Fixed Premiumize cloud folder deletion payload
+
 [COLOR dodgerblue][B]Version 0.1.1[/B][/COLOR]
 - Added refreshed dark-cinema source list layout with configurable colors for all Orac providers (Real-Debrid, Premiumize, TorBox, AllDebrid, Offcloud, EasyDebrid, Easynews, Orac Local) and Quality highlight mode
 - Added visual badge icons for video and audio definitions (resolution, DV/HDR10+/HDR, REMUX/Blu-Ray/WEB-DL/IMAX/3D, video codecs, audio codecs, and channel layouts)

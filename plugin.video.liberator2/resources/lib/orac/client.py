@@ -234,6 +234,27 @@ class OracClient:
     def premiumize_delete(self, body):
         return self.post('api/debrid/premiumize/delete', json_body=body)
 
+    # --- Unified Debrid / My Services Cloud (via Orac) ---
+    def get_debrid_services(self):
+        return self.get('api/debrid/services')
+
+    def debrid_cloud(self, service, folder_id=None, params=None):
+        if folder_id:
+            return self.get(f'api/debrid/{service}/cloud/{folder_id}', params=params)
+        return self.get(f'api/debrid/{service}/cloud', params=params)
+
+    def debrid_downloads(self, service):
+        return self.get(f'api/debrid/{service}/downloads')
+
+    def debrid_unrestrict(self, service, body):
+        return self.post(f'api/debrid/{service}/unrestrict', json_body=body)
+
+    def debrid_delete(self, service, body):
+        return self.post(f'api/debrid/{service}/delete', json_body=body)
+
+    def debrid_account_info(self, service):
+        return self.get(f'api/debrid/{service}/account_info')
+
     def scan_local_folder(self, params=None):
         return self.get('api/local_folders/scan', params=params)
 
