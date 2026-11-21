@@ -1,0 +1,10 @@
+[COLOR dodgerblue][B]Version 0.1.1[/B][/COLOR]
+- Added refreshed dark-cinema source list layout with configurable colors for all Orac providers (Real-Debrid, Premiumize, TorBox, AllDebrid, Offcloud, EasyDebrid, Easynews, Orac Local) and Quality highlight mode
+- Added visual badge icons for video and audio definitions (resolution, DV/HDR10+/HDR, REMUX/Blu-Ray/WEB-DL/IMAX/3D, video codecs, audio codecs, and channel layouts)
+- Added left-side source filter sidebar supporting quick Quality/Provider/Cached filters, multi-select Video/Audio Info filters, and comma-separated Title Keyword search
+- Added View Changelog in Tools & Settings
+
+[COLOR dodgerblue][B]Version 0.1.0[/B][/COLOR]
+- Initial ground-up rewrite of Liberator powered exclusively by Orac Server (API-key-free, zero legacy scrapers or SQLite caches)
+- Native Kodi settings UI, lazy-loaded routing, and batched directory rendering
+- Support for Orac Lists & Lists Manager, Movies/TV/Seasons/Episodes/Next Episodes, Anime Hub, Discover & Indexers, Extras & People windows, Premiumize Cloud, Local Orac files toggle, Strict Deduplication, Shortcut Folders, Menu Editor, and View Modes

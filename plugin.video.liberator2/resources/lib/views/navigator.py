@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.kodi import (
+    ADDON_PATH,
     add_dir,
     add_items,
     build_url,
@@ -132,6 +133,7 @@ class Navigator:
         self._add({'mode': 'navigator.view_modes'}, 'Set View Modes', icon='settings')
         self._add({'mode': 'navigator.test_orac'}, 'Test Orac Connection', icon='settings', is_folder=False)
         self._add({'mode': 'lists.force_sync'}, 'Force Orac Resync', icon='settings', is_folder=False)
+        self._add({'mode': 'navigator.changelog'}, 'View Changelog', icon='lists', is_folder=False)
         self._finish('Tools & Settings')
 
 
@@ -205,3 +207,17 @@ def save_view(handle, params):
         notification(f'Saved {label} view mode ({vid})')
     else:
         notification('Could not detect current view ID')
+
+
+def view_changelog(handle, params):
+    import os
+    import xbmcgui
+
+    path = os.path.join(ADDON_PATH, 'resources', 'text', 'changelog.txt')
+    try:
+        with open(path, 'r', encoding='utf-8') as fh:
+            text = fh.read()
+    except OSError:
+        notification('Changelog not found.')
+        return
+    xbmcgui.Dialog().textviewer('Liberator 2 Changelog', text)

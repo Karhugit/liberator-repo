@@ -17,6 +17,7 @@ ROUTES = {
     'navigator.tools': ('views.navigator', 'Navigator.tools'),
     'navigator.open_settings': ('views.navigator', 'open_addon_settings'),
     'navigator.test_orac': ('views.navigator', 'test_orac_connection'),
+    'navigator.changelog': ('views.navigator', 'view_changelog'),
     'navigator.view_modes': ('views.navigator', 'view_modes'),
     'navigator.save_view': ('views.navigator', 'save_view'),
 

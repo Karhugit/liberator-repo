@@ -14,7 +14,7 @@ def create_md5(file_path):
 def zip_directory(path, zip_name):
     with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as ziph:
         for root, dirs, files in os.walk(path):
-            if '.git' in root or '__pycache__' in root:
+            if '.git' in root or '.agents' in root or '__pycache__' in root:
                 continue
             for file in files:
                 # Avoid zipping git, bytecode, or existing zip files

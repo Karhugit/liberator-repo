@@ -1,4 +1,4 @@
-<addon id="plugin.video.liberator2" name="Liberator 2" provider-name="Karhu" version="0.1.0">
+<addon id="plugin.video.liberator2" name="Liberator 2" provider-name="Karhu" version="0.1.1">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.requests" version="2.19.1"/>
@@ -19,5 +19,6 @@
             <icon>icon.png</icon>
             <fanart>fanart.jpg</fanart>
         </assets>
+        <news>INFO: For latest changes see View Changelog within Tools &amp; Settings of add-on.</news>
     </extension>
 </addon>
