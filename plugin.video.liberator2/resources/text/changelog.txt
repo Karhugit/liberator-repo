@@ -1,3 +1,8 @@
+[COLOR dodgerblue][B]Version 0.1.3[/B][/COLOR]
+- Added configurable episode title formatting (Show: 01x01 - Episode, 01x01 - Episode, Episode, Show: S01E01 - Episode, S01E01 - Episode, and Show: Episode S01E01) separately for Season Lists, Next Episodes, and Widgets
+- Added episode title format selectors directly inside Tools & Settings -> Set View Modes -> Set Episodes View (as well as Addon Settings -> Browsing & UI -> TV Shows & Episodes)
+- Fixed Next Episodes show title detection and ListItem.Title formatting so chosen episode title styles display consistently across Kodi skins and home screen widgets
+
 [COLOR dodgerblue][B]Version 0.1.2[/B][/COLOR]
 - Replaced Premiumize Cloud with full My Services section supporting cloud storage, history, deletion, and account info for all Orac-authorised services (Real-Debrid, Premiumize.me, TorBox, AllDebrid, Offcloud, EasyDebrid, Easynews)
 - Fixed cloud storage playback leaving Kodi's busy spinner stuck on screen by handing streams back via xbmcplugin.setResolvedUrl

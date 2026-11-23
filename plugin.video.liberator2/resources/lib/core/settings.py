@@ -85,6 +85,62 @@ def nextep_sort_descending():
     return get_bool('nextep.sort_descending', True)
 
 
+EPISODE_TITLE_FORMATS = (
+    (0, 'Show: 01x01 - Episode', 'Breaking Bad: 01x01 - Pilot'),
+    (1, '01x01 - Episode', '01x01 - Pilot'),
+    (2, 'Episode', 'Pilot'),
+    (3, 'Show: S01E01 - Episode', 'Breaking Bad: S01E01 - Pilot'),
+    (4, 'S01E01 - Episode', 'S01E01 - Pilot'),
+    (5, 'Show: Episode S01E01', 'Breaking Bad: Pilot S01E01'),
+)
+
+
+def episode_title_format_label(fmt_id):
+    try:
+        idx = int(fmt_id)
+    except (ValueError, TypeError):
+        idx = 0
+    for fid, label, _example in EPISODE_TITLE_FORMATS:
+        if fid == idx:
+            return label
+    return EPISODE_TITLE_FORMATS[0][1]
+
+
+def episode_display_format():
+    return get_int('episode_display', 1)
+
+
+def single_ep_display_format(is_external=False):
+    if is_external:
+        return get_int('single_ep_display_widget', 1)
+    return get_int('single_ep_display', 0)
+
+
+def format_episode_title(fmt_id, show_title, season_num, episode_num, ep_title):
+    s = f'{int(season_num):02d}'
+    e = f'{int(episode_num):02d}'
+    show = (show_title or '').strip()
+    ep = (ep_title or f'Episode {episode_num}').strip()
+    try:
+        fid = int(fmt_id)
+    except (ValueError, TypeError):
+        fid = 0
+
+    if fid == 0:
+        return f'{show}: {s}x{e} - {ep}' if show else f'{s}x{e} - {ep}'
+    if fid == 1:
+        return f'{s}x{e} - {ep}'
+    if fid == 2:
+        return ep
+    if fid == 3:
+        return f'{show}: S{s}E{e} - {ep}' if show else f'S{s}E{e} - {ep}'
+    if fid == 4:
+        return f'S{s}E{e} - {ep}'
+    if fid == 5:
+        return f'{show}: {ep} S{s}E{e}' if show else f'{ep} S{s}E{e}'
+    return f'{show}: {s}x{e} - {ep}' if show else f'{s}x{e} - {ep}'
+
+
 def media_open_action(media_type):
     if media_type == 'movie':
         return get_int('media_open_action.movie', 0)

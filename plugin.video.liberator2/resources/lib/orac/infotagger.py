@@ -3,9 +3,15 @@ from core.kodi import (
     EMPTY_POSTER,
     FANART_PATH,
     build_url,
+    external,
     make_listitem,
 )
-from core.settings import media_open_action
+from core.settings import (
+    episode_display_format,
+    format_episode_title,
+    media_open_action,
+    single_ep_display_format,
+)
 
 RUN_PLUGIN = 'RunPlugin(%s)'
 CONTAINER_UPDATE = 'Container.Update(%s)'
@@ -312,17 +318,20 @@ def build_season_item(meta, show_meta):
 def build_episode_item(meta, show_meta=None, include_show_prefix=False):
     show_meta = show_meta or {}
     tmdb_id = meta.get('show_tmdb_id') or show_meta.get('show_tmdb_id') or meta.get('tmdb_id')
-    show_title = meta.get('show_title') or show_meta.get('show_title') or ''
     raw_season = meta.get('season') if meta.get('season') is not None else meta.get('season_number')
     raw_episode = meta.get('episode_number') if meta.get('episode_number') is not None else meta.get('episode')
     season_num = _safe_int(raw_season, 1)
     episode_num = _safe_int(raw_episode, 1)
-    ep_title = meta.get('episode_title') or meta.get('title') or f'Episode {episode_num}'
 
-    if include_show_prefix and show_title:
-        label = f'{show_title} - {season_num}x{episode_num:02d} - {ep_title}'
+    if include_show_prefix:
+        show_title = meta.get('show_title') or meta.get('tvshowtitle') or show_meta.get('show_title') or meta.get('title') or ''
+        ep_title = meta.get('episode_title') or f'Episode {episode_num}'
     else:
-        label = f'{season_num}x{episode_num:02d}. {ep_title}'
+        show_title = meta.get('show_title') or meta.get('tvshowtitle') or show_meta.get('show_title') or ''
+        ep_title = meta.get('episode_title') or meta.get('title') or f'Episode {episode_num}'
+
+    fmt_id = single_ep_display_format(external()) if include_show_prefix else episode_display_format()
+    label = format_episode_title(fmt_id, show_title, season_num, episode_num, ep_title)
 
     watched = bool(meta.get('watched'))
     show_poster = meta.get('show_poster_path') or show_meta.get('show_poster') or EMPTY_POSTER
@@ -357,7 +366,7 @@ def build_episode_item(meta, show_meta=None, include_show_prefix=False):
     li.setProperty('IsPlayable', 'true')
 
     info_tag = li.getVideoInfoTag()
-    _apply_common_tag(info_tag, meta, 'episode', title=ep_title)
+    _apply_common_tag(info_tag, meta, 'episode', title=label)
     info_tag.setTvShowTitle(show_title)
     info_tag.setSeason(season_num)
     info_tag.setEpisode(episode_num)

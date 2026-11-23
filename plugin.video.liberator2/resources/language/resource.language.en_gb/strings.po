@@ -106,6 +106,42 @@ msgctxt "#32121"
 msgid "Next Episodes Sort Descending"
 msgstr ""
 
+msgctxt "#32122"
+msgid "Episode Title Format (Season Lists)"
+msgstr ""
+
+msgctxt "#32123"
+msgid "Single Episode Title Format (Next Episodes)"
+msgstr ""
+
+msgctxt "#32124"
+msgid "Single Episode Title Format (Widgets)"
+msgstr ""
+
+msgctxt "#32125"
+msgid "Show: 01x01 - Episode"
+msgstr ""
+
+msgctxt "#32126"
+msgid "01x01 - Episode"
+msgstr ""
+
+msgctxt "#32127"
+msgid "Episode"
+msgstr ""
+
+msgctxt "#32128"
+msgid "Show: S01E01 - Episode"
+msgstr ""
+
+msgctxt "#32129"
+msgid "S01E01 - Episode"
+msgstr ""
+
+msgctxt "#32142"
+msgid "Show: Episode S01E01"
+msgstr ""
+
 msgctxt "#32130"
 msgid "Item Open Action"
 msgstr ""

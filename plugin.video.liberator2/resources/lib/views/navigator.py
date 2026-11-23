@@ -4,7 +4,9 @@ from core.kodi import (
     add_dir,
     add_items,
     build_url,
+    container_refresh,
     current_view_id,
+    dialog_select,
     end_directory,
     make_dir_item,
     notification,
@@ -14,6 +16,13 @@ from core.kodi import (
     set_content,
     set_sort_method,
     set_view_mode,
+)
+from core.settings import (
+    EPISODE_TITLE_FORMATS,
+    episode_display_format,
+    episode_title_format_label,
+    set_setting,
+    single_ep_display_format,
 )
 from core.shortcuts import get_menu_items
 
@@ -252,10 +261,55 @@ def view_modes(handle, params):
         icon='settings',
         is_folder=False,
     )
+    if view_key == 'view.episodes':
+        ep_fmt_items = (
+            (
+                'episode_display',
+                'Episode Title Format (Season Lists)',
+                episode_title_format_label(episode_display_format()),
+            ),
+            (
+                'single_ep_display',
+                'Single Episode Title Format (Next Episodes)',
+                episode_title_format_label(single_ep_display_format(False)),
+            ),
+            (
+                'single_ep_display_widget',
+                'Single Episode Title Format (Widgets)',
+                episode_title_format_label(single_ep_display_format(True)),
+            ),
+        )
+        for setting_id, title_label, current_val in ep_fmt_items:
+            add_dir(
+                handle,
+                {
+                    'mode': 'navigator.set_ep_title_format',
+                    'setting_id': setting_id,
+                    'name': title_label,
+                },
+                f'{title_label}: [B]{current_val}[/B]',
+                icon='tv',
+                is_folder=False,
+            )
     set_content(handle, content)
     set_category(handle, f'Set {label} View')
     set_sort_method(handle, 'none')
     end_directory(handle, cache_to_disc=False)
+
+
+def set_ep_title_format(handle, params):
+    setting_id = params.get('setting_id')
+    heading = params.get('name') or 'Episode Title Format'
+    if setting_id not in ('episode_display', 'single_ep_display', 'single_ep_display_widget'):
+        return
+    options = [f'{label}   [COLOR grey]({example})[/COLOR]' for _fid, label, example in EPISODE_TITLE_FORMATS]
+    choice = dialog_select(heading, options)
+    if choice < 0:
+        return
+    fid, label, _example = EPISODE_TITLE_FORMATS[choice]
+    set_setting(setting_id, fid)
+    notification(f'{heading}: {label}')
+    container_refresh()
 
 
 def save_view(handle, params):

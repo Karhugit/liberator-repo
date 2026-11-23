@@ -21,6 +21,7 @@ ROUTES = {
     'navigator.changelog': ('views.navigator', 'view_changelog'),
     'navigator.view_modes': ('views.navigator', 'view_modes'),
     'navigator.save_view': ('views.navigator', 'save_view'),
+    'navigator.set_ep_title_format': ('views.navigator', 'set_ep_title_format'),
 
     # Menu Editor & Shortcut Folders
     'menu_editor.move': ('core.shortcuts', 'menu_move'),
