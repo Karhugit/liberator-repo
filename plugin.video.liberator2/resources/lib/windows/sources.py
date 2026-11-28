@@ -639,6 +639,9 @@ class SourcesPlayback(BaseDialog):
     def __init__(self, xml_filename, *args, **kwargs):
         super().__init__(xml_filename)
         self.meta = kwargs.get('meta', {})
+        self.is_canceled = False
+        self.skip_requested = False
+        self.overview_text = self._build_overview_text()
         self.setProperty('window_mode', 'scraper')
         self.setProperty('enable_busy_spinner', 'true')
         self.setProperty('title', self.meta.get('title', ''))
@@ -647,13 +650,74 @@ class SourcesPlayback(BaseDialog):
         self.setProperty('year', str(self.meta.get('year', '')))
         self.setProperty('poster', self.meta.get('poster') or EMPTY_POSTER)
         self.setProperty('genre', ', '.join(self.meta.get('genres', [])) if isinstance(self.meta.get('genres'), list) else '')
-        self.setProperty('plot', self.meta.get('overview', ''))
+        self.setProperty('plot', self.overview_text)
+        self.setProperty('countdown_text', '')
         self.setProperty('results_4k', '0')
         self.setProperty('results_1080p', '0')
         self.setProperty('results_720p', '0')
         self.setProperty('results_sd', '0')
         self.setProperty('results_total', '0')
         self.setProperty('percent', '0')
+
+    def _build_overview_text(self):
+        overview = (self.meta.get('overview') or '').strip()
+        if self.meta.get('media_type') == 'episode':
+            season = self.meta.get('season')
+            episode = self.meta.get('episode')
+            ep_name = (self.meta.get('ep_name') or '').strip()
+            header = ''
+            if season is not None and episode is not None:
+                try:
+                    header = f'[B]S{int(season):02d}E{int(episode):02d}[/B]'
+                    if ep_name:
+                        header = f'[B]S{int(season):02d}E{int(episode):02d} • {ep_name}[/B]'
+                except (ValueError, TypeError):
+                    header = f'[B]{ep_name}[/B]' if ep_name else ''
+            elif ep_name:
+                header = f'[B]{ep_name}[/B]'
+            if header and overview:
+                return f'{header}[CR][CR]{overview}'
+            return header or overview
+        return overview
+
+    def onAction(self, action):
+        if action in self.closing_actions:
+            self.is_canceled = True
+        elif action == self.right_action:
+            self.skip_requested = True
+
+    def set_resolver_mode(self):
+        self.setProperty('window_mode', 'resolver')
+        self.setProperty('text', self.overview_text)
+        self.setProperty('countdown_text', 'Resolving source...')
+        try:
+            self.getControl(2003).setPercent(0)
+        except Exception:
+            pass
+
+    def set_busy_spinner(self, enabled):
+        self.setProperty('enable_busy_spinner', 'true' if enabled else 'false')
+
+    def reset_skip(self):
+        self.skip_requested = False
+
+    def reset_cancel(self):
+        self.is_canceled = False
+
+    def update_resolver(self, text=None, percent=None, remaining_seconds=None, status_text=None):
+        if text is not None:
+            super().set_text(2002, str(text))
+        if percent is not None:
+            pct = max(0, min(100, int(percent)))
+            self.setProperty('percent', str(pct))
+            try:
+                self.getControl(2003).setPercent(pct)
+            except Exception:
+                pass
+        if status_text is not None:
+            self.setProperty('countdown_text', str(status_text))
+        elif remaining_seconds is not None:
+            self.setProperty('countdown_text', f'Starting stream... {int(remaining_seconds)}s until next source')
 
     def set_text(self, text):
         self.setProperty('text', text)

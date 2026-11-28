@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
+from datetime import date
+import math
 import threading
 import time
+from urllib.parse import unquote, urlsplit
+import requests
 import xbmc
 import xbmcplugin
-from core.kodi import EMPTY_POSTER, FANART_PATH, logger, make_listitem, notification, play_trailer
+from core.kodi import (
+    EMPTY_POSTER,
+    FANART_PATH,
+    clear_property,
+    logger,
+    make_listitem,
+    notification,
+    play_trailer,
+)
 from core.settings import autoplay_enabled, strict_dedupe, trakt_user, use_local_files
 from orac.client import OracClientError, get_orac_client
-from playback.player import start_playback
+from playback.player import PLAYBACK_META_PROP, play_and_verify
 from windows.sources import SourcesPlayback, SourcesResults
 
 QUALITY_RANK = {'4k': 4, '2160p': 4, '1080p': 3, '720p': 2, 'sd': 1}
@@ -15,6 +27,11 @@ QUALITY_RANK = {'4k': 4, '2160p': 4, '1080p': 3, '720p': 2, 'sd': 1}
 def _fail_resolve(handle):
     if handle >= 0:
         xbmcplugin.setResolvedUrl(handle, False, make_listitem())
+
+
+def _is_future_date(raw_date):
+    date_str = str(raw_date or '').strip()[:10]
+    return len(date_str) == 10 and date_str > date.today().isoformat()
 
 
 def _build_meta(client, media_type, tmdb_id, params):
@@ -91,7 +108,7 @@ def _build_meta(client, media_type, tmdb_id, params):
             'episode': e_num,
             'ep_name': ep_data.get('episode_title') or ep_data.get('title') or f'Episode {e_num}',
             'ep_thumb': ep_data.get('episode_thumbnail_path', ''),
-            'air_date': ep_data.get('air_date') or ep_data.get('premiered') or '',
+            'air_date': ep_data.get('air_date') or ep_data.get('first_aired') or ep_data.get('premiered') or params.get('air_date') or '',
             'poster': data.get('poster_path') or EMPTY_POSTER,
             'fanart': data.get('fanart_path') or FANART_PATH,
             'clearlogo': data.get('clearlogo_path', ''),
@@ -148,11 +165,81 @@ def _sort_sources(raw_results):
     return sorted(raw_results, key=sort_key)
 
 
+def _is_easynews_item(item, url=''):
+    provider = str(item.get('cache_provider') or item.get('debrid') or item.get('provider') or '').lower()
+    return 'easynews' in provider or 'easynews.com' in str(url or '').lower()
+
+
+def _probe_easynews_stream(url, head_timeout=(3, 4), tail_timeout=(3, 3)):
+    """Pre-flight head + tail-seek probe so stalled Easynews nodes never hang Kodi's VideoPlayer."""
+    try:
+        parsed = urlsplit(url)
+        auth = None
+        if parsed.username is not None:
+            auth = (unquote(parsed.username), unquote(parsed.password or ''))
+
+        with requests.Session() as sess:
+            head_headers = {'Range': 'bytes=0-65535', 'User-Agent': 'Mozilla/5.0'}
+            total_size = 0
+            final_url = url
+            with sess.get(url, headers=head_headers, stream=True, timeout=head_timeout) as resp:
+                if resp.status_code not in (200, 206):
+                    logger('Sources', f'Easynews head probe HTTP {resp.status_code}')
+                    return False
+                chunk = next(resp.iter_content(chunk_size=16384), b'')
+                if not chunk:
+                    logger('Sources', 'Easynews head probe returned empty EOF')
+                    return False
+                resp_headers = getattr(resp, 'headers', {}) or {}
+                cr = resp_headers.get('Content-Range', '')
+                if '/' in cr:
+                    total_str = cr.rsplit('/', 1)[-1].strip()
+                    if total_str.isdigit():
+                        total_size = int(total_str)
+                elif resp.status_code == 200:
+                    try:
+                        total_size = int(resp_headers.get('Content-Length') or 0)
+                    except (ValueError, TypeError):
+                        total_size = 0
+                final_url = getattr(resp, 'url', None) or url
+
+            # Probe tail (MKV Cues region) to catch nodes that accept headers/head then stall on seek
+            if total_size > 131072:
+                tail_start = total_size - 32768
+                tail_end = total_size - 1
+                tail_headers = {'Range': f'bytes={tail_start}-{tail_end}', 'User-Agent': 'Mozilla/5.0'}
+                target_url = final_url if (auth or '@' in final_url) else url
+                req_auth = auth if (auth and '@' not in target_url) else None
+                try:
+                    with sess.get(target_url, headers=tail_headers, auth=req_auth, stream=True, timeout=tail_timeout) as resp2:
+                        if resp2.status_code not in (200, 206):
+                            logger('Sources', f'Easynews tail-seek probe failed (HTTP {resp2.status_code})')
+                            return False
+                        chunk2 = next(resp2.iter_content(chunk_size=16384), b'')
+                        if not chunk2:
+                            logger('Sources', 'Easynews tail-seek probe failed (empty EOF)')
+                            return False
+                except Exception as exc2:
+                    logger('Sources', f'Easynews tail-seek probe failed: {exc2}')
+                    return False
+            return True
+    except requests.RequestException as exc:
+        logger('Sources', f'Easynews probe failed: {exc}')
+        return False
+    except Exception as exc:
+        logger('Sources', f'Easynews probe unexpected error: {exc}')
+        return False
+
+
 def _resolve_source(client, item, meta):
     url = item.get('url', '')
     if url.startswith('/'):
         return f'{client.base_url}{url}'
-    if url.startswith(('http://', 'https://')) and not item.get('hash'):
+    if url.startswith(('http://', 'https://')) and (item.get('direct') or not item.get('hash')):
+        if _is_easynews_item(item, url):
+            if not _probe_easynews_stream(url):
+                return None
+            return url if '|' in url else f'{url}|connection-timeout=6'
         return url
 
     resolve_params = {
@@ -165,10 +252,59 @@ def _resolve_source(client, item, meta):
         resolve_params['season'] = str(meta['season'])
         resolve_params['episode'] = str(meta['episode'])
 
-    res = client.resolve(resolve_params) or {}
+    try:
+        res = client.resolve(resolve_params) or {}
+    except OracClientError as exc:
+        logger('Sources', f'Resolve failed for {resolve_params.get("provider")}: {exc}')
+        return None
     if res.get('success') and res.get('stream_url'):
         return res['stream_url']
     return None
+
+
+def _build_playback_queue(results, chosen=None):
+    cached = [r for r in results if 'Uncached' not in r.get('cache_provider', '')]
+    if chosen is None:
+        return cached
+
+    chosen_idx = None
+    for idx, item in enumerate(cached):
+        if item == chosen:
+            chosen_idx = idx
+            break
+    if chosen_idx is None:
+        chosen_sig = (chosen.get('url', ''), chosen.get('hash', ''), chosen.get('name', ''))
+        for idx, item in enumerate(cached):
+            if (item.get('url', ''), item.get('hash', ''), item.get('name', '')) == chosen_sig:
+                chosen_idx = idx
+                break
+
+    if chosen_idx is None:
+        return [chosen] + cached
+
+    items_prev = list(reversed(cached[:chosen_idx]))
+    items_next = cached[chosen_idx + 1:]
+    return [cached[chosen_idx]] + items_next + items_prev
+
+
+def _format_resolve_display(idx, total, item):
+    provider = (item.get('cache_provider') or item.get('debrid') or item.get('provider') or 'ORAC')
+    provider = str(provider).replace('.me', '').upper()
+    quality = str(item.get('quality') or 'SD').upper()
+    size_label = item.get('size_label') or ''
+    if not size_label and item.get('size'):
+        try:
+            size_label = f'{float(item["size"]):.2f} GB'
+        except (ValueError, TypeError):
+            size_label = ''
+    extra = item.get('extraInfo') or item.get('info') or ''
+    parts = [f'[B]{quality}[/B]']
+    if size_label:
+        parts.append(f'[B]{size_label}[/B]')
+    if extra:
+        parts.append(str(extra))
+    name = str(item.get('display_name') or item.get('name') or 'Unknown Source').upper()
+    return f'{idx:02d}/{total:02d}  [B]{provider}[/B][CR]{" | ".join(parts)}[CR]{name}'
 
 
 def play(handle, params):
@@ -176,9 +312,15 @@ def play(handle, params):
     tmdb_id = params.get('tmdb_id')
     force_select = params.get('force_select') == 'true'
     force_direct_play = params.get('direct_play') == 'true' or handle < 0
+    handle_used = False
 
     if not tmdb_id:
         notification('Missing TMDB ID for playback')
+        _fail_resolve(handle)
+        return
+
+    if media_type == 'episode' and _is_future_date(params.get('air_date')):
+        notification('Please wait for release date!')
         _fail_resolve(handle)
         return
 
@@ -186,6 +328,11 @@ def play(handle, params):
     try:
         client = get_orac_client()
         meta = _build_meta(client, media_type, tmdb_id, params)
+
+        if media_type == 'episode' and _is_future_date(meta.get('air_date')):
+            notification('Please wait for release date!')
+            _fail_resolve(handle)
+            return
 
         splash = SourcesPlayback('sources_playback.xml', meta=meta)
         splash.show()
@@ -203,7 +350,13 @@ def play(handle, params):
         start_ts = time.time()
         worker = threading.Thread(target=_do_scrape, daemon=True)
         worker.start()
+        monitor = xbmc.Monitor()
         while worker.is_alive():
+            if splash.is_canceled or monitor.abortRequested():
+                splash.close()
+                splash = None
+                _fail_resolve(handle)
+                return
             xbmc.sleep(100)
         duration = time.time() - start_ts
 
@@ -220,15 +373,10 @@ def play(handle, params):
             return
 
         results = _sort_sources(raw_results)
-        stream_url = None
+        is_autoplay = autoplay_enabled(media_type) and not force_select
 
-        if autoplay_enabled(media_type) and not force_select:
-            cached = [r for r in results if 'Uncached' not in r.get('cache_provider', '')]
-            for idx, candidate in enumerate(cached[:5], 1):
-                splash.set_text(f'Resolving source {idx}/{min(len(cached), 5)}...')
-                stream_url = _resolve_source(client, candidate, meta)
-                if stream_url:
-                    break
+        if is_autoplay:
+            queue = _build_playback_queue(results)
         else:
             splash.close()
             splash = None
@@ -241,35 +389,113 @@ def play(handle, params):
             if action != 'play' or not chosen:
                 _fail_resolve(handle)
                 return
+            queue = _build_playback_queue(results, chosen=chosen)
             splash = SourcesPlayback('sources_playback.xml', meta=meta)
             splash.show()
             xbmc.sleep(50)
-            splash.set_text('Resolving selected source...')
-            stream_url = _resolve_source(client, chosen, meta)
+
+        if not queue:
+            if splash:
+                splash.close()
+                splash = None
+            notification('No playable sources available.')
+            _fail_resolve(handle)
+            return
+
+        splash.set_resolver_mode()
+        splash.reset_cancel()
+        total = len(queue)
+        cancelled = False
+
+        for idx, candidate in enumerate(queue, 1):
+            if splash.is_canceled or monitor.abortRequested():
+                cancelled = True
+                break
+
+            splash.reset_skip()
+            splash.set_busy_spinner(True)
+            is_en = _is_easynews_item(candidate, candidate.get('url', ''))
+            probe_msg = 'Checking Easynews stream...' if is_en else 'Resolving source...'
+            splash.update_resolver(
+                text=_format_resolve_display(idx, total, candidate),
+                percent=0,
+                status_text=probe_msg,
+            )
+
+            resolve_box = {'url': None}
+
+            def _do_resolve(target=candidate):
+                resolve_box['url'] = _resolve_source(client, target, meta)
+
+            r_start = time.time()
+            probe_window = 7.0
+            r_worker = threading.Thread(target=_do_resolve, daemon=True)
+            r_worker.start()
+            skipped_resolve = False
+            while r_worker.is_alive():
+                if splash.is_canceled or monitor.abortRequested():
+                    cancelled = True
+                    break
+                if splash.skip_requested:
+                    skipped_resolve = True
+                    break
+                if is_en:
+                    elapsed = time.time() - r_start
+                    rem = max(0, int(math.ceil(probe_window - elapsed)))
+                    pct = int(min(99, (elapsed / probe_window) * 100))
+                    splash.update_resolver(percent=pct, status_text=f'Checking Easynews stream... {rem}s')
+                xbmc.sleep(50)
+
+            if cancelled:
+                break
+            stream_url = resolve_box['url']
+            if skipped_resolve or not stream_url:
+                logger('Sources', f'Source {idx}/{total} skipped or failed to resolve, trying next source')
+                continue
+
+            splash.set_busy_spinner(False)
+            splash.update_resolver(percent=0, remaining_seconds=22)
+            status, handle_used = play_and_verify(
+                handle,
+                stream_url,
+                meta,
+                splash=splash,
+                handle_used=handle_used,
+                force_direct_play=force_direct_play,
+                timeout_seconds=22.0,
+            )
+            if status == 'started':
+                splash.close()
+                splash = None
+                return
+            if status == 'cancelled':
+                cancelled = True
+                break
+            logger('Sources', f'Source {idx}/{total} failed ({status}), trying next source')
 
         if splash:
             splash.close()
             splash = None
-
-        if not stream_url:
-            notification('Failed to resolve stream.')
+        clear_property(PLAYBACK_META_PROP)
+        if not handle_used:
             _fail_resolve(handle)
-            return
-
-        start_playback(handle, stream_url, meta, force_direct_play=force_direct_play)
+        if not cancelled:
+            notification('Failed to play any source.')
 
     except OracClientError as exc:
         logger('Sources', f'Orac error during playback: {exc}')
         if splash:
             splash.close()
         notification(f'Playback error: {exc}')
-        _fail_resolve(handle)
+        if not handle_used:
+            _fail_resolve(handle)
     except Exception as exc:
         logger('Sources', f'Unexpected playback error: {exc}')
         if splash:
             splash.close()
         notification(f'Playback error: {exc}')
-        _fail_resolve(handle)
+        if not handle_used:
+            _fail_resolve(handle)
 
 
 def trailer(handle, params):

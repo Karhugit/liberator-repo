@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import date
+
 from core.kodi import (
     EMPTY_POSTER,
     FANART_PATH,
@@ -315,6 +317,16 @@ def build_season_item(meta, show_meta):
     return url, li, True
 
 
+def _is_unaired_episode(meta):
+    if meta.get('unaired'):
+        return True
+    raw_date = meta.get('air_date') or meta.get('first_aired') or meta.get('premiered') or ''
+    air_date_str = str(raw_date).strip()[:10]
+    if not air_date_str:
+        return True
+    return air_date_str > date.today().isoformat()
+
+
 def build_episode_item(meta, show_meta=None, include_show_prefix=False):
     show_meta = show_meta or {}
     tmdb_id = meta.get('show_tmdb_id') or show_meta.get('show_tmdb_id') or meta.get('tmdb_id')
@@ -330,8 +342,9 @@ def build_episode_item(meta, show_meta=None, include_show_prefix=False):
         show_title = meta.get('show_title') or meta.get('tvshowtitle') or show_meta.get('show_title') or ''
         ep_title = meta.get('episode_title') or meta.get('title') or f'Episode {episode_num}'
 
+    is_unaired = _is_unaired_episode(meta)
     fmt_id = single_ep_display_format(external()) if include_show_prefix else episode_display_format()
-    label = format_episode_title(fmt_id, show_title, season_num, episode_num, ep_title)
+    label = format_episode_title(fmt_id, show_title, season_num, episode_num, ep_title, is_unaired=is_unaired)
 
     watched = bool(meta.get('watched'))
     show_poster = meta.get('show_poster_path') or show_meta.get('show_poster') or EMPTY_POSTER
@@ -340,6 +353,7 @@ def build_episode_item(meta, show_meta=None, include_show_prefix=False):
     show_landscape = meta.get('show_landscape_path') or show_meta.get('show_landscape') or show_fanart
     thumb = meta.get('episode_thumbnail_path') or show_landscape
 
+    air_date_str = str(meta.get('air_date') or meta.get('first_aired') or meta.get('premiered') or '').strip()[:10]
     play_params = {
         'mode': 'playback.play',
         'media_type': 'episode',
@@ -348,6 +362,8 @@ def build_episode_item(meta, show_meta=None, include_show_prefix=False):
         'episode': episode_num,
         'title': show_title or ep_title,
     }
+    if air_date_str:
+        play_params['air_date'] = air_date_str
     url = build_url(play_params)
 
     li = make_listitem(label)
@@ -364,6 +380,7 @@ def build_episode_item(meta, show_meta=None, include_show_prefix=False):
         'tvshow.landscape': show_landscape,
     })
     li.setProperty('IsPlayable', 'true')
+    li.setProperty('unaired', 'true' if is_unaired else 'false')
 
     info_tag = li.getVideoInfoTag()
     _apply_common_tag(info_tag, meta, 'episode', title=label)

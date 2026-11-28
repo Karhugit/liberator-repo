@@ -1,3 +1,10 @@
+[COLOR dodgerblue][B]Version 0.1.4[/B][/COLOR]
+- Highlighted future-dated and unaired episodes in red italics across all episode title formats
+- Selecting a future-dated episode now shows "Please wait for release date!" before scraping
+- Added automatic playback verification and ordered fallback to the next source when a stream times out or fails (with BACK to cancel and RIGHT to skip)
+- Restored the movie/episode overview splash screen during stream startup with a visual timeout countdown progress bar and live seconds-remaining indicator
+- Added fast Easynews head + tail-seek pre-flight stream probing and non-blocking stream stop so stalled or dead Easynews nodes skip quickly without freezing Kodi
+
 [COLOR dodgerblue][B]Version 0.1.3[/B][/COLOR]
 - Added configurable episode title formatting (Show: 01x01 - Episode, 01x01 - Episode, Episode, Show: S01E01 - Episode, S01E01 - Episode, and Show: Episode S01E01) separately for Season Lists, Next Episodes, and Widgets
 - Added episode title format selectors directly inside Tools & Settings -> Set View Modes -> Set Episodes View (as well as Addon Settings -> Browsing & UI -> TV Shows & Episodes)

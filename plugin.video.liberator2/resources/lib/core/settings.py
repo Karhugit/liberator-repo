@@ -116,7 +116,7 @@ def single_ep_display_format(is_external=False):
     return get_int('single_ep_display', 0)
 
 
-def format_episode_title(fmt_id, show_title, season_num, episode_num, ep_title):
+def format_episode_title(fmt_id, show_title, season_num, episode_num, ep_title, is_unaired=False):
     s = f'{int(season_num):02d}'
     e = f'{int(episode_num):02d}'
     show = (show_title or '').strip()
@@ -126,19 +126,20 @@ def format_episode_title(fmt_id, show_title, season_num, episode_num, ep_title):
     except (ValueError, TypeError):
         fid = 0
 
-    if fid == 0:
-        return f'{show}: {s}x{e} - {ep}' if show else f'{s}x{e} - {ep}'
-    if fid == 1:
-        return f'{s}x{e} - {ep}'
-    if fid == 2:
-        return ep
-    if fid == 3:
-        return f'{show}: S{s}E{e} - {ep}' if show else f'S{s}E{e} - {ep}'
-    if fid == 4:
-        return f'S{s}E{e} - {ep}'
-    if fid == 5:
-        return f'{show}: {ep} S{s}E{e}' if show else f'{ep} S{s}E{e}'
-    return f'{show}: {s}x{e} - {ep}' if show else f'{s}x{e} - {ep}'
+    format_table = {
+        0: (f'{s}x{e} - {ep}', True),
+        1: (f'{s}x{e} - {ep}', False),
+        2: (ep, False),
+        3: (f'S{s}E{e} - {ep}', True),
+        4: (f'S{s}E{e} - {ep}', False),
+        5: (f'{ep} S{s}E{e}', True),
+    }
+    ep_part, has_prefix = format_table.get(fid, (f'{s}x{e} - {ep}', True))
+    if is_unaired:
+        ep_part = f'[COLOR red][I]{ep_part}[/I][/COLOR]'
+    if has_prefix and show:
+        return f'{show}: {ep_part}'
+    return ep_part
 
 
 def media_open_action(media_type):

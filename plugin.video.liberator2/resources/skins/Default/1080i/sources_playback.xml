@@ -48,7 +48,7 @@
                     <align>left</align>
                     <aligny>center</aligny>
                     <label>[UPPERCASE]Press [B]BACK[/B] to Cancel [B]|[/B] Press [B]RIGHT[/B] to Skip[/UPPERCASE]</label>
-                    <visible>String.IsEqual(Window.Property(window_mode),resolver) + !String.IsEqual(Window.Property(enable_busy_spinner),true)</visible>
+                    <visible>String.IsEqual(Window.Property(window_mode),resolver)</visible>
                 </control>
             </control>
             <!-- Clearlogo & Title/Genre -->
@@ -131,25 +131,45 @@
             <control type="group">
                 <visible>String.IsEqual(Window.Property(window_mode),resolver)</visible>
                 <control type="textbox">
-                    <left>550</left>
-                    <top>600</top>
-                    <width>820</width>
-                    <height>310</height>
+                    <left>460</left>
+                    <top>570</top>
+                    <width>1000</width>
+                    <height>255</height>
                     <font>font12</font> <!-- liberator_26 -->
                     <align>center</align>
-                    <aligny>bottom</aligny>
+                    <aligny>top</aligny>
                     <textcolor>FFB7B4BB</textcolor>
                     <label>$INFO[Window.Property(text)]</label>
                 </control>
+                <control type="progress" id="2003">
+                    <left>560</left>
+                    <top>842</top>
+                    <width>800</width>
+                    <height>8</height>
+                    <texturebg colordiffuse="33FFFFFF">liberator_common/white.png</texturebg>
+                    <midtexture colordiffuse="FF38BDF8">liberator_common/white.png</midtexture>
+                    <visible>!String.IsEmpty(Window.Property(countdown_text))</visible>
+                </control>
+                <control type="label">
+                    <left>460</left>
+                    <top>858</top>
+                    <width>1000</width>
+                    <height>28</height>
+                    <font>font10</font> <!-- liberator_21 -->
+                    <align>center</align>
+                    <aligny>center</aligny>
+                    <textcolor>FF94A3B8</textcolor>
+                    <label>$INFO[Window.Property(countdown_text)]</label>
+                </control>
                 <control type="textbox" id="2002">
-                    <top>970</top>
+                    <top>900</top>
                     <left>360</left>
                     <width>1200</width>
-                    <height>100</height>
+                    <height>145</height>
                     <font>font12</font> <!-- liberator_26 -->
                     <align>center</align>
                     <aligny>bottom</aligny>
-                    <textcolor>FFB7B4BB</textcolor>
+                    <textcolor>FFD4D4D8</textcolor>
                 </control>
             </control>
             <!-- Resume -->
